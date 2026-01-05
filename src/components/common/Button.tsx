@@ -1,11 +1,18 @@
-import { ButtonHTMLAttributes } from "react";
+import { ButtonHTMLAttributes, FC } from "react";
 
-type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement>;
+type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: "primary" | "secondary";
+};
 
-const Button = ({ className = "", children, ...props }: ButtonProps) => {
+const Button: FC<ButtonProps> = ({
+  children,
+  className = "",
+  variant = "primary",
+  ...props
+}) => {
   return (
     <button
-      className={`inline-flex w-full items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${className}`}
+      className={`btn btn-${variant} ${className}`}
       {...props}
     >
       {children}
