@@ -21,6 +21,15 @@ export default function LoginPage() {
     }
   };
 
+  const goBack = () => {
+    router.push("/"); // Navigate to index.tsx
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token"); // Clear token
+    router.push("/"); // Navigate to index.tsx
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.card}>
@@ -39,7 +48,11 @@ export default function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <button onClick={submit}>Login</button>
+        <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+          <button onClick={submit}>Login</button>
+          <button onClick={goBack}>Back</button>
+          <button onClick={logout}>Logout</button>
+        </div>
       </div>
     </div>
   );
