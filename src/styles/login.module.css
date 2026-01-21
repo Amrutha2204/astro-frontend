@@ -1,0 +1,59 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fdf6ec;
+}
+
+.card {
+  background: #fff8ee;
+  padding: 40px;
+  width: 360px;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.title {
+  text-align: center;
+  color: #8b4513;
+  font-size: 26px;
+  margin-bottom: 20px;
+}
+
+/* 👇 SCOPED selectors */
+.card label {
+  font-size: 14px;
+  color: #5a3e2b;
+}
+
+.card input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d8c4a1;
+  font-size: 14px;
+  outline: none;
+  background: #fff;
+}
+
+.card input:focus {
+  border-color: #c0893d;
+}
+
+.card button {
+  margin-top: 10px;
+  padding: 12px;
+  background: #c0893d;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.card button:hover {
+  background: #a9742e;
+}

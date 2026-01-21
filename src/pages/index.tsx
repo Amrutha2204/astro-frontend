@@ -1,30 +1,28 @@
-import Link from "next/link";
+import { useRouter } from "next/router";
+import styles from "@/styles/home.module.css";
 
-import Button from "@/components/common/Button";
-import Card from "@/components/common/Card";
+export default function Home() {
+  const router = useRouter();
 
-const Home = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-6">
-      <Card className="flex w-full max-w-xl flex-col items-start gap-6 text-left">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">
-            Genboot
-          </p>
-          <h1 className="mt-2 text-3xl font-bold text-gray-900">
-            Welcome to Genboot Boilerplate
-          </h1>
-          <p className="mt-2 text-base text-gray-600">
-            A simple starting point with Next.js, TypeScript, and Tailwind CSS.
-          </p>
-        </div>
+    <div className={styles.container}>
+      <header className={styles.header}>
+        <h1>🪔 Jyotishya Darshan</h1>
+        <p>Vedic Astrology • Horoscope • Panchangam</p>
 
-        <Link href="/auth/login" className="w-full sm:w-auto">
-          <Button className="w-full sm:w-auto">Go to Login</Button>
-        </Link>
-      </Card>
+        <div className={styles.actions}>
+          <button onClick={() => router.push("/auth/login")}>Login</button>
+          <button onClick={() => router.push("/auth/register")}>Register</button>
+        </div>
+      </header>
+
+      <section className={styles.content}>
+        <h2>Know Your Destiny Through Vedic Wisdom</h2>
+        <p>
+          Discover daily horoscope, planetary movements and life guidance
+          based on ancient Jyotishya Shastra.
+        </p>
+      </section>
     </div>
   );
-};
-
-export default Home;
+}

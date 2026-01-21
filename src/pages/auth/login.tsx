@@ -1,61 +1,46 @@
-import { FormEvent, useState } from "react";
-import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/router";
+import { loginUser } from "@/services/authService";
+import styles from "@/styles/login.module.css";
 
-import Button from "@/components/common/Button";
-import Card from "@/components/common/Card";
-import Input from "@/components/common/Input";
+export default function LoginPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-const LoginPage = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const submit = async () => {
+    try {
+      const res = await loginUser({ email, password });
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    console.log("Login form submitted:", formData);
+      localStorage.setItem("token", res.data.token);
+
+      router.push("/dashboard");
+    } catch (err) {
+      alert("Invalid email or password");
+      console.error(err);
+    }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md">
-        <Card className="space-y-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Login</h1>
-            <p className="mt-1 text-sm text-gray-600">Access your account to continue.</p>
-          </div>
+    <div className={styles.container}>
+      <div className={styles.card}>
+        <h1 className={styles.title}>🪔 Divine Login</h1>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <Input
-              id="email"
-              name="email"
-              label="Email"
-              type="email"
-              autoComplete="email"
-              required
-              value={formData.email}
-              onChange={(event) => setFormData({ ...formData, email: event.target.value })}
-            />
-            <Input
-              id="password"
-              name="password"
-              label="Password"
-              type="password"
-              autoComplete="current-password"
-              required
-              value={formData.password}
-              onChange={(event) => setFormData({ ...formData, password: event.target.value })}
-            />
-            <Button type="submit">Sign In</Button>
-          </form>
+        <label>Email</label>
+        <input
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
 
-          <p className="text-sm text-gray-600">
-            Don&apos;t have an account?{" "}
-            <Link href="/auth/register" className="font-semibold text-blue-600 hover:text-blue-700">
-              Register
-            </Link>
-          </p>
-        </Card>
+        <label>Password</label>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <button onClick={submit}>Login</button>
       </div>
     </div>
   );
-};
-
-export default LoginPage;
+}
