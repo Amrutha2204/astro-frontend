@@ -1,0 +1,47 @@
+.container {
+  background: #f9f4e8;
+  min-height: 100vh;
+  color: #3b2f2f;
+  font-family: "Merriweather", "Times New Roman", serif;
+}
+
+.header {
+  text-align: center;
+  padding: 60px 20px;
+  border-bottom: 2px solid #d6c5a3;
+}
+
+.header h1 {
+  font-size: 40px;
+  color: #7b2c2c;
+}
+
+.header p {
+  font-size: 16px;
+  margin-top: 8px;
+}
+
+.actions {
+  margin-top: 30px;
+}
+
+.actions button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  background: #7b2c2c;
+  color: #f9f4e8;
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.content {
+  max-width: 700px;
+  margin: 60px auto;
+  text-align: center;
+}
+
+.content h2 {
+  color: #7b2c2c;
+}

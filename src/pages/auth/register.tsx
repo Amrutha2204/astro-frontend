@@ -1,71 +1,89 @@
-import { FormEvent, useState } from "react";
-import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/router";
+import { registerUser } from "@/services/authService";
+import styles from "@/styles/auth.module.css";
 
-import Button from "@/components/common/Button";
-import Card from "@/components/common/Card";
-import Input from "@/components/common/Input";
+export default function Register() {
+  const router = useRouter();
 
-const RegisterPage = () => {
-  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    phoneNumber: "",
+    dob: "",
+    birthPlace: "",
+    birthTime: ""
+  });
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    console.log("Register form submitted:", formData);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleRegister = async () => {
+    try {
+      const payload = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        phoneNumber: formData.phoneNumber || "0000000000",
+        timezone: "Asia/Kolkata",
+        roleId: 1,
+        guestId: null,
+        dob: formData.dob,
+        birthPlace: formData.birthPlace,
+        birthTime: formData.birthTime
+      };
+
+      console.log("Sending payload 👉", payload);
+
+      const res = await registerUser(payload);
+
+      console.log("REGISTER SUCCESS ✅", res.data);
+      alert("Registration successful");
+
+      router.push("/auth/login");
+    } catch (error: any) {
+      console.error("REGISTER FAILED ❌", error.response?.data || error);
+      alert(error.response?.data?.message || "Registration failed");
+    }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md">
-        <Card className="space-y-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Create an Account</h1>
-            <p className="mt-1 text-sm text-gray-600">Start using Genboot by registering below.</p>
-          </div>
+    <div className={styles.container}>
+      <div className={styles.form}>
+        <h2>🪔 New Registration</h2>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <Input
-              id="name"
-              name="name"
-              label="Name"
-              type="text"
-              autoComplete="name"
-              required
-              value={formData.name}
-              onChange={(event) => setFormData({ ...formData, name: event.target.value })}
-            />
-            <Input
-              id="email"
-              name="email"
-              label="Email"
-              type="email"
-              autoComplete="email"
-              required
-              value={formData.email}
-              onChange={(event) => setFormData({ ...formData, email: event.target.value })}
-            />
-            <Input
-              id="password"
-              name="password"
-              label="Password"
-              type="password"
-              autoComplete="new-password"
-              required
-              value={formData.password}
-              onChange={(event) => setFormData({ ...formData, password: event.target.value })}
-            />
-            <Button type="submit">Register</Button>
-          </form>
+        <label>Name</label>
+        <input name="name" onChange={handleChange} />
 
-          <p className="text-sm text-gray-600">
-            Already have an account?{" "}
-            <Link href="/auth/login" className="font-semibold text-blue-600 hover:text-blue-700">
-              Login
-            </Link>
-          </p>
-        </Card>
+        <label>Email</label>
+        <input name="email" onChange={handleChange} />
+
+        <label>Password</label>
+        <input type="password" name="password" onChange={handleChange} />
+
+        <label>Phone</label>
+        <input name="phoneNumber" onChange={handleChange} />
+
+        <label>Date of Birth</label>
+        <input type="date" name="dob" onChange={handleChange} />
+
+        <label>Birth Place</label>
+        <input name="birthPlace" onChange={handleChange} />
+
+        <label>Birth Time</label>
+        <input type="time" name="birthTime" onChange={handleChange} />
+
+        <button onClick={handleRegister}>Register</button>
+
+        <p onClick={() => router.push("/auth/login")}>
+          Already registered? Login
+        </p>
       </div>
     </div>
   );
-};
-
-export default RegisterPage;
+}
