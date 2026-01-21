@@ -1,31 +1,16 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
+import { registerUser } from "@/services/authService";
 import styles from "@/styles/auth.module.css";
-
-interface FormData {
-  name: string;
-  email: string;
-  password: string;
-  phoneNumber: string;
-  timezone: string;
-  roleId: number;
-  guestId: string;
-  dob: string;
-  birthPlace: string;
-  birthTime: string;
-}
 
 export default function Register() {
   const router = useRouter();
 
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     phoneNumber: "",
-    timezone: "",
-    roleId: 1,
-    guestId: "",
     dob: "",
     birthPlace: "",
     birthTime: ""
@@ -38,10 +23,33 @@ export default function Register() {
     });
   };
 
-  const handleRegister = () => {
-    console.log("Form Data:", formData);
-    // TODO: Call your API to save registration
-    router.push("/auth/login");
+  const handleRegister = async () => {
+    try {
+      const payload = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        phoneNumber: formData.phoneNumber || "0000000000",
+        timezone: "Asia/Kolkata",
+        roleId: 1,
+        guestId: null,
+        dob: formData.dob,
+        birthPlace: formData.birthPlace,
+        birthTime: formData.birthTime
+      };
+
+      console.log("Sending payload 👉", payload);
+
+      const res = await registerUser(payload);
+
+      console.log("REGISTER SUCCESS ✅", res.data);
+      alert("Registration successful");
+
+      router.push("/auth/login");
+    } catch (error: any) {
+      console.error("REGISTER FAILED ❌", error.response?.data || error);
+      alert(error.response?.data?.message || "Registration failed");
+    }
   };
 
   return (
@@ -50,22 +58,22 @@ export default function Register() {
         <h2>🪔 New Registration</h2>
 
         <label>Name</label>
-        <input name="name" placeholder="Name" onChange={handleChange} />
+        <input name="name" onChange={handleChange} />
 
         <label>Email</label>
-        <input name="email" placeholder="Email" onChange={handleChange} />
+        <input name="email" onChange={handleChange} />
 
         <label>Password</label>
-        <input type="password" name="password" placeholder="Password" onChange={handleChange} />
+        <input type="password" name="password" onChange={handleChange} />
 
         <label>Phone</label>
-        <input name="phoneNumber" placeholder="Phone" onChange={handleChange} />
+        <input name="phoneNumber" onChange={handleChange} />
 
         <label>Date of Birth</label>
         <input type="date" name="dob" onChange={handleChange} />
 
         <label>Birth Place</label>
-        <input name="birthPlace" placeholder="Birth Place" onChange={handleChange} />
+        <input name="birthPlace" onChange={handleChange} />
 
         <label>Birth Time</label>
         <input type="time" name="birthTime" onChange={handleChange} />
