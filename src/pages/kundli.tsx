@@ -31,8 +31,9 @@ export default function KundliPage() {
         const data = await astroApi.getMyKundli(token);
         setKundli(data);
         setError(null);
-      } catch (err: any) {
-        const errorMessage = err.message || "Failed to load Kundli";
+      } catch (err) {
+        const error = err as { message?: string };
+        const errorMessage = error.message || "Failed to load Kundli";
         setError(errorMessage);
         console.error("Error fetching Kundli:", err);
         
@@ -45,7 +46,8 @@ export default function KundliPage() {
     };
 
     fetchKundli();
-  }, [router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (loading) {
     return (

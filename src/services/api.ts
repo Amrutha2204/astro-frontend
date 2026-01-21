@@ -120,8 +120,9 @@ export const astroApi = {
       }
 
       return response.json();
-    } catch (err: any) {
-      if (err.message && err.message.includes('fetch')) {
+    } catch (err) {
+      const error = err as { message?: string };
+      if (error.message && error.message.includes('fetch')) {
         throw new Error(
           `Cannot connect to astrology service. Please ensure the backend is running on ${ASTRO_API_BASE_URL}`
         );
