@@ -57,3 +57,35 @@
 .card button:hover {
   background: #a9742e;
 }
+
+.card button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.primaryButton {
+  flex: 1;
+}
+
+.secondaryButton {
+  background: #8b7355;
+}
+
+.secondaryButton:hover {
+  background: #6b5a45;
+}
+
+.errorMessage {
+  padding: 10px;
+  background: #fee2e2;
+  color: #dc2626;
+  border-radius: 6px;
+  font-size: 14px;
+  margin-top: 10px;
+}
