@@ -10,14 +10,31 @@ export default function LoginPage() {
 
   const submit = async () => {
     try {
-      const res = await loginUser({ email, password });
+      const trimmedEmail = email.trim();
+      const trimmedPassword = password.trim();
 
-      localStorage.setItem("token", res.data.token);
+      if (!trimmedEmail || !trimmedPassword) {
+        alert("Please enter both email and password");
+        return;
+      }
+
+      const res = await loginUser({ 
+        email: trimmedEmail.toLowerCase(), 
+        password: trimmedPassword 
+      });
+
+      const token = res.data.accessToken?.trim();
+      if (!token || token.split(".").length !== 3) {
+        alert("Invalid token received from server");
+        return;
+      }
+      localStorage.setItem("token", token);
 
       router.push("/dashboard");
-    } catch (err) {
-      alert("Invalid email or password");
-      console.error(err);
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.message || err.message || "Invalid email or password";
+      alert(errorMessage);
+      console.error("Login error:", err);
     }
   };
 

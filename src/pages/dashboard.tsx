@@ -1,27 +1,153 @@
 import { useRouter } from "next/router";
-import styles from "@/styles/dashboard.module.css";
+import AstrosageHeader from "@/components/layout/AstrosageHeader";
+import AstrosageSidebar from "@/components/layout/AstrosageSidebar";
+import ServiceCard from "@/components/common/ServiceCard";
+import styles from "@/styles/astrosage.module.css";
 
 export default function Dashboard() {
   const router = useRouter();
 
+  const services = [
+    {
+      id: "kundli",
+      title: "My Kundli",
+      icon: "🪐",
+      description: "View your complete birth chart with planetary positions",
+      onClick: () => router.push("/kundli"),
+    },
+    {
+      id: "natal-chart",
+      title: "Natal Chart",
+      icon: "⭐",
+      description: "Get your birth chart with Sun, Moon, and Ascendant",
+      onClick: () => router.push("/natal-chart"),
+    },
+    {
+      id: "horoscope-today",
+      title: "Daily Horoscope",
+      icon: "🌙",
+      description: "Personalized daily horoscope based on your birth chart",
+      onClick: () => router.push("/horoscope/today"),
+    },
+    {
+      id: "horoscope-weekly",
+      title: "Weekly Horoscope",
+      icon: "📅",
+      description: "Your personalized weekly predictions",
+      onClick: () => router.push("/horoscope/weekly"),
+    },
+    {
+      id: "horoscope-monthly",
+      title: "Monthly Horoscope",
+      icon: "📆",
+      description: "Monthly insights and predictions",
+      onClick: () => router.push("/horoscope/monthly"),
+    },
+    {
+      id: "calendar",
+      title: "Astrology Calendar",
+      icon: "📅",
+      description: "Today's moon phase, tithi, and planetary events",
+      onClick: () => router.push("/calendar"),
+    },
+    {
+      id: "transits",
+      title: "Today's Transits",
+      icon: "⚛️",
+      description: "Current planetary positions and transits",
+      onClick: () => router.push("/transits"),
+    },
+    {
+      id: "dasha",
+      title: "Dasha Analysis",
+      icon: "🔄",
+      description: "Current Mahadasha and Antardasha periods",
+      onClick: () => router.push("/dasha"),
+    },
+    {
+      id: "dosha",
+      title: "Dosha Check",
+      icon: "⚠️",
+      description: "Check Manglik, Nadi, and Bhakoot doshas",
+      onClick: () => router.push("/dosha"),
+    },
+    {
+      id: "compatibility",
+      title: "Match Horoscope",
+      icon: "💕",
+      description: "Guna Milan and marriage compatibility",
+      onClick: () => router.push("/compatibility"),
+    },
+    {
+      id: "remedies",
+      title: "Remedies",
+      icon: "🔮",
+      description: "Astrological remedies and recommendations",
+      onClick: () => router.push("/remedies"),
+    },
+    {
+      id: "ai-chat",
+      title: "AI Astrology Assistant",
+      icon: "🤖",
+      description: "Ask questions and get AI-powered astrology insights",
+      onClick: () => router.push("/ai-assistant/chat"),
+    },
+    {
+      id: "ai-explain",
+      title: "Explain My Kundli",
+      icon: "💬",
+      description: "Get AI explanation of your birth chart",
+      onClick: () => router.push("/ai-assistant/explain-kundli"),
+    },
+    {
+      id: "ai-suggestions",
+      title: "Daily Suggestions",
+      icon: "✨",
+      description: "Personalized daily suggestions based on transits",
+      onClick: () => router.push("/ai-assistant/suggestions"),
+    },
+  ];
+
   return (
-    <div className={styles.container}>
-      <h2 className={styles.title}>🕉 Welcome to Your Jyotish Dashboard</h2>
+    <div className={styles.dashboardContainer}>
+      <AstrosageHeader />
+      <div className={styles.dashboardContent}>
+        <AstrosageSidebar />
+        <main className={styles.mainContent}>
+          <div className={styles.banner}>
+            <div className={styles.bannerContent}>
+              <h2 className={styles.bannerTitle}>AI Astrology Assistant</h2>
+              <p className={styles.bannerSubtitle}>
+                Get personalized insights and explanations powered by AI
+              </p>
+              <button
+                className={styles.chatNowButton}
+                onClick={() => router.push("/ai-assistant/chat")}
+              >
+                Chat Now
+              </button>
+            </div>
+            <div className={styles.bannerAstrologers}>
+              <div className={styles.astrologerCard}>
+                <div className={styles.astrologerAvatar}>🤖</div>
+              </div>
+            </div>
+          </div>
 
-      <div className={styles.cards}>
-        <div
-          className={styles.card}
-          onClick={() => router.push("/birth-details")}
-        >
-          🪐 Enter Birth Details
-        </div>
-
-        <div
-          className={styles.card}
-          onClick={() => router.push("/my-day")}
-        >
-          🌙 My Day Today
-        </div>
+          <div className={styles.servicesGrid}>
+            {services.map((service) => (
+              <ServiceCard
+                key={service.id}
+                title={service.title}
+                icon={service.icon}
+                description={service.description}
+                onClick={service.onClick}
+                buttonText={service.buttonText}
+                buttonColor={service.buttonColor}
+              />
+            ))}
+          </div>
+        </main>
       </div>
     </div>
   );
