@@ -1,51 +1,50 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { loginUser } from "@/services/authService";
 import styles from "@/styles/login.module.css";
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const submit = async () => {
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+
+    if (!trimmedEmail || !trimmedPassword) {
+      alert("Please enter both email and password");
+      return;
+    }
+
     try {
-      const trimmedEmail = email.trim();
-      const trimmedPassword = password.trim();
+      setLoading(true);
 
-      if (!trimmedEmail || !trimmedPassword) {
-        alert("Please enter both email and password");
-        return;
-      }
+      // ✅ FRONTEND-ONLY LOGIN (NO BACKEND)
+      // Fake token
+      const fakeToken = "frontend-dummy-token";
 
-      const res = await loginUser({ 
-        email: trimmedEmail.toLowerCase(), 
-        password: trimmedPassword 
-      });
+      localStorage.setItem("token", fakeToken);
+      localStorage.setItem("userEmail", trimmedEmail);
 
-      const token = res.data.accessToken?.trim();
-      if (!token || token.split(".").length !== 3) {
-        alert("Invalid token received from server");
-        return;
-      }
-      localStorage.setItem("token", token);
-
+      // ✅ Navigate to dashboard
       router.push("/dashboard");
-    } catch (err) {
-      const error = err as { response?: { data?: { message?: string } }; message?: string };
-      const errorMessage = error.response?.data?.message || error.message || "Invalid email or password";
-      alert(errorMessage);
-      console.error("Login error:", err);
+    } catch (error) {
+      alert("Login failed");
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const goBack = () => {
-    router.push("/"); // Navigate to index.tsx
+    router.push("/");
   };
 
   const logout = () => {
-    localStorage.removeItem("token"); // Clear token
-    router.push("/"); // Navigate to index.tsx
+    localStorage.removeItem("token");
+    localStorage.removeItem("userEmail");
+    router.push("/");
   };
 
   return (
@@ -55,7 +54,9 @@ export default function LoginPage() {
 
         <label>Email</label>
         <input
+          type="email"
           value={email}
+          placeholder="Enter your email"
           onChange={(e) => setEmail(e.target.value)}
         />
 
@@ -63,11 +64,15 @@ export default function LoginPage() {
         <input
           type="password"
           value={password}
+          placeholder="Enter your password"
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-          <button onClick={submit}>Login</button>
+        <div style={{ display: "flex", gap: "10px", marginTop: "15px" }}>
+          <button onClick={submit} disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
+          </button>
+
           <button onClick={goBack}>Back</button>
           <button onClick={logout}>Logout</button>
         </div>
