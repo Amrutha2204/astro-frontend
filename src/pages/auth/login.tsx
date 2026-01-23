@@ -9,7 +9,6 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const submit = async () => {
     try {
@@ -22,7 +21,6 @@ export default function LoginPage() {
       }
 
       setLoading(true);
-      setError(null);
 
       const res = await loginUser({ 
         email: trimmedEmail.toLowerCase(), 
@@ -70,12 +68,12 @@ export default function LoginPage() {
   };
 
   const goBack = () => {
-    router.push("/"); // Navigate to index.tsx
+    router.push("/");
   };
 
   const logout = () => {
-    localStorage.removeItem("token"); // Clear token
-    router.push("/"); // Navigate to index.tsx
+    localStorage.removeItem("token");
+    router.push("/");
   };
 
   return (
@@ -85,14 +83,18 @@ export default function LoginPage() {
 
         <label>Email</label>
         <input
+          type="email"
           value={email}
+          placeholder="Enter your email"
           onChange={(e) => setEmail(e.target.value)}
+          disabled={loading}
         />
 
         <label>Password</label>
         <input
           type="password"
           value={password}
+          placeholder="Enter your password"
           onChange={(e) => setPassword(e.target.value)}
           disabled={loading}
         />
