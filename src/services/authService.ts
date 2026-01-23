@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 const API = "http://localhost:8001/api/v1/auth";
 

@@ -5,46 +5,48 @@ import AstrosageSidebar from "@/components/layout/AstrosageSidebar";
 import { astroApi, KundliResponse } from "@/services/api";
 import styles from "@/styles/astrosage.module.css";
 
+const REDIRECT_DELAY_MS = 2000;
+
 export default function KundliPage() {
   const router = useRouter();
   const [kundli, setKundli] = useState<KundliResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchKundli = async () => {
-      try {
-        const token = localStorage.getItem("token")?.trim();
-        if (!token) {
-          router.push("/auth/login");
-          return;
-        }
-
-        if (token.split(".").length !== 3) {
-          setError("Invalid token format. Please login again.");
-          localStorage.removeItem("token");
-          setTimeout(() => router.push("/auth/login"), 2000);
-          return;
-        }
-
-        setLoading(true);
-        const data = await astroApi.getMyKundli(token);
-        setKundli(data);
-        setError(null);
-      } catch (err) {
-        const error = err as { message?: string };
-        const errorMessage = error.message || "Failed to load Kundli";
-        setError(errorMessage);
-        console.error("Error fetching Kundli:", err);
-        
-        if (errorMessage.includes("Cannot connect")) {
-          console.error("Backend service may not be running. Please start astro-service on port 8002");
-        }
-      } finally {
-        setLoading(false);
+  const fetchKundli = async () => {
+    try {
+      const token = localStorage.getItem("token")?.trim();
+      if (!token) {
+        router.push("/auth/login");
+        return;
       }
-    };
 
+      if (token.split(".").length !== 3) {
+        setError("Invalid token format. Please login again.");
+        localStorage.removeItem("token");
+        setTimeout(() => router.push("/auth/login"), REDIRECT_DELAY_MS);
+        return;
+      }
+
+      setLoading(true);
+      const data = await astroApi.getMyKundli(token);
+      setKundli(data);
+      setError(null);
+    } catch (err) {
+      const error = err as { message?: string };
+      const errorMessage = error.message || "Failed to load Kundli";
+      setError(errorMessage);
+      console.error("Error fetching Kundli:", err);
+      
+      if (errorMessage.includes("Cannot connect")) {
+        console.error("Backend service may not be running. Please start astro-service on port 8002");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchKundli();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -79,10 +81,14 @@ export default function KundliPage() {
                   Please log out and log in again to get a fresh token.
                 </p>
               )}
-              <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+              <div className={styles.errorActions}>
                 <button
                   className={styles.retryButton}
-                  onClick={() => window.location.reload()}
+                  onClick={() => {
+                    setError(null);
+                    setLoading(true);
+                    fetchKundli();
+                  }}
                 >
                   Retry
                 </button>
