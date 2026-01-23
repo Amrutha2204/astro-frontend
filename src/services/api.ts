@@ -130,5 +130,42 @@ export const astroApi = {
       throw err;
     }
   },
+  async getTodayCalendar() {
+    const response = await fetch(
+      `${ASTRO_API_BASE_URL}/api/v1/astrology/calendar/today`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${getAuthToken()}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Calendar API failed (Status ${response.status})`);
+    }
+
+    return response.json();
+  },
+
+  async getTodayTransits() {
+    const response = await fetch(
+      `${ASTRO_API_BASE_URL}/api/v1/astrology/transits/today`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${getAuthToken()}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Transits API failed (Status ${response.status})`);
+    }
+
+    return response.json();
+  },
 };
 
