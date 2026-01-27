@@ -5,6 +5,11 @@ import styles from "@/styles/astrosage.module.css";
 const AstrosageSidebar = () => {
   const router = useRouter();
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    router.push("/auth/login");
+  };
+
   const menuItems = [
     { id: "dashboard", label: "Dashboard", icon: "→", href: "/dashboard" },
     { id: "kundli", label: "My Kundli", icon: "→", href: "/kundli" },
@@ -56,6 +61,17 @@ const AstrosageSidebar = () => {
           ))}
         </ul>
       </nav>
+
+      <div className={styles.sidebarFooter}>
+        <button
+          className={styles.logoutButton}
+          onClick={handleLogout}
+          aria-label="Logout"
+        >
+          <span className={styles.menuIcon}>🚪</span>
+          <span className={styles.menuLabel}>Logout</span>
+        </button>
+      </div>
     </aside>
   );
 };

@@ -1,0 +1,8 @@
+[33mdf66e87[m[33m ([m[1;36mHEAD -> [m[1;32mfrontend[m[33m, [m[1;31morigin/frontend[m[33m)[m Merge branch 'frontend' of github.com:mohit-raj-genboot/astro-frontend into frontend
+[33md8d7fd8[m fix: Remove TypeScript 'any' types and fix linting issues
+[33m04d4330[m feat: Create MVP-focused dashboard with working Kundli API integration
+[33ma5a5bdb[m Register API
+[33me256038[m Initial Commit
+[33m05f9f7f[m Loginaand register page
+[33ma657102[m[33m ([m[1;31morigin/reusable_form[m[33m, [m[1;32mreusable_form[m[33m, [m[1;32mmain[m[33m)[m Initial Commit
+[33m5996bae[m inital commit
