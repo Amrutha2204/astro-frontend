@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import AstrosageHeader from "@/components/layout/AstrosageHeader";
-import AstrosageSidebar from "@/components/layout/AstrosageSidebar";
+import AppHeader from "@/components/layout/AppHeader";
+import AppSidebar from "@/components/layout/AppSidebar";
 import { astroApi, KundliResponse } from "@/services/api";
-import styles from "@/styles/astrosage.module.css";
+import styles from "@/styles/dashboard.module.css";
 
 const REDIRECT_DELAY_MS = 2000;
 
@@ -54,9 +54,9 @@ export default function KundliPage() {
   if (loading) {
     return (
       <div className={styles.dashboardContainer}>
-        <AstrosageHeader />
+        <AppHeader />
         <div className={styles.dashboardContent}>
-          <AstrosageSidebar />
+          <AppSidebar />
           <main className={styles.mainContent}>
             <div className={styles.loadingContainer}>
               <p>Loading your Kundli...</p>
@@ -70,9 +70,9 @@ export default function KundliPage() {
   if (error) {
     return (
       <div className={styles.dashboardContainer}>
-        <AstrosageHeader />
+        <AppHeader />
         <div className={styles.dashboardContent}>
-          <AstrosageSidebar />
+          <AppSidebar />
           <main className={styles.mainContent}>
             <div className={styles.errorContainer}>
               <p className={styles.errorText}>Error: {error}</p>
@@ -113,9 +113,9 @@ export default function KundliPage() {
 
   return (
     <div className={styles.dashboardContainer}>
-      <AstrosageHeader />
+      <AppHeader />
       <div className={styles.dashboardContent}>
-        <AstrosageSidebar />
+        <AppSidebar />
         <main className={styles.mainContent}>
           <div className={styles.kundliContainer}>
             <h1 className={styles.pageTitle}>My Kundli</h1>

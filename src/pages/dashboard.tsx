@@ -1,11 +1,42 @@
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import AstrosageHeader from "@/components/layout/AstrosageHeader";
-import AstrosageSidebar from "@/components/layout/AstrosageSidebar";
+import AppHeader from "@/components/layout/AppHeader";
+import AppSidebar from "@/components/layout/AppSidebar";
 import ServiceCard from "@/components/common/ServiceCard";
-import styles from "@/styles/astrosage.module.css";
+import styles from "@/styles/dashboard.module.css";
 
 export default function Dashboard() {
   const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Check authentication on mount
+    const token = localStorage.getItem("token")?.trim();
+    
+    if (!token || token.split(".").length !== 3) {
+      // No valid token, redirect to login
+      localStorage.removeItem("token");
+      router.replace("/auth/login");
+      return;
+    }
+    
+    setIsAuthenticated(true);
+    setLoading(false);
+  }, [router]);
+
+  // Prevent browser back/forward navigation after logout
+  useEffect(() => {
+    const handlePopState = () => {
+      const token = localStorage.getItem("token")?.trim();
+      if (!token || token.split(".").length !== 3) {
+        router.replace("/auth/login");
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [router]);
 
   const services = [
     {
@@ -108,11 +139,29 @@ export default function Dashboard() {
     },
   ];
 
+  // Show loading or redirect if not authenticated
+  if (loading || !isAuthenticated) {
+    return (
+      <div className={styles.dashboardContainer}>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          height: '100vh',
+          fontSize: '16px',
+          color: '#6b7280'
+        }}>
+          Loading...
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.dashboardContainer}>
-      <AstrosageHeader />
+      <AppHeader />
       <div className={styles.dashboardContent}>
-        <AstrosageSidebar />
+        <AppSidebar />
         <main className={styles.mainContent}>
           <div className={styles.banner}>
             <div className={styles.bannerContent}>

@@ -1,8 +1,8 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
-import styles from "@/styles/astrosage.module.css";
+import styles from "@/styles/dashboard.module.css";
 
-const AstrosageHeader = () => {
+const AppHeader = () => {
   const router = useRouter();
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -90,5 +90,5 @@ const AstrosageHeader = () => {
   );
 };
 
-export default AstrosageHeader;
+export default AppHeader;
 

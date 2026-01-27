@@ -1,13 +1,20 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
-import styles from "@/styles/astrosage.module.css";
+import styles from "@/styles/dashboard.module.css";
 
-const AstrosageSidebar = () => {
+const AppSidebar = () => {
   const router = useRouter();
 
   const handleLogout = () => {
+    // Clear all authentication data
     localStorage.removeItem("token");
-    router.push("/auth/login");
+    
+    // Clear any cached data
+    localStorage.clear();
+    
+    // Force navigation and prevent back button access
+    // Using window.location.replace prevents back navigation
+    window.location.replace("/auth/login");
   };
 
   const menuItems = [
@@ -76,5 +83,5 @@ const AstrosageSidebar = () => {
   );
 };
 
-export default AstrosageSidebar;
+export default AppSidebar;
 

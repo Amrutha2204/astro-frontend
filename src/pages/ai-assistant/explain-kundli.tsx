@@ -1,0 +1,146 @@
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import AppHeader from "@/components/layout/AppHeader";
+import AppSidebar from "@/components/layout/AppSidebar";
+import { aiAssistantApi, ExplainKundliResponse } from "@/services/aiAssistantService";
+import { showError, showSuccess } from "@/utils/toast";
+import styles from "@/styles/dashboard.module.css";
+
+const REDIRECT_DELAY_MS = 2000;
+
+export default function ExplainKundliPage() {
+  const router = useRouter();
+  const [focus, setFocus] = useState<string>('overall');
+  const [loading, setLoading] = useState(false);
+  const [explanation, setExplanation] = useState<ExplainKundliResponse | null>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token")?.trim();
+    if (!token || token.split(".").length !== 3) {
+      router.replace("/auth/login");
+    }
+  }, [router]);
+
+  const handleExplain = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token")?.trim();
+      if (!token) {
+        router.push("/auth/login");
+        return;
+      }
+
+      const result = await aiAssistantApi.explainKundli(token, { focus: focus || undefined });
+      setExplanation(result);
+      showSuccess("Kundli explanation generated!");
+    } catch (err) {
+      const error = err as { message?: string };
+      const errorMessage = error.message || "Failed to explain kundli";
+      showError(errorMessage);
+      console.error("Error explaining kundli:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className={styles.dashboardContainer}>
+      <AppHeader />
+      <div className={styles.dashboardContent}>
+        <AppSidebar />
+        <main className={styles.mainContent}>
+          <div className={styles.pageHeader}>
+            <button onClick={() => router.back()} className={styles.backButton}>
+              ← Back
+            </button>
+          </div>
+
+          <div className={styles.kundliContainer}>
+            <h1 className={styles.sectionTitle}>AI Kundli Explanation</h1>
+            <p style={{ color: '#6b7280', marginBottom: '30px' }}>
+              Get a detailed AI-powered explanation of your birth chart. Choose a focus area or get an overall explanation.
+            </p>
+
+            <div className={styles.explainKundliForm}>
+              <div className={styles.focusSelector}>
+                <label className={styles.focusLabel}>Focus Area:</label>
+                <select
+                  value={focus}
+                  onChange={(e) => setFocus(e.target.value)}
+                  className={styles.focusSelect}
+                  disabled={loading}
+                >
+                  <option value="overall">Overall Chart</option>
+                  <option value="sun-sign">Sun Sign</option>
+                  <option value="moon-sign">Moon Sign</option>
+                  <option value="ascendant">Ascendant (Lagna)</option>
+                  <option value="houses">Houses</option>
+                  <option value="planets">Planets</option>
+                </select>
+              </div>
+              <button
+                onClick={handleExplain}
+                disabled={loading}
+                className={styles.loginButton}
+                style={{ maxWidth: '300px', margin: '20px auto 0' }}
+              >
+                {loading ? 'Generating Explanation...' : 'Explain My Kundli'}
+              </button>
+            </div>
+
+            {explanation && (
+              <div className={styles.explanationResult}>
+                <div className={styles.chartSummary}>
+                  <h3 className={styles.cardTitle}>Your Chart Summary</h3>
+                  <div className={styles.summaryGrid}>
+                    <div className={styles.summaryItem}>
+                      <span className={styles.summaryLabel}>Sun Sign</span>
+                      <span className={styles.summaryValue}>{explanation.chartSummary.sunSign}</span>
+                    </div>
+                    <div className={styles.summaryItem}>
+                      <span className={styles.summaryLabel}>Moon Sign</span>
+                      <span className={styles.summaryValue}>{explanation.chartSummary.moonSign}</span>
+                    </div>
+                    <div className={styles.summaryItem}>
+                      <span className={styles.summaryLabel}>Ascendant</span>
+                      <span className={styles.summaryValue}>{explanation.chartSummary.ascendant}</span>
+                    </div>
+                    <div className={styles.summaryItem}>
+                      <span className={styles.summaryLabel}>Nakshatra</span>
+                      <span className={styles.summaryValue}>{explanation.chartSummary.nakshatra}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className={styles.explanationText}>
+                  <h3 className={styles.cardTitle}>
+                    Explanation ({explanation.explanation.focus.replace('-', ' ')})
+                  </h3>
+                  <div className={styles.explanationContent}>
+                    {explanation.explanation.text.split('\n').map((paragraph, index) => (
+                      paragraph.trim() && (
+                        <p key={index} style={{ marginBottom: '15px', lineHeight: '1.8', color: '#374151' }}>
+                          {paragraph.trim()}
+                        </p>
+                      )
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{ marginTop: '20px', textAlign: 'center' }}>
+                  <button
+                    onClick={handleExplain}
+                    disabled={loading}
+                    className={styles.refreshButton}
+                  >
+                    🔄 Regenerate Explanation
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}

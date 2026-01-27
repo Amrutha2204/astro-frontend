@@ -2,18 +2,18 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
-import { horoscopeApi } from "@/services/horoscopeService";
+import { astroApi } from "@/services/api";
 import styles from "@/styles/dashboard.module.css";
 
 const REDIRECT_DELAY_MS = 2000;
 
-export default function DailyHoroscopePage() {
+export default function NatalChartPage() {
   const router = useRouter();
-  const [horoscope, setHoroscope] = useState<any>(null);
+  const [natalChart, setNatalChart] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchHoroscope = async () => {
+  const fetchNatalChart = async () => {
     try {
       const token = localStorage.getItem("token")?.trim();
       if (!token) {
@@ -29,15 +29,15 @@ export default function DailyHoroscopePage() {
       }
 
       setLoading(true);
-      const data = await horoscopeApi.getDailyHoroscope(token);
-      console.log("🌙 Daily Horoscope API Response:", JSON.stringify(data, null, 2));
-      setHoroscope(data);
+      const data = await astroApi.getNatalChart(token);
+      console.log("⭐ Natal Chart API Response:", JSON.stringify(data, null, 2));
+      setNatalChart(data);
       setError(null);
     } catch (err) {
       const error = err as { message?: string };
-      const errorMessage = error.message || "Failed to load Daily Horoscope";
+      const errorMessage = error.message || "Failed to load Natal Chart";
       setError(errorMessage);
-      console.error("Error fetching Daily Horoscope:", err);
+      console.error("Error fetching Natal Chart:", err);
       
       if (errorMessage.includes("Cannot connect")) {
         console.error("Backend service may not be running. Please start astro-service on port 8002");
@@ -48,7 +48,7 @@ export default function DailyHoroscopePage() {
   };
 
   useEffect(() => {
-    fetchHoroscope();
+    fetchNatalChart();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -60,8 +60,8 @@ export default function DailyHoroscopePage() {
           <AppSidebar />
           <main className={styles.mainContent}>
             <div className={styles.kundliContainer}>
-              <h1 className={styles.sectionTitle}>🌙 Daily Horoscope</h1>
-              <p>Loading your personalized horoscope...</p>
+              <h1 className={styles.sectionTitle}>⭐ Natal Chart</h1>
+              <p>Loading your birth chart...</p>
             </div>
           </main>
         </div>
@@ -77,12 +77,12 @@ export default function DailyHoroscopePage() {
           <AppSidebar />
           <main className={styles.mainContent}>
             <div className={styles.kundliContainer}>
-              <h1 className={styles.sectionTitle}>🌙 Daily Horoscope</h1>
+              <h1 className={styles.sectionTitle}>⭐ Natal Chart</h1>
               <div style={{ color: "red", margin: "20px 0" }}>
                 <p><strong>Error:</strong> {error}</p>
               </div>
               <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
-                <button onClick={fetchHoroscope} className={styles.primaryButton}>
+                <button onClick={fetchNatalChart} className={styles.primaryButton}>
                   Retry
                 </button>
                 <button onClick={() => router.push("/auth/login")} className={styles.secondaryButton}>
@@ -113,9 +113,9 @@ export default function DailyHoroscopePage() {
               </button>
               <div className={styles.headerActions}>
                 <button 
-                  onClick={fetchHoroscope} 
+                  onClick={fetchNatalChart} 
                   className={styles.refreshButton}
-                  aria-label="Refresh horoscope"
+                  aria-label="Refresh natal chart"
                   disabled={loading}
                 >
                   🔄 Refresh
@@ -123,34 +123,36 @@ export default function DailyHoroscopePage() {
               </div>
             </div>
 
-            <h1 className={styles.sectionTitle}>🌙 Daily Horoscope</h1>
+            <h1 className={styles.sectionTitle}>⭐ Natal Chart</h1>
             
-            {horoscope && (
+            {natalChart && (
               <>
                 <div className={styles.infoGrid}>
                   <div className={styles.infoCard}>
-                    <h3>Date</h3>
-                    <p className={styles.infoValue}>{horoscope.date || new Date().toLocaleDateString()}</p>
+                    <h3>Sun Sign</h3>
+                    <p className={styles.infoValue}>{natalChart.sunSign || "N/A"}</p>
                   </div>
                   <div className={styles.infoCard}>
-                    <h3>Day Type</h3>
-                    <p className={styles.infoValue}>{horoscope.dayType || "N/A"}</p>
+                    <h3>Moon Sign</h3>
+                    <p className={styles.infoValue}>{natalChart.moonSign || "N/A"}</p>
+                  </div>
+                  <div className={styles.infoCard}>
+                    <h3>Ascendant (Lagna)</h3>
+                    <p className={styles.infoValue}>{natalChart.ascendant || "N/A"}</p>
                   </div>
                 </div>
 
-                <div style={{ marginTop: "30px" }}>
-                  <h2 className={styles.sectionTitle}>Main Theme</h2>
-                  <p style={{ fontSize: "18px", lineHeight: "1.6", marginBottom: "20px" }}>
-                    {horoscope.mainTheme || "No theme available"}
-                  </p>
-                </div>
-
-                {horoscope.reason && (
-                  <div style={{ marginTop: "20px" }}>
-                    <h3 className={styles.sectionTitle}>Why Today?</h3>
-                    <p style={{ fontSize: "16px", lineHeight: "1.6", color: "#666" }}>
-                      {horoscope.reason}
-                    </p>
+                {natalChart.planetSignList && natalChart.planetSignList.length > 0 && (
+                  <div style={{ marginTop: "30px" }}>
+                    <h2 className={styles.sectionTitle}>Planetary Positions</h2>
+                    <div className={styles.planetsGrid}>
+                      {natalChart.planetSignList.map((planet: any, index: number) => (
+                        <div key={index} className={styles.planetCard}>
+                          <h4>{planet.planet}</h4>
+                          <p>{planet.sign}</p>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
               </>
@@ -161,3 +163,4 @@ export default function DailyHoroscopePage() {
     </div>
   );
 }
+

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { getUserDetails, saveBirthDetails } from "@/services/userService";
+import { showError } from "@/utils/toast";
 
 export default function BirthDetails() {
   const router = useRouter();
@@ -43,7 +44,7 @@ export default function BirthDetails() {
 
       router.push("/dashboard");
     } catch (err) {
-      alert("Failed to save birth details");
+      showError("Failed to save birth details");
       console.error(err);
     }
   };

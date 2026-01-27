@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import styles from "@/styles/astrosage.module.css";
+import styles from "@/styles/dashboard.module.css";
 
 interface ServiceCardProps {
   title: string;
