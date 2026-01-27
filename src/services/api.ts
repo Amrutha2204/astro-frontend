@@ -91,6 +91,39 @@ export interface KundliResponse {
   source: string;
 }
 
+export interface TransitResponse {
+  date: string;
+  planetTransits: Array<{
+    planet: string;
+    fromSign: string;
+    toSign: string;
+    degree: number;
+  }>;
+  source: string;
+}
+
+export interface CalendarResponse {
+  date: string;
+  tithi?: string;
+  nakshatra?: string;
+  yoga?: string;
+  karana?: string;
+  sunrise?: string;
+  sunset?: string;
+  moonRise?: string;
+  moonSet?: string;
+  source: string;
+}
+
+export interface GuestCalendarResponse {
+  moonPhase: string;
+  tithi: string;
+  nakshatra: string;
+  majorPlanetaryEvents: string[];
+  date: string;
+  source: string;
+}
+
 export const astroApi = {
   async getMyKundli(token: string, chartType?: string): Promise<KundliResponse> {
     try {
@@ -174,6 +207,118 @@ export const astroApi = {
       }
       throw err;
     }
+  },
+  async getTodayTransit(token: string, date?: string): Promise<TransitResponse> {
+    try {
+      const cleanToken = token.trim();
+      if (!cleanToken || cleanToken.split('.').length !== 3) {
+        throw new Error('Invalid token format. Please login again.');
+      }
+
+      const url = new URL(`${ASTRO_API_BASE_URL}/api/v1/astrology/transits/today`);
+      if (date) {
+        url.searchParams.append('date', date);
+      }
+
+      const response = await fetch(url.toString(), {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${cleanToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({
+          message: `Failed to fetch transit data (Status: ${response.status})`
+        }));
+        throw new Error(error.message || `Failed to fetch transit data (Status: ${response.status})`);
+      }
+
+      return response.json();
+    } catch (err) {
+      const error = err as { message?: string };
+      if (error.message && error.message.includes('fetch')) {
+        throw new Error(
+          `Cannot connect to astrology service. Please ensure the backend is running on ${ASTRO_API_BASE_URL}`
+        );
+      }
+      throw err;
+    }
+  },
+
+  async getTodayCalendar(token: string, date?: string): Promise<CalendarResponse> {
+    try {
+      const cleanToken = token.trim();
+      if (!cleanToken || cleanToken.split(".").length !== 3) {
+        throw new Error("Invalid token format. Please login again.");
+      }
+
+      const url = new URL(`${ASTRO_API_BASE_URL}/api/v1/astrology/calendar/today`);
+      if (date) {
+        url.searchParams.append("date", date);
+      }
+
+      const response = await fetch(url.toString(), {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${cleanToken}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({
+          message: `Failed to fetch calendar data (Status: ${response.status})`,
+        }));
+        throw new Error(
+          error.message || `Failed to fetch calendar data (Status: ${response.status})`
+        );
+      }
+
+      return response.json();
+    } catch (err) {
+      const error = err as { message?: string };
+      if (error.message?.includes("fetch")) {
+        throw new Error(
+          `Cannot connect to astrology service. Please ensure the backend is running on ${ASTRO_API_BASE_URL}`
+        );
+      }
+      throw err;
+    }
+  },
+
+  async getGuestKundli(dto: { dob: string; birthTime: string; placeOfBirth: string }): Promise<KundliResponse> {
+    const response = await fetch(`${ASTRO_API_BASE_URL}/api/v1/kundli/guest`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(dto),
+    });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({
+        message: `Failed to calculate Kundli (Status: ${response.status})`,
+      }));
+      throw new Error(error.message || `Failed to calculate Kundli (Status: ${response.status})`);
+    }
+    return response.json();
+  },
+
+  async getGuestCalendar(city?: string): Promise<GuestCalendarResponse> {
+    const url = new URL(`${ASTRO_API_BASE_URL}/api/v1/astrology/calendar/today/guest`);
+    if (city && city.trim()) {
+      url.searchParams.append("placeOfBirth", city.trim());
+    }
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({
+        message: `Failed to fetch calendar (Status: ${response.status})`,
+      }));
+      throw new Error(error.message || `Failed to fetch calendar (Status: ${response.status})`);
+    }
+    return response.json();
   },
 };
 
