@@ -1,15 +1,17 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
 import { aiAssistantApi, ChatResponse } from "@/services/aiAssistantService";
 import { showError, showSuccess, showWarning } from "@/utils/toast";
+import { selectToken, selectIsRehydrated } from "@/store/slices/authSlice";
 import styles from "@/styles/dashboard.module.css";
-
-const REDIRECT_DELAY_MS = 2000;
 
 export default function AIChatPage() {
   const router = useRouter();
+  const rehydrated = useSelector(selectIsRehydrated);
+  const token = useSelector(selectToken);
   const [question, setQuestion] = useState("");
   const [context, setContext] = useState<'daily' | 'weekly' | 'relationships' | 'career' | 'wellness' | undefined>(undefined);
   const [loading, setLoading] = useState(false);
@@ -18,11 +20,10 @@ export default function AIChatPage() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token")?.trim();
-    if (!token || token.split(".").length !== 3) {
-      router.replace("/auth/login");
-    }
-  }, [router]);
+    if (!rehydrated) return;
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) router.replace("/auth/login");
+  }, [rehydrated, token, router]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -43,13 +44,12 @@ export default function AIChatPage() {
 
     try {
       setLoading(true);
-      const token = localStorage.getItem("token")?.trim();
-      if (!token) {
+      const t = token?.trim();
+      if (!t) {
         router.push("/auth/login");
         return;
       }
-
-      const response = await aiAssistantApi.chat(token, {
+      const response = await aiAssistantApi.chat(t, {
         question: question.trim(),
         context,
       });

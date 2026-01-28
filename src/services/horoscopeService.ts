@@ -1,4 +1,4 @@
-const ASTRO_API_BASE_URL = process.env.NEXT_PUBLIC_ASTRO_API_URL || 'http://localhost:8002';
+import { request, ASTRO_BASE } from "./fetcher";
 
 export interface DailyHoroscopeResponse {
   dayType: string;
@@ -11,130 +11,52 @@ export interface DailyHoroscopeResponse {
 export interface WeeklyHoroscopeResponse {
   weekType: string;
   mainTheme: string;
-  predictions: Array<{
-    date: string;
-    theme: string;
-    advice: string;
-  }>;
+  predictions: Array<{ date: string; theme: string; advice: string }>;
   source: string;
 }
 
 export interface MonthlyHoroscopeResponse {
   monthType: string;
   mainTheme: string;
-  predictions: Array<{
-    date: string;
-    theme: string;
-    advice: string;
-  }>;
+  predictions: Array<{ date: string; theme: string; advice: string }>;
   source: string;
 }
 
+export type GuestHoroscopeRequest = { dob: string; birthTime: string; placeOfBirth: string };
+
 export const horoscopeApi = {
-  async getDailyHoroscope(token: string, chartType?: string): Promise<DailyHoroscopeResponse> {
-    try {
-      const cleanToken = token.trim();
-      if (!cleanToken || cleanToken.split('.').length !== 3) {
-        throw new Error('Invalid token format. Please login again.');
-      }
-
-      const url = new URL(`${ASTRO_API_BASE_URL}/api/v1/astrology/horoscope/today`);
-      if (chartType) {
-        url.searchParams.append('chartType', chartType);
-      }
-
-      const response = await fetch(url.toString(), {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${cleanToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({ 
-          message: `Failed to fetch daily horoscope (Status: ${response.status})` 
-        }));
-        throw new Error(error.message || `Failed to fetch daily horoscope (Status: ${response.status})`);
-      }
-
-      return response.json();
-    } catch (err) {
-      const error = err as { message?: string };
-      if (error.message && error.message.includes('fetch')) {
-        throw new Error(
-          `Cannot connect to astrology service. Please ensure the backend is running on ${ASTRO_API_BASE_URL}`
-        );
-      }
-      throw err;
-    }
+  getDailyHoroscopeGuest(dto: GuestHoroscopeRequest): Promise<DailyHoroscopeResponse> {
+    return request<DailyHoroscopeResponse>(ASTRO_BASE, "/api/v1/astrology/horoscope/today/guest", {
+      method: "POST",
+      body: { dob: dto.dob, birthTime: dto.birthTime, placeOfBirth: dto.placeOfBirth.trim() },
+    });
   },
 
-  async getWeeklyHoroscope(token: string): Promise<WeeklyHoroscopeResponse> {
-    try {
-      const cleanToken = token.trim();
-      if (!cleanToken || cleanToken.split('.').length !== 3) {
-        throw new Error('Invalid token format. Please login again.');
-      }
-
-      const response = await fetch(`${ASTRO_API_BASE_URL}/api/v1/horoscope/weekly`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${cleanToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({ 
-          message: `Failed to fetch weekly horoscope (Status: ${response.status})` 
-        }));
-        throw new Error(error.message || `Failed to fetch weekly horoscope (Status: ${response.status})`);
-      }
-
-      return response.json();
-    } catch (err) {
-      const error = err as { message?: string };
-      if (error.message && error.message.includes('fetch')) {
-        throw new Error(
-          `Cannot connect to astrology service. Please ensure the backend is running on ${ASTRO_API_BASE_URL}`
-        );
-      }
-      throw err;
-    }
+  getDailyHoroscope(token: string, chartType?: string): Promise<DailyHoroscopeResponse> {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) throw new Error("Invalid token format. Please login again.");
+    return request<DailyHoroscopeResponse>(ASTRO_BASE, "/api/v1/astrology/horoscope/today", {
+      method: "GET",
+      token: t,
+      params: chartType ? { chartType } : undefined,
+    });
   },
 
-  async getMonthlyHoroscope(token: string): Promise<MonthlyHoroscopeResponse> {
-    try {
-      const cleanToken = token.trim();
-      if (!cleanToken || cleanToken.split('.').length !== 3) {
-        throw new Error('Invalid token format. Please login again.');
-      }
+  getWeeklyHoroscope(token: string): Promise<WeeklyHoroscopeResponse> {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) throw new Error("Invalid token format. Please login again.");
+    return request<WeeklyHoroscopeResponse>(ASTRO_BASE, "/api/v1/horoscope/weekly", {
+      method: "GET",
+      token: t,
+    });
+  },
 
-      const response = await fetch(`${ASTRO_API_BASE_URL}/api/v1/horoscope/monthly`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${cleanToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({ 
-          message: `Failed to fetch monthly horoscope (Status: ${response.status})` 
-        }));
-        throw new Error(error.message || `Failed to fetch monthly horoscope (Status: ${response.status})`);
-      }
-
-      return response.json();
-    } catch (err) {
-      const error = err as { message?: string };
-      if (error.message && error.message.includes('fetch')) {
-        throw new Error(
-          `Cannot connect to astrology service. Please ensure the backend is running on ${ASTRO_API_BASE_URL}`
-        );
-      }
-      throw err;
-    }
+  getMonthlyHoroscope(token: string): Promise<MonthlyHoroscopeResponse> {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) throw new Error("Invalid token format. Please login again.");
+    return request<MonthlyHoroscopeResponse>(ASTRO_BASE, "/api/v1/horoscope/monthly", {
+      method: "GET",
+      token: t,
+    });
   },
 };

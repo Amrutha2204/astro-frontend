@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
 import { compatibilityApi, CompatibilityRequest, GunaMilanResponse, MarriageCompatibilityResponse } from "@/services/compatibilityService";
 import { getCoordinatesFromCity } from "@/utils/coordinates";
 import { showError, showSuccess, showWarning } from "@/utils/toast";
+import { selectToken } from "@/store/slices/authSlice";
 import styles from "@/styles/dashboard.module.css";
 
 const REDIRECT_DELAY_MS = 2000;
@@ -23,6 +25,7 @@ interface PartnerFormData {
 
 export default function CompatibilityPage() {
   const router = useRouter();
+  const token = useSelector(selectToken);
   const [loading, setLoading] = useState(false);
   const [calculationType, setCalculationType] = useState<'guna-milan' | 'marriage'>('guna-milan');
   const [gunaMilanResult, setGunaMilanResult] = useState<GunaMilanResponse | null>(null);
@@ -49,13 +52,6 @@ export default function CompatibilityPage() {
     latitude: 28.6139,
     longitude: 77.209,
   });
-
-  useEffect(() => {
-    const token = localStorage.getItem("token")?.trim();
-    if (!token || token.split(".").length !== 3) {
-      router.replace("/auth/login");
-    }
-  }, [router]);
 
   const handlePartner1Change = (field: keyof PartnerFormData, value: string | number) => {
     const updated = { ...partner1, [field]: value };
@@ -93,41 +89,20 @@ export default function CompatibilityPage() {
     return true;
   };
 
+  const requestBody: CompatibilityRequest = {
+    partner1: { year: partner1.year, month: partner1.month, day: partner1.day, hour: partner1.hour, minute: partner1.minute, latitude: partner1.latitude, longitude: partner1.longitude, birthPlace: partner1.birthPlace },
+    partner2: { year: partner2.year, month: partner2.month, day: partner2.day, hour: partner2.hour, minute: partner2.minute, latitude: partner2.latitude, longitude: partner2.longitude, birthPlace: partner2.birthPlace },
+  };
+
   const calculateGunaMilan = async () => {
     if (!validateForm()) return;
-
     try {
       setLoading(true);
-      const token = localStorage.getItem("token")?.trim();
-      if (!token) {
-        router.push("/auth/login");
-        return;
-      }
-
-      const request: CompatibilityRequest = {
-        partner1: {
-          year: partner1.year,
-          month: partner1.month,
-          day: partner1.day,
-          hour: partner1.hour,
-          minute: partner1.minute,
-          latitude: partner1.latitude,
-          longitude: partner1.longitude,
-          birthPlace: partner1.birthPlace,
-        },
-        partner2: {
-          year: partner2.year,
-          month: partner2.month,
-          day: partner2.day,
-          hour: partner2.hour,
-          minute: partner2.minute,
-          latitude: partner2.latitude,
-          longitude: partner2.longitude,
-          birthPlace: partner2.birthPlace,
-        },
-      };
-
-      const result = await compatibilityApi.calculateGunaMilan(token, request);
+      const t = token?.trim();
+      const useAuth = !!(t && t.split(".").length === 3);
+      const result = useAuth
+        ? await compatibilityApi.calculateGunaMilan(t!, requestBody)
+        : await compatibilityApi.calculateGunaMilanGuest(requestBody);
       setGunaMilanResult(result);
       setMarriageResult(null);
       showSuccess("Guna Milan calculated successfully!");
@@ -142,39 +117,13 @@ export default function CompatibilityPage() {
 
   const calculateMarriage = async () => {
     if (!validateForm()) return;
-
     try {
       setLoading(true);
-      const token = localStorage.getItem("token")?.trim();
-      if (!token) {
-        router.push("/auth/login");
-        return;
-      }
-
-      const request: CompatibilityRequest = {
-        partner1: {
-          year: partner1.year,
-          month: partner1.month,
-          day: partner1.day,
-          hour: partner1.hour,
-          minute: partner1.minute,
-          latitude: partner1.latitude,
-          longitude: partner1.longitude,
-          birthPlace: partner1.birthPlace,
-        },
-        partner2: {
-          year: partner2.year,
-          month: partner2.month,
-          day: partner2.day,
-          hour: partner2.hour,
-          minute: partner2.minute,
-          latitude: partner2.latitude,
-          longitude: partner2.longitude,
-          birthPlace: partner2.birthPlace,
-        },
-      };
-
-      const result = await compatibilityApi.calculateMarriageCompatibility(token, request);
+      const t = token?.trim();
+      const useAuth = !!(t && t.split(".").length === 3);
+      const result = useAuth
+        ? await compatibilityApi.calculateMarriageCompatibility(t!, requestBody)
+        : await compatibilityApi.calculateMarriageCompatibilityGuest(requestBody);
       setMarriageResult(result);
       setGunaMilanResult(null);
       showSuccess("Marriage compatibility calculated successfully!");
@@ -202,19 +151,12 @@ export default function CompatibilityPage() {
     }
   };
 
-  return (
-    <div className={styles.dashboardContainer}>
-      <AppHeader />
-      <div className={styles.dashboardContent}>
-        <AppSidebar />
-        <main className={styles.mainContent}>
-          <div className={styles.pageHeader}>
-            <button onClick={() => router.back()} className={styles.backButton}>
-              ← Back
-            </button>
-          </div>
-
-          <div className={styles.kundliContainer}>
+  const main = (
+    <main className={styles.mainContent}>
+      <div className={styles.pageHeader}>
+        <button onClick={() => router.back()} className={styles.backButton}>← Back</button>
+      </div>
+      <div className={styles.kundliContainer}>
             <h1 className={styles.sectionTitle}>Match Horoscope (Compatibility)</h1>
 
             <div className={styles.compatibilityForm}>
@@ -492,7 +434,15 @@ export default function CompatibilityPage() {
               </div>
             )}
           </div>
-        </main>
+    </main>
+  );
+
+  return (
+    <div className={styles.dashboardContainer}>
+      <AppHeader />
+      <div className={styles.dashboardContent}>
+        <AppSidebar />
+        {main}
       </div>
     </div>
   );

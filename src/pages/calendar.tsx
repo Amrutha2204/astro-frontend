@@ -9,7 +9,7 @@ export default function CalendarPage() {
       <div className={styles.dashboardContent}>
         <AppSidebar />
         <main className={styles.mainContent}>
-          <h1 className={styles.pageTitle} style={{ marginBottom: 16 }}>Astrology Calendar</h1>
+          <h1 className={`${styles.pageTitle} mb-4`}>Astrology Calendar</h1>
           <div className={styles.noDataContainer}>
             <div className={styles.noDataIcon}>📅</div>
             <h3 className={styles.noDataTitle}>No Data Found</h3>

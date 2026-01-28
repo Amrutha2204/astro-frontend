@@ -6,7 +6,7 @@
 }
 
 .header {
-  background: #ffd700;
+  background: #8b4513;
   height: 50px;
   display: flex;
   align-items: center;
@@ -22,7 +22,7 @@
 }
 
 .closeButton {
-  background: #dc2626;
+  background: rgba(255, 255, 255, 0.2);
   color: white;
   border: none;
   width: 24px;
@@ -37,13 +37,13 @@
 }
 
 .closeButton:hover {
-  background: #b91c1c;
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .logo {
   font-size: 18px;
   font-weight: bold;
-  color: #1f2937;
+  color: #fff;
 }
 
 .headerIcons {
@@ -63,7 +63,7 @@
 }
 
 .iconButton:hover {
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .headerRight {
@@ -72,13 +72,27 @@
   gap: 20px;
 }
 
+.headerLink {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.headerLink:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
 .currency {
   display: flex;
   align-items: center;
   gap: 4px;
   font-size: 16px;
   font-weight: 600;
-  color: #1f2937;
+  color: #fff;
 }
 
 .currencySymbol {
@@ -102,18 +116,18 @@
   cursor: pointer;
   border-radius: 4px;
   transition: all 0.2s;
-  color: #1f2937;
+  color: #fff;
   font-weight: 500;
 }
 
 .languageButton:hover {
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .languageActive {
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.25);
   font-weight: 700;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  color: #fff;
 }
 
 .dashboardContent {
@@ -125,7 +139,7 @@
 
 .sidebar {
   width: 250px;
-  background: #dc2626;
+  background: #6b4423;
   color: white;
   display: flex;
   flex-direction: column;
@@ -238,7 +252,7 @@
   margin-left: 250px;
   overflow-y: auto;
   overflow-x: hidden;
-  background: #ffffff;
+  background: #faf8f5;
   height: calc(100vh - 50px);
 }
 
@@ -261,7 +275,7 @@
 .noDataTitle {
   font-size: 24px;
   font-weight: 600;
-  color: #dc2626;
+  color: #6b4423;
   margin: 0 0 12px 0;
 }
 
@@ -274,14 +288,15 @@
 }
 
 .banner {
-  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  background: linear-gradient(135deg, #f5ebe0 0%, #ede4d8 100%);
   border-radius: 12px;
   padding: 30px;
   margin-bottom: 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e8ddd0;
 }
 
 .bannerContent {
@@ -291,18 +306,18 @@
 .bannerTitle {
   font-size: 28px;
   font-weight: bold;
-  color: #dc2626;
+  color: #6b4423;
   margin: 0 0 10px 0;
 }
 
 .bannerSubtitle {
   font-size: 16px;
-  color: #7f1d1d;
+  color: #5c4033;
   margin: 0 0 20px 0;
 }
 
 .chatNowButton {
-  background: #dc2626;
+  background: #6b4423;
   color: white;
   border: none;
   padding: 12px 30px;
@@ -314,7 +329,7 @@
 }
 
 .chatNowButton:hover {
-  background: #b91c1c;
+  background: #5c3a1f;
 }
 
 .bannerAstrologers {
@@ -424,12 +439,12 @@
 }
 
 .buttonRed {
-  background: #dc2626;
+  background: #6b4423;
   color: white;
 }
 
 .buttonRed:hover {
-  background: #b91c1c;
+  background: #5c3a1f;
 }
 
 .buttonPurple {
@@ -468,10 +483,32 @@
   .bannerAstrologers {
     margin-top: 20px;
   }
+}
 
-  .headerIcons {
-    display: none;
-  }
+.resultBlock {
+  background: #fff;
+  border: 1px solid #e8ddd0;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.resultBlock h3 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #5c4033;
+}
+
+.resultBlock p {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.resultBlock p:last-child {
+  margin-bottom: 0;
 }
 
 .kundliContainer {
@@ -504,10 +541,10 @@
 .sectionTitle {
   font-size: 24px;
   font-weight: 600;
-  color: #dc2626;
+  color: #6b4423;
   margin: 0 0 20px 0;
   padding-bottom: 10px;
-  border-bottom: 2px solid #fee2e2;
+  border-bottom: 2px solid #e8ddd0;
 }
 
 .infoGrid {
@@ -523,7 +560,7 @@
   padding: 15px;
   background: #f9fafb;
   border-radius: 8px;
-  border-left: 4px solid #dc2626;
+  border-left: 4px solid #6b4423;
 }
 
 .infoLabel {
@@ -547,43 +584,44 @@
 }
 
 .planetCard {
-  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  background: linear-gradient(135deg, #f5ebe0 0%, #ede4d8 100%);
   border-radius: 8px;
   padding: 20px;
   text-align: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e8ddd0;
   transition: transform 0.2s;
 }
 
 .planetCard:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
 }
 
 .planetName {
   font-size: 18px;
   font-weight: bold;
-  color: #dc2626;
+  color: #6b4423;
   margin-bottom: 8px;
 }
 
 .planetSign {
   font-size: 16px;
   font-weight: 600;
-  color: #7f1d1d;
+  color: #5c4033;
   margin-bottom: 4px;
 }
 
 .planetDegree {
   font-size: 14px;
-  color: #7f1d1d;
+  color: #5c4033;
   margin-top: 4px;
   font-weight: 500;
 }
 
 .planetNakshatra {
   font-size: 13px;
-  color: #991b1b;
+  color: #6b4423;
   margin-top: 4px;
 }
 
@@ -603,8 +641,8 @@
 }
 
 .houseCard:hover {
-  border-color: #dc2626;
-  background: #fee2e2;
+  border-color: #6b4423;
+  background: #f5ebe0;
 }
 
 .houseNumber {
@@ -618,14 +656,14 @@
 .houseSign {
   font-size: 14px;
   font-weight: 500;
-  color: #7f1d1d;
+  color: #5c4033;
   margin-bottom: 4px;
 }
 
 .houseCusp {
   font-size: 16px;
   font-weight: bold;
-  color: #dc2626;
+  color: #6b4423;
 }
 
 .sourceInfo {
@@ -668,7 +706,7 @@
 
 .errorText {
   font-size: 18px;
-  color: #dc2626;
+  color: #6b4423;
   font-weight: 600;
 }
 
@@ -701,11 +739,11 @@
 
 .searchInput:focus {
   outline: none;
-  border-color: #dc2626;
+  border-color: #6b4423;
 }
 
 .retryButton {
-  background: #dc2626;
+  background: #6b4423;
   color: white;
   border: none;
   padding: 12px 30px;
@@ -717,7 +755,7 @@
 }
 
 .retryButton:hover {
-  background: #b91c1c;
+  background: #5c3a1f;
 }
 
 /* Page Header with Back Button and Actions */
@@ -731,7 +769,7 @@
 }
 
 .backButton {
-  background: #dc2626;
+  background: #6b4423;
   color: white;
   border: none;
   padding: 8px 16px;
@@ -746,7 +784,7 @@
 }
 
 .backButton:hover {
-  background: #b91c1c;
+  background: #5c3a1f;
   transform: translateX(-2px);
 }
 
@@ -762,8 +800,8 @@
 
 .refreshButton {
   background: #ffffff;
-  color: #dc2626;
-  border: 1px solid #dc2626;
+  color: #6b4423;
+  border: 1px solid #6b4423;
   padding: 8px 16px;
   border-radius: 6px;
   cursor: pointer;
@@ -776,7 +814,7 @@
 }
 
 .refreshButton:hover:not(:disabled) {
-  background: #dc2626;
+  background: #6b4423;
   color: white;
 }
 
@@ -795,7 +833,7 @@
 
 .timelineItem {
   background: #f9fafb;
-  border-left: 4px solid #dc2626;
+  border-left: 4px solid #6b4423;
   border-radius: 8px;
   padding: 20px;
   transition: transform 0.2s;
@@ -820,7 +858,7 @@
 }
 
 .timelinePlanet {
-  background: #dc2626;
+  background: #6b4423;
   color: white;
   padding: 6px 12px;
   border-radius: 6px;
@@ -838,15 +876,15 @@
 }
 
 .timelineMahadasha {
-  color: #dc2626;
+  color: #6b4423;
 }
 
 .timelineAntardasha {
-  color: #7f1d1d;
+  color: #5c4033;
 }
 
 .timelinePratyantardasha {
-  color: #991b1b;
+  color: #6b4423;
   font-size: 14px;
 }
 
@@ -862,12 +900,13 @@
 }
 
 .doshaSummaryCard {
-  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  background: linear-gradient(135deg, #f5ebe0 0%, #ede4d8 100%);
   border-radius: 12px;
   padding: 30px;
   text-align: center;
   max-width: 400px;
   margin: 0 auto;
+  border: 1px solid #e8ddd0;
 }
 
 .doshaCard {
@@ -927,7 +966,7 @@
 }
 
 .tab:hover {
-  color: #dc2626;
+  color: #6b4423;
 }
 
 .activeTab {
@@ -936,9 +975,9 @@
   padding: 12px 24px;
   font-size: 16px;
   font-weight: 600;
-  color: #dc2626;
+  color: #6b4423;
   cursor: pointer;
-  border-bottom: 3px solid #dc2626;
+  border-bottom: 3px solid #6b4423;
 }
 
 .partnersForm {
@@ -957,10 +996,10 @@
 .partnerTitle {
   font-size: 18px;
   font-weight: 600;
-  color: #dc2626;
+  color: #6b4423;
   margin: 0 0 20px 0;
   padding-bottom: 10px;
-  border-bottom: 2px solid #fee2e2;
+  border-bottom: 2px solid #e8ddd0;
 }
 
 .formRow {
@@ -1019,12 +1058,13 @@
 }
 
 .gunaMilanCard {
-  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  background: linear-gradient(135deg, #f5ebe0 0%, #ede4d8 100%);
   border-radius: 12px;
   padding: 30px;
   text-align: center;
   max-width: 500px;
   margin: 0 auto;
+  border: 1px solid #e8ddd0;
 }
 
 .gunasList {
@@ -1036,7 +1076,7 @@
 
 .gunaCard {
   background: #f9fafb;
-  border-left: 4px solid #dc2626;
+  border-left: 4px solid #6b4423;
   border-radius: 8px;
   padding: 20px;
 }
@@ -1058,8 +1098,8 @@
 .gunaScore {
   font-size: 14px;
   font-weight: 600;
-  color: #dc2626;
-  background: #fee2e2;
+  color: #6b4423;
+  background: #f5ebe0;
   padding: 4px 12px;
   border-radius: 12px;
 }
@@ -1119,15 +1159,16 @@
 }
 
 .challengesList li {
-  border-left-color: #dc2626;
+  border-left-color: #6b4423;
 }
 
 .overallVerdict {
   margin-top: 30px;
   padding: 20px;
-  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  background: linear-gradient(135deg, #f5ebe0 0%, #ede4d8 100%);
   border-radius: 8px;
   text-align: center;
+  border: 1px solid #e8ddd0;
 }
 
 .verdictText {
@@ -1148,7 +1189,7 @@
 .cardValue {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #dc2626;
+  color: #6b4423;
   margin: 10px 0;
 }
 
@@ -1218,7 +1259,7 @@
 }
 
 .suggestedQuestions li:hover {
-  background: #fee2e2;
+  background: #f5ebe0;
 }
 
 .chatMessageGroup {
@@ -1230,7 +1271,7 @@
 .userMessage {
   align-self: flex-end;
   max-width: 70%;
-  background: #dc2626;
+  background: #6b4423;
   color: white;
   border-radius: 12px;
   padding: 12px 16px;
@@ -1280,8 +1321,8 @@
 }
 
 .transitBadge {
-  background: #fee2e2;
-  color: #7f1d1d;
+  background: #f5ebe0;
+  color: #5c4033;
   padding: 4px 8px;
   border-radius: 6px;
   font-size: 11px;
@@ -1329,11 +1370,11 @@
 
 .chatInput:focus {
   outline: none;
-  border-color: #dc2626;
+  border-color: #6b4423;
 }
 
 .chatSendButton {
-  background: #dc2626;
+  background: #6b4423;
   color: white;
   border: none;
   padding: 12px 20px;
@@ -1344,7 +1385,7 @@
 }
 
 .chatSendButton:hover:not(:disabled) {
-  background: #b91c1c;
+  background: #5c3a1f;
 }
 
 .chatSendButton:disabled {
@@ -1367,7 +1408,7 @@
 .loadingDots span {
   width: 8px;
   height: 8px;
-  background: #dc2626;
+  background: #6b4423;
   border-radius: 50%;
   animation: bounce 1.4s infinite ease-in-out;
 }
@@ -1460,7 +1501,7 @@
 .summaryValue {
   font-size: 18px;
   font-weight: 600;
-  color: #dc2626;
+  color: #6b4423;
 }
 
 .explanationText {
@@ -1472,7 +1513,7 @@
   padding: 20px;
   background: #f9fafb;
   border-radius: 8px;
-  border-left: 4px solid #dc2626;
+  border-left: 4px solid #6b4423;
 }
 
 /* Suggestions Styles */
@@ -1481,11 +1522,12 @@
 }
 
 .overallTheme {
-  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  background: linear-gradient(135deg, #f5ebe0 0%, #ede4d8 100%);
   border-radius: 12px;
   padding: 20px;
   margin-top: 20px;
   text-align: center;
+  border: 1px solid #e8ddd0;
 }
 
 .suggestionsList {
@@ -1549,11 +1591,12 @@
 
 /* Remedies Styles */
 .bestTimingCard {
-  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  background: linear-gradient(135deg, #f5ebe0 0%, #ede4d8 100%);
   border-radius: 12px;
   padding: 25px;
   margin-bottom: 30px;
   text-align: center;
+  border: 1px solid #e8ddd0;
 }
 
 .timingDetails {
@@ -1592,7 +1635,7 @@
 }
 
 .remedyTab:hover {
-  color: #dc2626;
+  color: #6b4423;
 }
 
 .activeRemedyTab {
@@ -1601,7 +1644,7 @@
   padding: 12px 20px;
   font-size: 14px;
   font-weight: 600;
-  color: #dc2626;
+  color: #6b4423;
   cursor: pointer;
   border-bottom: 3px solid;
 }
@@ -1684,7 +1727,7 @@
 }
 
 .loginButton {
-  background: #dc2626;
+  background: #6b4423;
   color: white;
   border: none;
   padding: 12px 24px;
@@ -1697,7 +1740,7 @@
 }
 
 .loginButton:hover:not(:disabled) {
-  background: #b91c1c;
+  background: #5c3a1f;
 }
 
 .loginButton:disabled {

@@ -1,54 +1,56 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
+import { useDispatch, useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
 import { aiAssistantApi, SuggestionsResponse } from "@/services/aiAssistantService";
 import { showError, showSuccess } from "@/utils/toast";
+import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
 import styles from "@/styles/dashboard.module.css";
 
 const REDIRECT_DELAY_MS = 2000;
 
 export default function SuggestionsPage() {
   const router = useRouter();
+  const dispatch = useDispatch();
+  const rehydrated = useSelector(selectIsRehydrated);
+  const token = useSelector(selectToken);
   const [loading, setLoading] = useState(true);
   const [suggestions, setSuggestions] = useState<SuggestionsResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchSuggestions = async () => {
+  const fetchSuggestions = useCallback(async () => {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) {
+      dispatch(clearToken());
+      setTimeout(() => router.push("/auth/login"), REDIRECT_DELAY_MS);
+      return;
+    }
     try {
-      const token = localStorage.getItem("token")?.trim();
-      if (!token) {
-        router.push("/auth/login");
-        return;
-      }
-
-      if (token.split(".").length !== 3) {
-        setError("Invalid token format. Please login again.");
-        localStorage.removeItem("token");
-        setTimeout(() => router.push("/auth/login"), REDIRECT_DELAY_MS);
-        return;
-      }
-
       setLoading(true);
-      const data = await aiAssistantApi.getSuggestions(token);
+      const data = await aiAssistantApi.getSuggestions(t);
       setSuggestions(data);
       setError(null);
       showSuccess("Daily suggestions loaded!");
     } catch (err) {
-      const error = err as { message?: string };
-      const errorMessage = error.message || "Failed to load suggestions";
-      setError(errorMessage);
-      showError(errorMessage);
-      console.error("Error fetching suggestions:", err);
+      const e = err as { message?: string };
+      const msg = e.message || "Failed to load suggestions";
+      setError(msg);
+      showError(msg);
     } finally {
       setLoading(false);
     }
-  };
+  }, [token, dispatch, router]);
 
   useEffect(() => {
+    if (!rehydrated) return;
+    if (!token?.trim() || token.trim().split(".").length !== 3) {
+      dispatch(clearToken());
+      setTimeout(() => router.push("/auth/login"), REDIRECT_DELAY_MS);
+      return;
+    }
     fetchSuggestions();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [rehydrated, token, dispatch, router, fetchSuggestions]);
 
   const getCategoryIcon = (category: string) => {
     const normalized = category.toLowerCase();

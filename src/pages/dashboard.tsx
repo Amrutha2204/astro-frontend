@@ -1,39 +1,32 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/router";
+import { useDispatch, useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
 import ServiceCard from "@/components/common/ServiceCard";
 import styles from "@/styles/dashboard.module.css";
+import { store } from "@/store";
+import { selectIsRehydrated, selectIsGuest, clearToken } from "@/store/slices/authSlice";
 
 export default function Dashboard() {
   const router = useRouter();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const rehydrated = useSelector(selectIsRehydrated);
+  const isGuest = useSelector(selectIsGuest);
 
   useEffect(() => {
-    // Check authentication on mount
-    const token = localStorage.getItem("token")?.trim();
-    
-    if (!token || token.split(".").length !== 3) {
-      // No valid token, redirect to login
-      localStorage.removeItem("token");
+    if (!rehydrated) return;
+    if (isGuest) {
+      dispatch(clearToken());
       router.replace("/auth/login");
-      return;
     }
-    
-    setIsAuthenticated(true);
-    setLoading(false);
-  }, [router]);
+  }, [rehydrated, isGuest, dispatch, router]);
 
-  // Prevent browser back/forward navigation after logout
   useEffect(() => {
     const handlePopState = () => {
-      const token = localStorage.getItem("token")?.trim();
-      if (!token || token.split(".").length !== 3) {
-        router.replace("/auth/login");
-      }
+      const t = store.getState().auth.token?.trim();
+      if (!t || t.split(".").length !== 3) router.replace("/auth/login");
     };
-
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
   }, [router]);
@@ -139,18 +132,10 @@ export default function Dashboard() {
     },
   ];
 
-  // Show loading or redirect if not authenticated
-  if (loading || !isAuthenticated) {
+  if (!rehydrated || isGuest) {
     return (
       <div className={styles.dashboardContainer}>
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center', 
-          height: '100vh',
-          fontSize: '16px',
-          color: '#6b7280'
-        }}>
+        <div className="flex items-center justify-center h-screen text-base text-gray-500">
           Loading...
         </div>
       </div>
@@ -191,8 +176,6 @@ export default function Dashboard() {
                 icon={service.icon}
                 description={service.description}
                 onClick={service.onClick}
-                buttonText={service.buttonText}
-                buttonColor={service.buttonColor}
               />
             ))}
           </div>

@@ -1,0 +1,140 @@
+.page {
+  min-height: 100vh;
+  background: linear-gradient(#fff6e5, #fdf0dc);
+  display: flex;
+  flex-direction: column;
+  font-family: "Georgia", serif;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: #fffaf2;
+  border-bottom: 1px solid #e4cfa6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.topBarLogo {
+  font-size: 20px;
+  font-weight: 600;
+  color: #7a2e2e;
+}
+
+.topBarLinks {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.topBarLink {
+  padding: 8px 16px;
+  background: #7a2e2e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: inherit;
+}
+
+.topBarLink:hover {
+  background: #5e2323;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+}
+
+.resultWrapper {
+  width: 100%;
+  max-width: 900px;
+  padding: 0 20px;
+}
+
+.calculateNewBtn {
+  margin-bottom: 20px;
+  padding: 10px 20px;
+  background: #7a2e2e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.calculateNewBtn:hover {
+  background: #5e2323;
+}
+
+.timeRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.timeRow .input {
+  flex: 1 1 140px;
+  margin-bottom: 0;
+}
+
+.unknownTimeBtn {
+  padding: 8px 14px;
+  background: #f5e6d3;
+  color: #5a3d2b;
+  border: 1px solid #d9c3a1;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.unknownTimeBtn:hover {
+  background: #ebd4b8;
+  border-color: #b47b45;
+}
+
+.guestNote {
+  font-size: 13px;
+  color: #7a5c3c;
+  margin-top: 16px;
+  text-align: center;
+}
+
+.loadingWrap {
+  text-align: center;
+  padding: 40px;
+  color: #5a3d2b;
+}
+
+.errorWrap {
+  text-align: center;
+  padding: 40px;
+  color: #7a2e2e;
+}
+
+.errorWrap button {
+  margin-top: 16px;
+  padding: 10px 20px;
+  background: #7a2e2e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.errorWrap button:hover {
+  background: #5e2323;
+}

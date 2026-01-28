@@ -1,4 +1,4 @@
-const ASTRO_API_BASE_URL = process.env.NEXT_PUBLIC_ASTRO_API_URL || 'http://localhost:8002';
+import { request, ASTRO_BASE } from "./fetcher";
 
 export interface DashaResponse {
   mahadasha: string;
@@ -24,53 +24,43 @@ export interface DashaTimelineResponse {
   source: string;
 }
 
+export type GuestBirthDto = { dob: string; birthTime: string; placeOfBirth: string };
+
+const guestBody = (dto: GuestBirthDto) => ({
+  dob: dto.dob,
+  birthTime: dto.birthTime,
+  placeOfBirth: dto.placeOfBirth.trim(),
+});
+
 export const dashaApi = {
-  async getCurrentDasha(token: string): Promise<DashaResponse> {
-    const cleanToken = token.trim();
-    if (!cleanToken || cleanToken.split('.').length !== 3) {
-      throw new Error('Invalid token format. Please login again.');
-    }
-
-    const response = await fetch(`${ASTRO_API_BASE_URL}/api/v1/dasha/current`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${cleanToken}`,
-        'Content-Type': 'application/json',
-      },
+  getGuestDasha(dto: GuestBirthDto): Promise<DashaResponse> {
+    return request<DashaResponse>(ASTRO_BASE, "/api/v1/dasha/guest", {
+      method: "POST",
+      body: guestBody(dto),
     });
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ 
-        message: `Failed to fetch dasha (Status: ${response.status})` 
-      }));
-      throw new Error(error.message || `Failed to fetch dasha (Status: ${response.status})`);
-    }
-
-    return response.json();
   },
 
-  async getDashaTimeline(token: string, years: number = 10): Promise<DashaTimelineResponse> {
-    const cleanToken = token.trim();
-    if (!cleanToken || cleanToken.split('.').length !== 3) {
-      throw new Error('Invalid token format. Please login again.');
-    }
-
-    const response = await fetch(`${ASTRO_API_BASE_URL}/api/v1/dasha/timeline?years=${years}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${cleanToken}`,
-        'Content-Type': 'application/json',
-      },
+  getGuestDashaTimeline(dto: GuestBirthDto, years = 10): Promise<DashaTimelineResponse> {
+    return request<DashaTimelineResponse>(ASTRO_BASE, "/api/v1/dasha/guest/timeline", {
+      method: "POST",
+      body: guestBody(dto),
+      params: { years: String(years) },
     });
+  },
 
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ 
-        message: `Failed to fetch dasha timeline (Status: ${response.status})` 
-      }));
-      throw new Error(error.message || `Failed to fetch dasha timeline (Status: ${response.status})`);
-    }
+  getCurrentDasha(token: string): Promise<DashaResponse> {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) throw new Error("Invalid token format. Please login again.");
+    return request<DashaResponse>(ASTRO_BASE, "/api/v1/dasha/current", { method: "GET", token: t });
+  },
 
-    return response.json();
+  getDashaTimeline(token: string, years = 10): Promise<DashaTimelineResponse> {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) throw new Error("Invalid token format. Please login again.");
+    return request<DashaTimelineResponse>(ASTRO_BASE, "/api/v1/dasha/timeline", {
+      method: "GET",
+      token: t,
+      params: { years: String(years) },
+    });
   },
 };
-

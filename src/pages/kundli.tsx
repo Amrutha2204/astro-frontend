@@ -1,55 +1,56 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
+import { useDispatch, useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
 import { astroApi, KundliResponse } from "@/services/api";
+import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
 import styles from "@/styles/dashboard.module.css";
 
 const REDIRECT_DELAY_MS = 2000;
 
 export default function KundliPage() {
   const router = useRouter();
+  const dispatch = useDispatch();
+  const rehydrated = useSelector(selectIsRehydrated);
+  const token = useSelector(selectToken);
   const [kundli, setKundli] = useState<KundliResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchKundli = async () => {
+  const fetchKundli = useCallback(async () => {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) {
+      dispatch(clearToken());
+      setTimeout(() => router.push("/auth/login"), REDIRECT_DELAY_MS);
+      return;
+    }
     try {
-      const token = localStorage.getItem("token")?.trim();
-      if (!token) {
-        router.push("/auth/login");
-        return;
-      }
-
-      if (token.split(".").length !== 3) {
-        setError("Invalid token format. Please login again.");
-        localStorage.removeItem("token");
-        setTimeout(() => router.push("/auth/login"), REDIRECT_DELAY_MS);
-        return;
-      }
-
       setLoading(true);
-      const data = await astroApi.getMyKundli(token);
+      const data = await astroApi.getMyKundli(t);
       setKundli(data);
       setError(null);
     } catch (err) {
-      const error = err as { message?: string };
-      const errorMessage = error.message || "Failed to load Kundli";
-      setError(errorMessage);
-      console.error("Error fetching Kundli:", err);
-      
-      if (errorMessage.includes("Cannot connect")) {
+      const e = err as { message?: string };
+      const msg = e.message || "Failed to load Kundli";
+      setError(msg);
+      if (msg.includes("Cannot connect")) {
         console.error("Backend service may not be running. Please start astro-service on port 8002");
       }
     } finally {
       setLoading(false);
     }
-  };
+  }, [token, dispatch, router]);
 
   useEffect(() => {
+    if (!rehydrated) return;
+    if (!token?.trim() || token.trim().split(".").length !== 3) {
+      dispatch(clearToken());
+      setTimeout(() => router.push("/auth/login"), REDIRECT_DELAY_MS);
+      return;
+    }
     fetchKundli();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [rehydrated, token, dispatch, router, fetchKundli]);
 
   if (loading) {
     return (
@@ -96,7 +97,7 @@ export default function KundliPage() {
                   <button
                     className={styles.retryButton}
                     onClick={() => {
-                      localStorage.removeItem("token");
+                      dispatch(clearToken());
                       router.push("/auth/login");
                     }}
                   >

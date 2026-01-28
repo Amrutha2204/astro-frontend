@@ -1,66 +1,73 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
+import { useDispatch, useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
 import { doshaApi, DoshaResponse } from "@/services/doshaService";
 import { showError } from "@/utils/toast";
+import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
 import styles from "@/styles/dashboard.module.css";
 
 const REDIRECT_DELAY_MS = 2000;
 
 export default function DoshaPage() {
   const router = useRouter();
+  const dispatch = useDispatch();
+  const rehydrated = useSelector(selectIsRehydrated);
+  const token = useSelector(selectToken);
   const [dosha, setDosha] = useState<DoshaResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchDosha = async () => {
+  const fetchDosha = useCallback(async () => {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) {
+      dispatch(clearToken());
+      setTimeout(() => router.push("/auth/login"), REDIRECT_DELAY_MS);
+      return;
+    }
     try {
-      const token = localStorage.getItem("token")?.trim();
-      if (!token) {
-        router.push("/auth/login");
-        return;
-      }
-
-      if (token.split(".").length !== 3) {
-        setError("Invalid token format. Please login again.");
-        localStorage.removeItem("token");
-        setTimeout(() => router.push("/auth/login"), REDIRECT_DELAY_MS);
-        return;
-      }
-
       setLoading(true);
-      const data = await doshaApi.checkDoshas(token);
+      const data = await doshaApi.checkDoshas(t);
       setDosha(data);
       setError(null);
     } catch (err) {
-      const error = err as { message?: string };
-      const errorMessage = error.message || "Failed to load Dosha";
-      setError(errorMessage);
-      showError(errorMessage);
-      console.error("Error fetching Dosha:", err);
+      const e = err as { message?: string };
+      const msg = e.message || "Failed to load Dosha";
+      setError(msg);
+      showError(msg);
     } finally {
       setLoading(false);
     }
-  };
+  }, [token, dispatch, router]);
 
   useEffect(() => {
+    if (!rehydrated) return;
+    if (!token?.trim() || token.trim().split(".").length !== 3) {
+      dispatch(clearToken());
+      setTimeout(() => router.push("/auth/login"), REDIRECT_DELAY_MS);
+      return;
+    }
     fetchDosha();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [rehydrated, token, dispatch, router, fetchDosha]);
 
   const getSeverityColor = (severity?: string) => {
     switch (severity) {
       case 'High':
-        return '#dc2626';
+        return '#9c4a3d';
       case 'Medium':
-        return '#f59e0b';
+        return '#a67c00';
       case 'Low':
-        return '#eab308';
+        return '#8b7b4a';
       default:
-        return '#10b981';
+        return '#5c4033';
     }
   };
+
+  const notPresentStyle = { background: '#e8f0e8', color: '#3d6b4f' };
+  const presentColor = '#9c4a3d';
+  const totalZeroColor = '#5c4033';
+  const totalNonZeroColor = '#9c4a3d';
 
   if (loading) {
     return (
@@ -125,7 +132,7 @@ export default function DoshaPage() {
                 <div className={styles.doshaSummary}>
                   <div className={styles.doshaSummaryCard}>
                     <h3 className={styles.cardTitle}>Total Doshas</h3>
-                    <p className={styles.cardValue} style={{ fontSize: '2.5rem', color: dosha.totalDoshas > 0 ? '#dc2626' : '#10b981' }}>
+                    <p className={styles.cardValue} style={{ fontSize: '2.5rem', color: dosha.totalDoshas > 0 ? totalNonZeroColor : totalZeroColor }}>
                       {dosha.totalDoshas}
                     </p>
                     <p className={styles.cardSubtext}>
@@ -135,14 +142,13 @@ export default function DoshaPage() {
                 </div>
 
                 <div className={styles.infoGrid}>
-                  <div className={styles.doshaCard} style={{ borderLeft: `4px solid ${dosha.manglik.hasDosha ? getSeverityColor(dosha.manglik.severity) : '#10b981'}` }}>
+                  <div className={styles.doshaCard} style={{ borderLeft: `4px solid ${dosha.manglik.hasDosha ? getSeverityColor(dosha.manglik.severity) : '#b8cfb0'}` }}>
                     <div className={styles.doshaHeader}>
                       <h3 className={styles.cardTitle}>Manglik Dosha</h3>
                       <span
                         className={styles.doshaBadge}
                         style={{
-                          background: dosha.manglik.hasDosha ? getSeverityColor(dosha.manglik.severity) : '#10b981',
-                          color: 'white',
+                          ...(dosha.manglik.hasDosha ? { background: getSeverityColor(dosha.manglik.severity), color: 'white' } : notPresentStyle),
                           padding: '4px 12px',
                           borderRadius: '12px',
                           fontSize: '0.875rem',
@@ -155,14 +161,13 @@ export default function DoshaPage() {
                     <p className={styles.cardDescription}>{dosha.manglik.description}</p>
                   </div>
 
-                  <div className={styles.doshaCard} style={{ borderLeft: `4px solid ${dosha.nadi.hasDosha ? '#dc2626' : '#10b981'}` }}>
+                  <div className={styles.doshaCard} style={{ borderLeft: `4px solid ${dosha.nadi.hasDosha ? presentColor : '#b8cfb0'}` }}>
                     <div className={styles.doshaHeader}>
                       <h3 className={styles.cardTitle}>Nadi Dosha</h3>
                       <span
                         className={styles.doshaBadge}
                         style={{
-                          background: dosha.nadi.hasDosha ? '#dc2626' : '#10b981',
-                          color: 'white',
+                          ...(dosha.nadi.hasDosha ? { background: presentColor, color: 'white' } : notPresentStyle),
                           padding: '4px 12px',
                           borderRadius: '12px',
                           fontSize: '0.875rem',
@@ -175,14 +180,13 @@ export default function DoshaPage() {
                     <p className={styles.cardDescription}>{dosha.nadi.description}</p>
                   </div>
 
-                  <div className={styles.doshaCard} style={{ borderLeft: `4px solid ${dosha.bhakoot.hasDosha ? '#dc2626' : '#10b981'}` }}>
+                  <div className={styles.doshaCard} style={{ borderLeft: `4px solid ${dosha.bhakoot.hasDosha ? presentColor : '#b8cfb0'}` }}>
                     <div className={styles.doshaHeader}>
                       <h3 className={styles.cardTitle}>Bhakoot Dosha</h3>
                       <span
                         className={styles.doshaBadge}
                         style={{
-                          background: dosha.bhakoot.hasDosha ? '#dc2626' : '#10b981',
-                          color: 'white',
+                          ...(dosha.bhakoot.hasDosha ? { background: presentColor, color: 'white' } : notPresentStyle),
                           padding: '4px 12px',
                           borderRadius: '12px',
                           fontSize: '0.875rem',
