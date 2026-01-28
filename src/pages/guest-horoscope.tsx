@@ -6,6 +6,7 @@ import styles from "@/styles/dashboard.module.css";
 import formStyles from "@/styles/birthDetails.module.css";
 
 export default function GuestHoroscopePage() {
+  const [fullName, setFullName] = useState("");
   const [dob, setDob] = useState("");
   const [birthTime, setBirthTime] = useState("");
   const [placeOfBirth, setPlaceOfBirth] = useState("");
@@ -42,6 +43,8 @@ export default function GuestHoroscopePage() {
             <h2 className={formStyles.title}>Daily Horoscope (Guest)</h2>
             <p className={formStyles.subtitle}>Personalized by your birth chart. No login required.</p>
             <form onSubmit={handleSubmit}>
+              <label className={formStyles.label}>Full Name (optional)</label>
+              <input type="text" className={formStyles.input} value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="e.g. Rahul Sharma" />
               <label className={formStyles.label}>Date of Birth *</label>
               <input type="date" className={formStyles.input} value={dob} onChange={(e) => setDob(e.target.value)} required />
               <label className={formStyles.label}>Birth Time (24h) *</label>
@@ -54,7 +57,7 @@ export default function GuestHoroscopePage() {
           </div>
           {result && (
             <div className="bg-gray-50 p-5 rounded-xl border border-gray-200">
-              <h3 className="mb-2">Today: {result.dayType}</h3>
+              <h3 className="mb-2">{fullName.trim() ? `Horoscope for ${fullName.trim()} · ` : ""}Today: {result.dayType}</h3>
               <p><strong>Theme:</strong> {result.mainTheme}</p>
               <p><strong>Reason:</strong> {result.reason}</p>
               <p className="text-xs text-gray-500">Date: {result.date} · {result.source}</p>

@@ -249,13 +249,13 @@ export default function GuestKundliPage() {
           </p>
 
           <form onSubmit={handleSubmit}>
-            <label className={formStyles.label}>Name (optional)</label>
+            <label className={formStyles.label}>Full Name (optional)</label>
             <input
               type="text"
               className={formStyles.input}
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Rahul"
+              placeholder="e.g. Rahul Sharma"
             />
 
             <label className={formStyles.label}>Gender (optional)</label>

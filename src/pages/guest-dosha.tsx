@@ -6,6 +6,7 @@ import styles from "@/styles/dashboard.module.css";
 import formStyles from "@/styles/birthDetails.module.css";
 
 export default function GuestDoshaPage() {
+  const [fullName, setFullName] = useState("");
   const [dob, setDob] = useState("");
   const [birthTime, setBirthTime] = useState("");
   const [placeOfBirth, setPlaceOfBirth] = useState("");
@@ -48,6 +49,8 @@ export default function GuestDoshaPage() {
             <h2 className={formStyles.title}>Dosha Check (Guest)</h2>
             <p className={formStyles.subtitle}>Manglik, Nadi and Bhakoot. No login required.</p>
             <form onSubmit={handleSubmit}>
+              <label className={formStyles.label}>Full Name (optional)</label>
+              <input type="text" className={formStyles.input} value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="e.g. Rahul Sharma" />
               <label className={formStyles.label}>Date of Birth *</label>
               <input type="date" className={formStyles.input} value={dob} onChange={(e) => setDob(e.target.value)} required />
               <label className={formStyles.label}>Birth Time (24h) *</label>
@@ -60,7 +63,7 @@ export default function GuestDoshaPage() {
           </div>
           {result && (
             <div className={styles.resultBlock}>
-              <h3>Result</h3>
+              <h3>{fullName.trim() ? `Dosha result for ${fullName.trim()}` : "Result"}</h3>
               <p><strong>Manglik:</strong> {result.manglik.hasDosha ? "Yes" : "No"} – {result.manglik.description}</p>
               <p><strong>Nadi:</strong> {result.nadi.hasDosha ? "Yes" : "No"} – {result.nadi.description}</p>
               <p><strong>Bhakoot:</strong> {result.bhakoot.hasDosha ? "Yes" : "No"} – {result.bhakoot.description}</p>

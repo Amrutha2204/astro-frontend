@@ -6,6 +6,7 @@ import styles from "@/styles/dashboard.module.css";
 import formStyles from "@/styles/birthDetails.module.css";
 
 export default function GuestDashaPage() {
+  const [fullName, setFullName] = useState("");
   const [dob, setDob] = useState("");
   const [birthTime, setBirthTime] = useState("");
   const [placeOfBirth, setPlaceOfBirth] = useState("");
@@ -57,6 +58,8 @@ export default function GuestDashaPage() {
             <h2 className={formStyles.title}>Dasha (Guest)</h2>
             <p className={formStyles.subtitle}>Enter birth details to get current Mahadasha and Antardasha. No login required.</p>
             <form onSubmit={handleSubmit}>
+              <label className={formStyles.label}>Full Name (optional)</label>
+              <input type="text" className={formStyles.input} value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="e.g. Rahul Sharma" />
               <label className={formStyles.label}>Date of Birth *</label>
               <input type="date" className={formStyles.input} value={dob} onChange={(e) => setDob(e.target.value)} required />
               <label className={formStyles.label}>Birth Time (24h) *</label>
@@ -69,7 +72,7 @@ export default function GuestDashaPage() {
           </div>
           {current && (
             <div className={styles.resultBlock}>
-              <h3>Current period</h3>
+              <h3>{fullName.trim() ? `Dasha for ${fullName.trim()}` : "Current period"}</h3>
               <p><strong>Mahadasha:</strong> {current.mahadasha}</p>
               <p><strong>Antardasha:</strong> {current.antardasha}</p>
               <p><strong>From</strong> {current.startDate} <strong>to</strong> {current.endDate}</p>
