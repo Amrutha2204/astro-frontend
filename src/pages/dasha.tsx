@@ -1,70 +1,70 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
+import { useDispatch, useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
 import { dashaApi, DashaResponse, DashaTimelineResponse } from "@/services/dashaService";
-import { showError, showSuccess } from "@/utils/toast";
+import { showError } from "@/utils/toast";
+import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
 import styles from "@/styles/dashboard.module.css";
 
 const REDIRECT_DELAY_MS = 2000;
 
 export default function DashaPage() {
   const router = useRouter();
+  const dispatch = useDispatch();
+  const rehydrated = useSelector(selectIsRehydrated);
+  const token = useSelector(selectToken);
   const [currentDasha, setCurrentDasha] = useState<DashaResponse | null>(null);
   const [timeline, setTimeline] = useState<DashaTimelineResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showTimeline, setShowTimeline] = useState(false);
 
-  const fetchDasha = async () => {
+  const fetchDasha = useCallback(async () => {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) {
+      dispatch(clearToken());
+      setTimeout(() => router.push("/auth/login"), REDIRECT_DELAY_MS);
+      return;
+    }
     try {
-      const token = localStorage.getItem("token")?.trim();
-      if (!token) {
-        router.push("/auth/login");
-        return;
-      }
-
-      if (token.split(".").length !== 3) {
-        setError("Invalid token format. Please login again.");
-        localStorage.removeItem("token");
-        setTimeout(() => router.push("/auth/login"), REDIRECT_DELAY_MS);
-        return;
-      }
-
       setLoading(true);
-      const current = await dashaApi.getCurrentDasha(token);
+      const current = await dashaApi.getCurrentDasha(t);
       setCurrentDasha(current);
       setError(null);
     } catch (err) {
-      const error = err as { message?: string };
-      const errorMessage = error.message || "Failed to load Dasha";
-      setError(errorMessage);
-      showError(errorMessage);
-      console.error("Error fetching Dasha:", err);
+      const e = err as { message?: string };
+      const msg = e.message || "Failed to load Dasha";
+      setError(msg);
+      showError(msg);
     } finally {
       setLoading(false);
     }
-  };
+  }, [token, dispatch, router]);
 
-  const fetchTimeline = async () => {
+  const fetchTimeline = useCallback(async () => {
+    const t = token?.trim();
+    if (!t) return;
     try {
-      const token = localStorage.getItem("token")?.trim();
-      if (!token) return;
-
-      const timelineData = await dashaApi.getDashaTimeline(token, 10);
-      setTimeline(timelineData);
+      const data = await dashaApi.getDashaTimeline(t, 10);
+      setTimeline(data);
       setShowTimeline(true);
     } catch (err) {
-      const error = err as { message?: string };
-      showError(error.message || "Failed to load timeline");
-      console.error("Error fetching timeline:", err);
+      const e = err as { message?: string };
+      showError(e.message || "Failed to load timeline");
     }
-  };
+  }, [token]);
 
   useEffect(() => {
+    if (!rehydrated) return;
+    if (!token?.trim() || token.trim().split(".").length !== 3) {
+      dispatch(clearToken());
+      setTimeout(() => router.push("/auth/login"), REDIRECT_DELAY_MS);
+      return;
+    }
     fetchDasha();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [rehydrated, token, dispatch, router, fetchDasha]);
 
   const formatDate = (dateString: string) => {
     try {

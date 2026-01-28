@@ -1,36 +1,36 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
 import { aiAssistantApi, ExplainKundliResponse } from "@/services/aiAssistantService";
 import { showError, showSuccess } from "@/utils/toast";
+import { selectToken, selectIsRehydrated } from "@/store/slices/authSlice";
 import styles from "@/styles/dashboard.module.css";
-
-const REDIRECT_DELAY_MS = 2000;
 
 export default function ExplainKundliPage() {
   const router = useRouter();
+  const rehydrated = useSelector(selectIsRehydrated);
+  const token = useSelector(selectToken);
   const [focus, setFocus] = useState<string>('overall');
   const [loading, setLoading] = useState(false);
   const [explanation, setExplanation] = useState<ExplainKundliResponse | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token")?.trim();
-    if (!token || token.split(".").length !== 3) {
-      router.replace("/auth/login");
-    }
-  }, [router]);
+    if (!rehydrated) return;
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) router.replace("/auth/login");
+  }, [rehydrated, token, router]);
 
   const handleExplain = async () => {
+    const t = token?.trim();
+    if (!t) {
+      router.push("/auth/login");
+      return;
+    }
     try {
       setLoading(true);
-      const token = localStorage.getItem("token")?.trim();
-      if (!token) {
-        router.push("/auth/login");
-        return;
-      }
-
-      const result = await aiAssistantApi.explainKundli(token, { focus: focus || undefined });
+      const result = await aiAssistantApi.explainKundli(t, { focus: focus || undefined });
       setExplanation(result);
       showSuccess("Kundli explanation generated!");
     } catch (err) {

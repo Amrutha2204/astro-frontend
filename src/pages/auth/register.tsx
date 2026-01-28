@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import axios from "axios";
 import { registerUser } from "@/services/authService";
 import { showError, showSuccess, showWarning } from "@/utils/toast";
 import styles from "@/styles/login.module.css";
 
 export default function Register() {
   const router = useRouter();
+  const guestId = typeof router.query.guestId === "string" ? router.query.guestId : undefined;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -53,13 +53,15 @@ export default function Register() {
       showError("Passwords do not match");
       return false;
     }
-    if (!formData.dob) {
-      showError("Date of birth is required");
-      return false;
-    }
-    if (!formData.birthPlace.trim()) {
-      showError("Birth place is required");
-      return false;
+    if (!guestId) {
+      if (!formData.dob) {
+        showError("Date of birth is required");
+        return false;
+      }
+      if (!formData.birthPlace.trim()) {
+        showError("Birth place is required");
+        return false;
+      }
     }
     return true;
   };
@@ -73,18 +75,27 @@ export default function Register() {
       setLoading(true);
       setError(null);
 
-      const payload = {
-        name: formData.name.trim(),
-        email: formData.email.toLowerCase().trim(),
-        password: formData.password,
-        phoneNumber: formData.phoneNumber.trim() || undefined,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Kolkata",
-        roleId: 1,
-        guestId: null,
-        dob: formData.dob,
-        birthPlace: formData.birthPlace.trim(),
-        birthTime: formData.birthTime || undefined
-      };
+      const payload = guestId
+        ? {
+            name: formData.name.trim(),
+            email: formData.email.toLowerCase().trim(),
+            password: formData.password,
+            phoneNumber: formData.phoneNumber.trim() || undefined,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Kolkata",
+            roleId: 1,
+            guestId,
+          }
+        : {
+            name: formData.name.trim(),
+            email: formData.email.toLowerCase().trim(),
+            password: formData.password,
+            phoneNumber: formData.phoneNumber.trim() || undefined,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Kolkata",
+            roleId: 1,
+            dob: formData.dob,
+            birthPlace: formData.birthPlace.trim(),
+            birthTime: formData.birthTime || undefined,
+          };
 
       const res = await registerUser(payload as any);
 
@@ -93,22 +104,10 @@ export default function Register() {
         router.push("/auth/login");
       }, 1500);
     } catch (err: unknown) {
-      let errorMessage = "Registration failed. Please try again.";
-      
-      if (axios.isAxiosError(err)) {
-        const axiosError = err;
-        
-        if (axiosError.response?.status === 400) {
-          errorMessage = axiosError.response?.data?.message || "Invalid registration data. Please check all fields.";
-        } else if (axiosError.response?.status === 409) {
-          errorMessage = "Email already exists. Please use a different email or login.";
-        } else if (axiosError.response?.status === 500) {
-          errorMessage = "Server error. Please try again later.";
-        } else if (axiosError.response?.data?.message) {
-          errorMessage = axiosError.response.data.message;
-        }
-      }
-      
+      const errorMessage =
+        (err && typeof err === "object" && "message" in err && typeof (err as Error).message === "string")
+          ? (err as Error).message
+          : "Registration failed. Please try again.";
       showError(errorMessage);
       console.error("Registration error:", err);
     } finally {
@@ -207,7 +206,7 @@ export default function Register() {
             <div className={styles.formRow}>
               <div className={styles.inputGroup}>
                 <label className={styles.label}>
-                  Phone Number <span style={{ color: '#9ca3af', fontWeight: 'normal', fontSize: '12px' }}>(Optional)</span>
+                  Phone Number <span className={styles.labelOptional}>(Optional)</span>
                 </label>
                 <input
                   type="tel"
@@ -220,54 +219,63 @@ export default function Register() {
                   autoComplete="tel"
                 />
               </div>
-
-              <div className={styles.inputGroup}>
-                <label className={styles.label}>
-                  Date of Birth <span className={styles.required}>*</span>
-                </label>
-                <input
-                  type="date"
-                  name="dob"
-                  value={formData.dob}
-                  onChange={handleChange}
-                  disabled={loading}
-                  required
-                  className={styles.input}
-                />
-              </div>
+              {!guestId && (
+                <div className={styles.inputGroup}>
+                  <label className={styles.label}>
+                    Date of Birth <span className={styles.required}>*</span>
+                  </label>
+                  <input
+                    type="date"
+                    name="dob"
+                    value={formData.dob}
+                    onChange={handleChange}
+                    disabled={loading}
+                    required
+                    className={styles.input}
+                  />
+                </div>
+              )}
             </div>
 
-            <div className={styles.formRow}>
-              <div className={styles.inputGroup}>
-                <label className={styles.label}>
-                  Birth Place <span className={styles.required}>*</span>
-                </label>
-                <input
-                  type="text"
-                  name="birthPlace"
-                  value={formData.birthPlace}
-                  placeholder="City, State, Country"
-                  onChange={handleChange}
-                  disabled={loading}
-                  required
-                  className={styles.input}
-                />
-              </div>
+            {guestId && (
+              <p className={`${styles.subtitle} mb-4 text-green-600 text-sm`}>
+                We'll use the birth details you provided.
+              </p>
+            )}
 
-              <div className={styles.inputGroup}>
-                <label className={styles.label}>
-                  Birth Time
-                </label>
-                <input
-                  type="time"
-                  name="birthTime"
-                  value={formData.birthTime}
-                  onChange={handleChange}
-                  disabled={loading}
-                  className={styles.input}
-                />
+            {!guestId && (
+              <div className={styles.formRow}>
+                <div className={styles.inputGroup}>
+                  <label className={styles.label}>
+                    Birth Place <span className={styles.required}>*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="birthPlace"
+                    value={formData.birthPlace}
+                    placeholder="City, State, Country"
+                    onChange={handleChange}
+                    disabled={loading}
+                    required
+                    className={styles.input}
+                  />
+                </div>
+
+                <div className={styles.inputGroup}>
+                  <label className={styles.label}>
+                    Birth Time
+                  </label>
+                  <input
+                    type="time"
+                    name="birthTime"
+                    value={formData.birthTime}
+                    onChange={handleChange}
+                    disabled={loading}
+                    className={styles.input}
+                  />
+                </div>
               </div>
-            </div>
+            )}
 
             <button 
               type="submit"

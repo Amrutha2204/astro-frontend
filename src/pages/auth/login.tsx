@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import axios from "axios";
+import { useDispatch } from "react-redux";
 import { loginUser } from "@/services/authService";
 import { showError, showSuccess } from "@/utils/toast";
+import { setToken } from "@/store/slices/authSlice";
 import styles from "@/styles/login.module.css";
 
 export default function LoginPage() {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -47,40 +49,18 @@ export default function LoginPage() {
           setLoading(false);
           return;
         }
-        localStorage.setItem("token", token);
+        dispatch(setToken(token));
         showSuccess("Login successful!");
         router.push("/dashboard");
       })
       .catch((err: unknown) => {
-        // Handle all errors gracefully - prevent Next.js error overlay
         setLoading(false);
-        
-        let errorMessage = "Invalid email or password";
-        
-        if (axios.isAxiosError(err)) {
-          const axiosError = err;
-          
-          if (axiosError.response?.status === 401) {
-            errorMessage = axiosError.response?.data?.message || "Invalid email or password. Please check your credentials and try again.";
-          } else if (axiosError.response?.status === 404) {
-            errorMessage = "Authentication service not found. Please check if the backend is running on port 8001.";
-          } else if (axiosError.response?.status === 500) {
-            errorMessage = "Server error. Please try again later.";
-          } else if (axiosError.response?.data?.message) {
-            errorMessage = axiosError.response.data.message;
-          } else if (axiosError.message) {
-            errorMessage = axiosError.message;
-          }
-        } else if (err && typeof err === 'object' && 'message' in err && typeof err.message === 'string') {
-          errorMessage = err.message;
-        }
-        
-        // Show toast instead of alert
+        const errorMessage =
+          (err && typeof err === "object" && "message" in err && typeof (err as Error).message === "string")
+            ? (err as Error).message
+            : "Invalid email or password";
         showError(errorMessage);
         console.error("Login error:", err);
-        
-        // Return to prevent any further error propagation
-        return;
       });
   };
 

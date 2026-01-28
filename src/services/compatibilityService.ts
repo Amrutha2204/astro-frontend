@@ -1,4 +1,4 @@
-const ASTRO_API_BASE_URL = process.env.NEXT_PUBLIC_ASTRO_API_URL || 'http://localhost:8002';
+import { request, ASTRO_BASE } from "./fetcher";
 
 export interface PartnerBirthDetails {
   year: number;
@@ -20,78 +20,75 @@ export interface GunaMilanResponse {
   totalScore: number;
   maxScore: number;
   percentage: number;
-  verdict: 'Excellent' | 'Good' | 'Average' | 'Below Average';
-  gunas: Array<{
-    name: string;
-    score: number;
-    maxScore: number;
-    description: string;
-  }>;
+  verdict: "Excellent" | "Good" | "Average" | "Below Average";
+  gunas: Array<{ name: string; score: number; maxScore: number; description: string }>;
   source: string;
 }
 
 export interface MarriageCompatibilityResponse {
   gunaMilan: GunaMilanResponse;
-  doshas: {
-    manglik: string;
-    nadi: string;
-    bhakoot: string;
-  };
+  doshas: { manglik: string; nadi: string; bhakoot: string };
   strengths: string[];
   challenges: string[];
   overallVerdict: string;
   source: string;
 }
 
+function toBody(data: CompatibilityRequest) {
+  return {
+    partner1: {
+      year: data.partner1.year,
+      month: data.partner1.month,
+      day: data.partner1.day,
+      hour: data.partner1.hour ?? 12,
+      minute: data.partner1.minute ?? 0,
+      latitude: data.partner1.latitude,
+      longitude: data.partner1.longitude,
+    },
+    partner2: {
+      year: data.partner2.year,
+      month: data.partner2.month,
+      day: data.partner2.day,
+      hour: data.partner2.hour ?? 12,
+      minute: data.partner2.minute ?? 0,
+      latitude: data.partner2.latitude,
+      longitude: data.partner2.longitude,
+    },
+  };
+}
+
 export const compatibilityApi = {
-  async calculateGunaMilan(token: string, data: CompatibilityRequest): Promise<GunaMilanResponse> {
-    const cleanToken = token.trim();
-    if (!cleanToken || cleanToken.split('.').length !== 3) {
-      throw new Error('Invalid token format. Please login again.');
-    }
-
-    const response = await fetch(`${ASTRO_API_BASE_URL}/api/v1/compatibility/guna-milan`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${cleanToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
+  calculateGunaMilanGuest(data: CompatibilityRequest): Promise<GunaMilanResponse> {
+    return request<GunaMilanResponse>(ASTRO_BASE, "/api/v1/compatibility/guna-milan/guest", {
+      method: "POST",
+      body: toBody(data),
     });
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ 
-        message: `Failed to calculate Guna Milan (Status: ${response.status})` 
-      }));
-      throw new Error(error.message || `Failed to calculate Guna Milan (Status: ${response.status})`);
-    }
-
-    return response.json();
   },
 
-  async calculateMarriageCompatibility(token: string, data: CompatibilityRequest): Promise<MarriageCompatibilityResponse> {
-    const cleanToken = token.trim();
-    if (!cleanToken || cleanToken.split('.').length !== 3) {
-      throw new Error('Invalid token format. Please login again.');
-    }
-
-    const response = await fetch(`${ASTRO_API_BASE_URL}/api/v1/compatibility/marriage`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${cleanToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
+  calculateMarriageCompatibilityGuest(data: CompatibilityRequest): Promise<MarriageCompatibilityResponse> {
+    return request<MarriageCompatibilityResponse>(ASTRO_BASE, "/api/v1/compatibility/marriage/guest", {
+      method: "POST",
+      body: toBody(data),
     });
+  },
 
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ 
-        message: `Failed to calculate marriage compatibility (Status: ${response.status})` 
-      }));
-      throw new Error(error.message || `Failed to calculate marriage compatibility (Status: ${response.status})`);
-    }
+  calculateGunaMilan(token: string, data: CompatibilityRequest): Promise<GunaMilanResponse> {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) throw new Error("Invalid token format. Please login again.");
+    return request<GunaMilanResponse>(ASTRO_BASE, "/api/v1/compatibility/guna-milan", {
+      method: "POST",
+      token: t,
+      body: data,
+    });
+  },
 
-    return response.json();
+  calculateMarriageCompatibility(token: string, data: CompatibilityRequest): Promise<MarriageCompatibilityResponse> {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) throw new Error("Invalid token format. Please login again.");
+    return request<MarriageCompatibilityResponse>(ASTRO_BASE, "/api/v1/compatibility/marriage", {
+      method: "POST",
+      token: t,
+      body: data,
+    });
   },
 };
-

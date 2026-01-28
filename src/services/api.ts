@@ -1,6 +1,6 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001';
-const ASTRO_API_BASE_URL = process.env.NEXT_PUBLIC_ASTRO_API_URL || 'http://localhost:8002';
+import { request, AUTH_BASE, ASTRO_BASE } from "./fetcher";
 
+// ----- Auth types (signup/login may be used elsewhere) -----
 export interface SignUpRequest {
   name: string;
   email: string;
@@ -20,11 +20,7 @@ export interface LoginRequest {
 
 export interface LoginResponse {
   accessToken: string;
-  user: {
-    id: string;
-    name: string;
-    roleId: number;
-  };
+  user: { id: string; name: string; roleId: number };
 }
 
 export interface SignUpResponse {
@@ -32,42 +28,7 @@ export interface SignUpResponse {
   userId: string;
 }
 
-export const authApi = {
-  async signup(data: SignUpRequest): Promise<SignUpResponse> {
-    const response = await fetch(`${API_BASE_URL}/api/v1/auth/signup`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Registration failed' }));
-      throw new Error(error.message || 'Registration failed');
-    }
-
-    return response.json();
-  },
-
-  async login(data: LoginRequest): Promise<LoginResponse> {
-    const response = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Login failed' }));
-      throw new Error(error.message || 'Invalid credentials');
-    }
-
-    return response.json();
-  },
-};
-
+// ----- Astro response types -----
 export interface KundliResponse {
   lagna: string;
   moonSign: string;
@@ -76,29 +37,21 @@ export interface KundliResponse {
   pada: number;
   chandraRasi?: string;
   sooryaRasi?: string;
-  planetaryPositions: Array<{
-    planet: string;
-    sign: string;
-    degree: number;
-    nakshatra?: string;
-    pada?: number;
-  }>;
-  houses: Array<{
-    house: number;
-    sign: string;
-    degree: number;
-  }>;
+  planetaryPositions: Array<{ planet: string; sign: string; degree: number; nakshatra?: string; pada?: number }>;
+  houses: Array<{ house: number; sign: string; degree: number }>;
   source: string;
 }
 
 export interface TransitResponse {
   date: string;
-  planetTransits: Array<{
-    planet: string;
-    fromSign: string;
-    toSign: string;
-    degree: number;
-  }>;
+  planetTransits: Array<{ planet: string; fromSign: string; toSign: string; degree: number }>;
+  source: string;
+}
+
+export interface TransitsTodayResponse {
+  currentPlanetPositions?: Record<string, { name: string; sign: { name: string }; degree?: number }>;
+  majorActiveTransits?: Array<{ planet: string; sign: string; description?: string }>;
+  date: string;
   source: string;
 }
 
@@ -124,201 +77,68 @@ export interface GuestCalendarResponse {
   source: string;
 }
 
+// ----- Astro API (uses shared fetcher) -----
 export const astroApi = {
   async getMyKundli(token: string, chartType?: string): Promise<KundliResponse> {
-    try {
-      const cleanToken = token.trim();
-      if (!cleanToken || cleanToken.split('.').length !== 3) {
-        throw new Error('Invalid token format. Please login again.');
-      }
-
-      const url = new URL(`${ASTRO_API_BASE_URL}/api/v1/kundli/my-kundli`);
-      if (chartType) {
-        url.searchParams.append('chartType', chartType);
-      }
-
-      const response = await fetch(url.toString(), {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${cleanToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({ 
-          message: `Failed to fetch Kundli (Status: ${response.status})` 
-        }));
-        throw new Error(error.message || `Failed to fetch Kundli (Status: ${response.status})`);
-      }
-
-      return response.json();
-    } catch (err) {
-      const error = err as { message?: string };
-      if (error.message && error.message.includes('fetch')) {
-        throw new Error(
-          `Cannot connect to astrology service. Please ensure the backend is running on ${ASTRO_API_BASE_URL}`
-        );
-      }
-      throw err;
-    }
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) throw new Error("Invalid token format. Please login again.");
+    return request<KundliResponse>(ASTRO_BASE, "/api/v1/kundli/my-kundli", {
+      method: "GET",
+      token: t,
+      params: chartType ? { chartType } : undefined,
+    });
   },
 
-  async getNatalChart(token: string, chartType?: string): Promise<{
-    sunSign: string;
-    moonSign: string;
-    ascendant: string;
-    planetSignList: Array<{ planet: string; sign: string }>;
-    source: string;
-  }> {
-    try {
-      const cleanToken = token.trim();
-      if (!cleanToken || cleanToken.split('.').length !== 3) {
-        throw new Error('Invalid token format. Please login again.');
-      }
-
-      const url = new URL(`${ASTRO_API_BASE_URL}/api/v1/astrology/natal-chart`);
-      if (chartType) {
-        url.searchParams.append('chartType', chartType);
-      }
-
-      const response = await fetch(url.toString(), {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${cleanToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({ 
-          message: `Failed to fetch natal chart (Status: ${response.status})` 
-        }));
-        throw new Error(error.message || `Failed to fetch natal chart (Status: ${response.status})`);
-      }
-
-      return response.json();
-    } catch (err) {
-      const error = err as { message?: string };
-      if (error.message && error.message.includes('fetch')) {
-        throw new Error(
-          `Cannot connect to astrology service. Please ensure the backend is running on ${ASTRO_API_BASE_URL}`
-        );
-      }
-      throw err;
-    }
+  async getNatalChart(
+    token: string,
+    chartType?: string
+  ): Promise<{ sunSign: string; moonSign: string; ascendant: string; planetSignList: Array<{ planet: string; sign: string }>; source: string }> {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) throw new Error("Invalid token format. Please login again.");
+    return request(ASTRO_BASE, "/api/v1/astrology/natal-chart", {
+      method: "GET",
+      token: t,
+      params: chartType ? { chartType } : undefined,
+    });
   },
+
   async getTodayTransit(token: string, date?: string): Promise<TransitResponse> {
-    try {
-      const cleanToken = token.trim();
-      if (!cleanToken || cleanToken.split('.').length !== 3) {
-        throw new Error('Invalid token format. Please login again.');
-      }
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) throw new Error("Invalid token format. Please login again.");
+    return request<TransitResponse>(ASTRO_BASE, "/api/v1/astrology/transits/today", {
+      method: "GET",
+      token: t,
+      params: date ? { date } : undefined,
+    });
+  },
 
-      const url = new URL(`${ASTRO_API_BASE_URL}/api/v1/astrology/transits/today`);
-      if (date) {
-        url.searchParams.append('date', date);
-      }
-
-      const response = await fetch(url.toString(), {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${cleanToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({
-          message: `Failed to fetch transit data (Status: ${response.status})`
-        }));
-        throw new Error(error.message || `Failed to fetch transit data (Status: ${response.status})`);
-      }
-
-      return response.json();
-    } catch (err) {
-      const error = err as { message?: string };
-      if (error.message && error.message.includes('fetch')) {
-        throw new Error(
-          `Cannot connect to astrology service. Please ensure the backend is running on ${ASTRO_API_BASE_URL}`
-        );
-      }
-      throw err;
-    }
+  async getTransitsToday(): Promise<TransitsTodayResponse> {
+    return request<TransitsTodayResponse>(ASTRO_BASE, "/api/v1/astrology/transits/today", {
+      method: "GET",
+    });
   },
 
   async getTodayCalendar(token: string, date?: string): Promise<CalendarResponse> {
-    try {
-      const cleanToken = token.trim();
-      if (!cleanToken || cleanToken.split(".").length !== 3) {
-        throw new Error("Invalid token format. Please login again.");
-      }
-
-      const url = new URL(`${ASTRO_API_BASE_URL}/api/v1/astrology/calendar/today`);
-      if (date) {
-        url.searchParams.append("date", date);
-      }
-
-      const response = await fetch(url.toString(), {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${cleanToken}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({
-          message: `Failed to fetch calendar data (Status: ${response.status})`,
-        }));
-        throw new Error(
-          error.message || `Failed to fetch calendar data (Status: ${response.status})`
-        );
-      }
-
-      return response.json();
-    } catch (err) {
-      const error = err as { message?: string };
-      if (error.message?.includes("fetch")) {
-        throw new Error(
-          `Cannot connect to astrology service. Please ensure the backend is running on ${ASTRO_API_BASE_URL}`
-        );
-      }
-      throw err;
-    }
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) throw new Error("Invalid token format. Please login again.");
+    return request<CalendarResponse>(ASTRO_BASE, "/api/v1/astrology/calendar/today", {
+      method: "GET",
+      token: t,
+      params: date ? { date } : undefined,
+    });
   },
 
   async getGuestKundli(dto: { dob: string; birthTime: string; placeOfBirth: string }): Promise<KundliResponse> {
-    const response = await fetch(`${ASTRO_API_BASE_URL}/api/v1/kundli/guest`, {
+    return request<KundliResponse>(ASTRO_BASE, "/api/v1/kundli/guest", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(dto),
+      body: dto,
     });
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({
-        message: `Failed to calculate Kundli (Status: ${response.status})`,
-      }));
-      throw new Error(error.message || `Failed to calculate Kundli (Status: ${response.status})`);
-    }
-    return response.json();
   },
 
   async getGuestCalendar(city?: string): Promise<GuestCalendarResponse> {
-    const url = new URL(`${ASTRO_API_BASE_URL}/api/v1/astrology/calendar/today/guest`);
-    if (city && city.trim()) {
-      url.searchParams.append("placeOfBirth", city.trim());
-    }
-    const response = await fetch(url.toString(), {
+    return request<GuestCalendarResponse>(ASTRO_BASE, "/api/v1/astrology/calendar/today/guest", {
       method: "GET",
-      headers: { "Content-Type": "application/json" },
+      params: city?.trim() ? { placeOfBirth: city.trim() } : undefined,
     });
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({
-        message: `Failed to fetch calendar (Status: ${response.status})`,
-      }));
-      throw new Error(error.message || `Failed to fetch calendar (Status: ${response.status})`);
-    }
-    return response.json();
   },
 };
-
