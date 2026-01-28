@@ -1705,3 +1705,79 @@
   cursor: not-allowed;
 }
 
+/* 🌸 Soft Divine Background */
+.divineSoftBackground {
+  background: linear-gradient(
+    to bottom,
+    #fffaf0,
+    #fff3e0,
+    #fffdf8
+  );
+  padding: 30px;
+  border-radius: 28px;
+  min-height: 100%;
+}
+
+/* 🪔 Header */
+.divineHeader {
+  margin-bottom: 26px;
+}
+
+.divineTitle {
+  font-size: 30px;
+  font-weight: 700;
+  color: #8b4513;
+}
+
+.divineSubtitle {
+  margin-top: 6px;
+  color: #7a5c3c;
+  opacity: 0.85;
+}
+
+/* 🌼 Grid */
+.softDivineGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 22px;
+}
+
+/* 🌺 Card */
+.softDivineCard {
+  padding: 18px 20px;
+  border-radius: 18px;
+  background: linear-gradient(
+    135deg,
+    #ffffff,
+    #fff6e5
+  );
+  border: 1px solid #f0dfc4;
+  box-shadow: 0 6px 14px rgba(139, 69, 19, 0.08);
+  transition: all 0.3s ease;
+}
+
+.softDivineCard h3 {
+  font-size: 15px;
+  color: #9c6b30;
+  margin-bottom: 6px;
+}
+
+.softDivineCard p {
+  font-size: 15px;
+  font-weight: 500;
+  color: #3e2a14;
+}
+
+/* 🌸 Hover – very gentle */
+.softDivineCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(139, 69, 19, 0.12);
+}
+
+/* 🌼 Footer */
+.divineSource {
+  margin-top: 22px;
+  font-size: 13px;
+  color: #7a5c3c;
+  opacity: 0.7;
+}

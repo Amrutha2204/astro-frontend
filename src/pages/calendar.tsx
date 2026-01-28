@@ -51,109 +51,153 @@ export default function CalendarPage() {
       <AppHeader />
       <div className={styles.dashboardContent}>
         <AppSidebar />
-        <main className={styles.mainContent}>
 
-          {/* 🌸 PAGE HEADER */}
-          <div style={{ marginBottom: "24px" }}>
-            <h1 style={{ fontSize: "26px" }}>🪔 Today’s Panchang</h1>
-            <p style={{ opacity: 0.7 }}>
-              Divine calendar based on Vedic astrology
-            </p>
+        <main className={styles.mainContent}>
+          {/* 🔴 TOP ACTION BAR (like Dasha) */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "20px",
+            }}
+          >
+            <button
+              onClick={() => router.push("/dashboard")}
+              style={{
+                backgroundColor: "#d32f2f",
+                color: "#fff",
+                border: "none",
+                borderRadius: "6px",
+                padding: "8px 16px",
+                cursor: "pointer",
+                fontWeight: 500,
+              }}
+            >
+              ← Back
+            </button>
+
+            <button
+              onClick={() => window.location.reload()}
+              style={{
+                backgroundColor: "#fff",
+                color: "#d32f2f",
+                border: "1px solid #d32f2f",
+                borderRadius: "6px",
+                padding: "8px 16px",
+                cursor: "pointer",
+                fontWeight: 500,
+              }}
+            >
+              ⟳ Refresh
+            </button>
           </div>
 
+          {/* 🔴 PAGE TITLE */}
+          <h2
+            style={{
+              color: "#d32f2f",
+              fontSize: "24px",
+              fontWeight: 600,
+              marginBottom: "20px",
+              borderBottom: "2px solid #f2bcbc",
+              paddingBottom: "8px",
+            }}
+          >
+            Panchang Calendar
+          </h2>
+
           {/* ⏳ LOADING */}
-          {loading && (
-            <div className={styles.noDataContainer}>
-              <div className={styles.noDataIcon}>🌸</div>
-              <p>Loading divine energies...</p>
-            </div>
-          )}
+          {loading && <p>Loading Panchang...</p>}
 
           {/* ❌ ERROR */}
-          {error && (
-            <div className={styles.noDataContainer}>
-              <div className={styles.noDataIcon}>⚠️</div>
-              <h3>Error</h3>
-              <p>{error}</p>
-            </div>
-          )}
+          {error && <p style={{ color: "red" }}>{error}</p>}
 
-          {/* 🌞 PANCHANG DATA */}
-          {calendar && !loading && !error && (
+          {/* 🌼 PANCHANG CONTENT */}
+          {calendar && (
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+                gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
                 gap: "20px",
               }}
             >
-              {/* DATE */}
-              <DivineCard title="📅 Date" value={calendar.date} />
-
-              {/* TITHI */}
+              <InfoCard title="Date" value={calendar.date} />
               {calendar.tithi && (
-                <DivineCard title="🌙 Tithi" value={calendar.tithi} />
+                <InfoCard title="Tithi" value={calendar.tithi} />
               )}
-
-              {/* NAKSHATRA */}
               {calendar.nakshatra && (
-                <DivineCard title="⭐ Nakshatra" value={calendar.nakshatra} />
+                <InfoCard title="Nakshatra" value={calendar.nakshatra} />
               )}
-
-              {/* YOGA */}
               {calendar.yoga && (
-                <DivineCard title="✨ Yoga" value={calendar.yoga} />
+                <InfoCard title="Yoga" value={calendar.yoga} />
               )}
-
-              {/* KARANA */}
               {calendar.karana && (
-                <DivineCard title="🔱 Karana" value={calendar.karana} />
+                <InfoCard title="Karana" value={calendar.karana} />
               )}
-
-              {/* SUN */}
               {(calendar.sunrise || calendar.sunset) && (
-                <DivineCard
-                  title="🌞 Sun Timings"
+                <InfoCard
+                  title="Sun Timings"
                   value={`Sunrise: ${calendar.sunrise} | Sunset: ${calendar.sunset}`}
                 />
               )}
-
-              {/* MOON */}
               {(calendar.moonRise || calendar.moonSet) && (
-                <DivineCard
-                  title="🌕 Moon Timings"
+                <InfoCard
+                  title="Moon Timings"
                   value={`Moonrise: ${calendar.moonRise} | Moonset: ${calendar.moonSet}`}
                 />
               )}
             </div>
           )}
 
-          {/* 🌼 FOOTNOTE */}
+          {/* FOOTNOTE */}
           {calendar && (
-            <p style={{ marginTop: "20px", opacity: 0.5 }}>
+            <p
+              style={{
+                marginTop: "16px",
+                fontSize: "13px",
+                color: "#777",
+              }}
+            >
               Source: {calendar.source}
             </p>
           )}
-
         </main>
       </div>
     </div>
   );
 }
 
-/* 🌺 Small Divine Card Component */
-function DivineCard({ title, value }: { title: string; value: string }) {
+/* 🔶 Reusable Card (matches Dasha cards) */
+function InfoCard({ title, value }: { title: string; value: string }) {
   return (
     <div
       style={{
+        background: "#ffffff",
+        borderRadius: "10px",
         padding: "18px",
-        borderRadius: "14px",
-        background: "linear-gradient(135deg, #fff7e6, #fff)",
-        boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
       }}
     >
-      <h3 style={{ marginBottom: "8px", fontSize: "16px" }}>{title}</h3>
-      <p style={{ fontSize: "15px", fontWeight: 500 }}>{value}</p>
+      <h4
+        style={{
+          marginBottom: "10px",
+          color: "#333",
+          fontWeight: 600,
+        }}
+      >
+        {title}
+      </h4>
+
+      <p
+        style={{
+          fontSize: "16px",
+          color: "#d32f2f",
+          fontWeight: 600,
+        }}
+      >
+        {value}
+      </p>
     </div>
   );
 }
