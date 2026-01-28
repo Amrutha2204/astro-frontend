@@ -10,7 +10,7 @@ type NavItem = { id: string; label: string; href: string };
 const GUEST_MENU: NavItem[] = [
   { id: "home", label: "Home", href: "/" },
   { id: "transits", label: "Transits", href: "/transits" },
-  { id: "calendar", label: "Calendar", href: "/calendar" },
+  { id: "calendar", label: "Calendar", href: "/guest-calendar" },
   { id: "horoscope", label: "Horoscope", href: "/guest-horoscope" },
   { id: "dasha", label: "Dasha", href: "/guest-dasha" },
   { id: "dosha", label: "Dosha", href: "/guest-dosha" },

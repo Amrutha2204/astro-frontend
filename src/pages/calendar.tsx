@@ -53,11 +53,44 @@ export default function CalendarPage() {
         <AppSidebar />
 
         <main className={styles.mainContent}>
-          <h1 className={styles.pageTitle} style={{ marginBottom: 16 }}>Astrology Calendar</h1>
-          <div className={styles.noDataContainer}>
-            <div className={styles.noDataIcon}>📅</div>
-            <h3 className={styles.noDataTitle}>No Data Found</h3>
-            <p className={styles.noDataMessage}>Calendar data is currently unavailable. This section is under development.</p>
+          {/* 🔴 TOP ACTION BAR (like Dasha) */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "20px",
+            }}
+          >
+            <button
+              onClick={() => router.push("/dashboard")}
+              style={{
+                backgroundColor: "#d32f2f",
+                color: "#fff",
+                border: "none",
+                borderRadius: "6px",
+                padding: "8px 16px",
+                cursor: "pointer",
+                fontWeight: 500,
+              }}
+            >
+              ← Back
+            </button>
+
+            <button
+              onClick={() => window.location.reload()}
+              style={{
+                backgroundColor: "#fff",
+                color: "#d32f2f",
+                border: "1px solid #d32f2f",
+                borderRadius: "6px",
+                padding: "8px 16px",
+                cursor: "pointer",
+                fontWeight: 500,
+              }}
+            >
+              ⟳ Refresh
+            </button>
           </div>
 
           {/* 🔴 PAGE TITLE */}
@@ -117,18 +150,7 @@ export default function CalendarPage() {
             </div>
           )}
 
-          {/* FOOTNOTE */}
-          {calendar && (
-            <p
-              style={{
-                marginTop: "16px",
-                fontSize: "13px",
-                color: "#777",
-              }}
-            >
-              Source: {calendar.source}
-            </p>
-          )}
+         
         </main>
       </div>
     </div>

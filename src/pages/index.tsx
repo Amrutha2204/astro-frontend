@@ -8,7 +8,7 @@ import dStyles from "@/styles/dashboard.module.css";
 const QUICK_LINKS = [
   { label: "Today's Horoscope", desc: "Daily prediction for your zodiac sign", href: "/guest-horoscope" },
   { label: "Match / Compatibility", desc: "Check compatibility with your partner", href: "/compatibility" },
-  { label: "Calendar (Panchang)", desc: "Auspicious days and festivals", href: "/calendar" },
+  { label: "Calendar (Panchang)", desc: "Auspicious days and festivals", href: "/guest-calendar" },
   { label: "Transits", desc: "Current planetary positions", href: "/transits" },
   { label: "Dasha", desc: "Planetary periods in your life", href: "/guest-dasha" },
   { label: "Dosha Check", desc: "Manglik and other dosha analysis", href: "/guest-dosha" },
