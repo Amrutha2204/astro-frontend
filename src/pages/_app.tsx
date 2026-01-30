@@ -1,10 +1,12 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
+import Head from "next/head";
 import { useEffect } from "react";
 import { Provider, useStore } from "react-redux";
 import { Toaster } from "react-hot-toast";
 import { store } from "@/store";
 import { rehydrate } from "@/store/slices/authSlice";
+import ErrorBoundary from "@/components/common/ErrorBoundary";
 
 function RehydrateAuth() {
   const s = useStore();
@@ -43,8 +45,14 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <Provider store={store}>
+      <Head>
+        <title>Jyotishya Darshan – Vedic Horoscope & Kundli</title>
+        <meta name="description" content="Vedic horoscope, Kundli, Dasha, Dosha check, marriage match, and Panchang. Try free without login." />
+      </Head>
       <RehydrateAuth />
-      <Component {...pageProps} />
+      <ErrorBoundary>
+        <Component {...pageProps} />
+      </ErrorBoundary>
       <Toaster
         position="top-right"
         toastOptions={{

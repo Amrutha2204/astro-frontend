@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
+import PageHead from "@/components/common/PageHead";
 import styles from "@/styles/home.module.css";
 import dStyles from "@/styles/dashboard.module.css";
 
@@ -19,6 +20,7 @@ export default function Home() {
 
   return (
     <div className={dStyles.dashboardContainer}>
+      <PageHead title="Home" description="Vedic horoscope, Kundli, Dasha, Dosha check, marriage match, and Panchang. Try free without login." />
       <AppHeader />
       <div className={dStyles.dashboardContent}>
         <AppSidebar />

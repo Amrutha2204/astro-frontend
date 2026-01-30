@@ -5,6 +5,8 @@ import { onboardGuest } from "@/services/authService";
 import { showError } from "@/utils/toast";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
+import CalculationInfo from "@/components/common/CalculationInfo";
+import TrustNote from "@/components/common/TrustNote";
 import styles from "@/styles/guestKundli.module.css";
 import formStyles from "@/styles/birthDetails.module.css";
 import dStyles from "@/styles/dashboard.module.css";
@@ -161,7 +163,7 @@ export default function GuestKundliPage() {
               </h1>
               <div className={dStyles.kundliContent}>
                 <div className={dStyles.kundliSection}>
-                  <h2 className={dStyles.sectionTitle}>Basic Information</h2>
+                  <h2 className={dStyles.sectionTitle}>Chart overview</h2>
                   <div className={dStyles.infoGrid}>
                     <div className={dStyles.infoItem}>
                       <span className={dStyles.infoLabel}>Lagna (Ascendant):</span>
@@ -186,7 +188,7 @@ export default function GuestKundliPage() {
 
                 {k.planetaryPositions && Array.isArray(k.planetaryPositions) && k.planetaryPositions.length > 0 && (
                   <div className={dStyles.kundliSection}>
-                    <h2 className={dStyles.sectionTitle}>Planetary Positions</h2>
+                    <h2 className={dStyles.sectionTitle}>Planet positions</h2>
                     <div className={dStyles.planetsGrid}>
                       {k.planetaryPositions.map((planetData) => (
                         <div key={planetData.planet} className={dStyles.planetCard}>
@@ -228,6 +230,8 @@ export default function GuestKundliPage() {
                   </div>
                 )}
 
+                <CalculationInfo showDasha={true} showAyanamsa={true} className={dStyles.calculationInfo} />
+                <TrustNote variant="guest" showAccuracyTip />
                 <div className={dStyles.sourceInfo}>
                   <span className={dStyles.sourceLabel}>Source:</span>
                   <span className={dStyles.sourceValue}>{k.source}</span>
@@ -249,7 +253,7 @@ export default function GuestKundliPage() {
           </p>
 
           <form onSubmit={handleSubmit}>
-            <label className={formStyles.label}>Full Name (optional)</label>
+            <label className={formStyles.label}>Full name (optional)</label>
             <input
               type="text"
               className={formStyles.input}
@@ -269,7 +273,7 @@ export default function GuestKundliPage() {
               <option value="female">Female</option>
             </select>
 
-            <label className={formStyles.label}>Date of Birth *</label>
+            <label className={formStyles.label}>Birth date *</label>
             <input
               type="date"
               className={formStyles.input}
@@ -278,7 +282,7 @@ export default function GuestKundliPage() {
               required
             />
 
-            <label className={formStyles.label}>Birth Time (24-hour) *</label>
+            <label className={formStyles.label}>Birth time *</label>
             <input
               type="time"
               className={formStyles.input}
@@ -289,7 +293,7 @@ export default function GuestKundliPage() {
             />
             <p className={formStyles.hint}>Use hours and minutes; add seconds if known for better accuracy.</p>
 
-            <label className={formStyles.label}>Place of Birth (city) *</label>
+            <label className={formStyles.label}>Birth place (city) *</label>
             <input
               type="text"
               className={formStyles.input}

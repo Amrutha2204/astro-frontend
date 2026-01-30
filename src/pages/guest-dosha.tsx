@@ -1,6 +1,8 @@
 import { useState } from "react";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
+import CalculationInfo from "@/components/common/CalculationInfo";
+import TrustNote from "@/components/common/TrustNote";
 import { doshaApi } from "@/services/doshaService";
 import styles from "@/styles/dashboard.module.css";
 import formStyles from "@/styles/birthDetails.module.css";
@@ -23,7 +25,7 @@ export default function GuestDoshaPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!dob.trim() || !birthTime.trim() || !placeOfBirth.trim()) {
-      setError("Please enter date of birth, birth time and place of birth.");
+      setError("Please enter birth date, time and place.");
       return;
     }
     setError(null);
@@ -49,25 +51,36 @@ export default function GuestDoshaPage() {
             <h2 className={formStyles.title}>Dosha Check (Guest)</h2>
             <p className={formStyles.subtitle}>Manglik, Nadi and Bhakoot. No login required.</p>
             <form onSubmit={handleSubmit}>
-              <label className={formStyles.label}>Full Name (optional)</label>
+              <label className={formStyles.label}>Full name (optional)</label>
               <input type="text" className={formStyles.input} value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="e.g. Rahul Sharma" />
-              <label className={formStyles.label}>Date of Birth *</label>
+              <label className={formStyles.label}>Birth date *</label>
               <input type="date" className={formStyles.input} value={dob} onChange={(e) => setDob(e.target.value)} required />
-              <label className={formStyles.label}>Birth Time (24h) *</label>
+              <label className={formStyles.label}>Birth time *</label>
               <input type="time" className={formStyles.input} value={birthTime} onChange={(e) => setBirthTime(e.target.value)} step="1" required />
-              <label className={formStyles.label}>Place of Birth *</label>
+              <label className={formStyles.label}>Birth place (city) *</label>
               <input type="text" className={formStyles.input} value={placeOfBirth} onChange={(e) => setPlaceOfBirth(e.target.value)} placeholder="e.g. Mumbai" minLength={3} required />
               {error && <p className="text-red-600 text-sm my-3">{error}</p>}
-              <button type="submit" className={formStyles.button} disabled={loading}>{loading ? "Checking…" : "Check Doshas"}</button>
+              <button type="submit" className={formStyles.button} disabled={loading}>{loading ? "Checking…" : "Check doshas"}</button>
             </form>
           </div>
           {result && (
             <div className={styles.resultBlock}>
-              <h3>{fullName.trim() ? `Dosha result for ${fullName.trim()}` : "Result"}</h3>
-              <p><strong>Manglik:</strong> {result.manglik.hasDosha ? "Yes" : "No"} – {result.manglik.description}</p>
-              <p><strong>Nadi:</strong> {result.nadi.hasDosha ? "Yes" : "No"} – {result.nadi.description}</p>
-              <p><strong>Bhakoot:</strong> {result.bhakoot.hasDosha ? "Yes" : "No"} – {result.bhakoot.description}</p>
-              <p><strong>Total doshas:</strong> {result.totalDoshas}</p>
+              <h3>{fullName.trim() ? `Dosha check for ${fullName.trim()}` : "Your dosha check"}</h3>
+              <p className={styles.explanationLine}>These checks are based on your birth chart’s planetary positions.</p>
+              <div className={styles.doshaList}>
+                <div className={`${styles.doshaItem} ${result.manglik.hasDosha ? styles.activeDoshaItem : ""}`}>
+                  <strong>Manglik:</strong> {result.manglik.hasDosha ? "Present" : "Not present"} – {result.manglik.description}
+                </div>
+                <div className={`${styles.doshaItem} ${result.nadi.hasDosha ? styles.activeDoshaItem : ""}`}>
+                  <strong>Nadi:</strong> {result.nadi.hasDosha ? "Present" : "Not present"} – {result.nadi.description}
+                </div>
+                <div className={`${styles.doshaItem} ${result.bhakoot.hasDosha ? styles.activeDoshaItem : ""}`}>
+                  <strong>Bhakoot:</strong> {result.bhakoot.hasDosha ? "Present" : "Not present"} – {result.bhakoot.description}
+                </div>
+              </div>
+              <p><strong>Doshas present:</strong> {result.totalDoshas}</p>
+              <CalculationInfo showDasha={false} showAyanamsa={true} />
+              <TrustNote variant="guest" showAccuracyTip />
               <p className="text-xs text-gray-500 mt-2">Source: {result.source}</p>
             </div>
           )}

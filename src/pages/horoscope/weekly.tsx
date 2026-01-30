@@ -61,7 +61,9 @@ export default function WeeklyHoroscopePage() {
           <main className={styles.mainContent}>
             <div className={styles.kundliContainer}>
               <h1 className={styles.sectionTitle}>📅 Weekly Horoscope</h1>
-              <p>Loading your personalized weekly predictions...</p>
+              <div className={styles.loadingContainer}>
+                <p><span className={styles.loadingSpinner} /> Loading your weekly predictions…</p>
+              </div>
             </div>
           </main>
         </div>
@@ -130,7 +132,7 @@ export default function WeeklyHoroscopePage() {
                 {horoscope.weekStart && (
                   <div className={styles.infoGrid}>
                     <div className={styles.infoCard}>
-                      <h3>Week Starting</h3>
+                      <h3>Week starts</h3>
                       <p className={styles.infoValue}>
                         {new Date(horoscope.weekStart).toLocaleDateString('en-US', { 
                           weekday: 'long', 
@@ -145,39 +147,51 @@ export default function WeeklyHoroscopePage() {
 
                 {horoscope.predictions && Array.isArray(horoscope.predictions) && horoscope.predictions.length > 0 && (
                   <div style={{ marginTop: "30px" }}>
-                    <h2 className={styles.sectionTitle}>Daily Predictions</h2>
+                    <h2 className={styles.sectionTitle}>Daily predictions</h2>
                     <div className={styles.planetsGrid}>
-                      {horoscope.predictions.map((prediction: any, index: number) => (
-                        <div key={index} className={styles.planetCard}>
-                          <h4>
-                            {prediction.day ? `${prediction.day}, ` : ""}
-                            {prediction.date ? new Date(prediction.date).toLocaleDateString('en-US', { 
-                              month: 'short', 
-                              day: 'numeric' 
-                            }) : `Day ${index + 1}`}
-                          </h4>
-                          {prediction.horoscope?.dayType && (
-                            <p style={{ marginBottom: "8px" }}>
-                              <strong>Type:</strong> <span style={{ 
-                                color: prediction.horoscope.dayType === 'Good' ? '#10b981' : 
-                                       prediction.horoscope.dayType === 'Challenging' ? '#ef4444' : '#6b7280'
-                              }}>
-                                {prediction.horoscope.dayType}
-                              </span>
-                            </p>
-                          )}
-                          {prediction.horoscope?.mainTheme && (
-                            <p style={{ marginTop: "8px", fontSize: "14px", lineHeight: "1.5" }}>
-                              <strong>Theme:</strong> {prediction.horoscope.mainTheme}
-                            </p>
-                          )}
-                          {prediction.horoscope?.reason && (
-                            <p style={{ marginTop: "10px", fontSize: "13px", color: "#666", fontStyle: "italic" }}>
-                              {prediction.horoscope.reason}
-                            </p>
-                          )}
-                        </div>
-                      ))}
+                      {horoscope.predictions.map((prediction: any, index: number) => {
+                        const predDate = prediction.date ? new Date(prediction.date) : null;
+                        const today = new Date();
+                        const isToday = predDate && predDate.toDateString() === today.toDateString();
+                        const isPast = predDate && predDate < today && predDate.toDateString() !== today.toDateString();
+                        const isTomorrow = index > 0 && horoscope.predictions[index - 1]?.date && new Date(horoscope.predictions[index - 1].date).toDateString() === today.toDateString();
+                        return (
+                          <div
+                            key={index}
+                            className={`${styles.planetCard} ${isToday ? styles.cardActive : ""} ${isPast ? styles.cardPast : ""} ${isTomorrow ? styles.cardFuture : ""}`}
+                          >
+                            {isToday && <span className={styles.youAreHereBadge}>Today</span>}
+                            {isTomorrow && <span className={styles.upNextBadge}>Up next</span>}
+                            <h4>
+                              {prediction.day ? `${prediction.day}, ` : ""}
+                              {prediction.date ? new Date(prediction.date).toLocaleDateString('en-US', { 
+                                month: 'short', 
+                                day: 'numeric' 
+                              }) : `Day ${index + 1}`}
+                            </h4>
+                            {prediction.horoscope?.dayType && (
+                              <p style={{ marginBottom: "8px" }}>
+                                <strong>Type:</strong> <span style={{ 
+                                  color: prediction.horoscope.dayType === 'Good' ? '#10b981' : 
+                                         prediction.horoscope.dayType === 'Challenging' ? '#ef4444' : '#6b7280'
+                                }}>
+                                  {prediction.horoscope.dayType}
+                                </span>
+                              </p>
+                            )}
+                            {prediction.horoscope?.mainTheme && (
+                              <p style={{ marginTop: "8px", fontSize: "14px", lineHeight: "1.5" }}>
+                                <strong>Focus:</strong> {prediction.horoscope.mainTheme}
+                              </p>
+                            )}
+                            {prediction.horoscope?.reason && (
+                              <p style={{ marginTop: "10px", fontSize: "13px", color: "#666", fontStyle: "italic" }}>
+                                {prediction.horoscope.reason}
+                              </p>
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 )}

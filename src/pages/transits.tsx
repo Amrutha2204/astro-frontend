@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
+import CalculationInfo from "@/components/common/CalculationInfo";
 import styles from "@/styles/dashboard.module.css";
 import { astroApi, TransitsTodayResponse } from "@/services/api";
 
@@ -36,9 +37,13 @@ export default function TransitsPage() {
       <div className={styles.dashboardContent}>
         <AppSidebar />
         <main className={styles.mainContent}>
-          <h2 className={styles.pageTitle}>Today's Planetary Transits</h2>
+          <h2 className={styles.pageTitle}>Today’s transits</h2>
 
-          {loading && <p className={styles.noDataMessage}>Loading today's transits...</p>}
+          {loading && (
+            <div className={styles.loadingContainer}>
+              <p><span className={styles.loadingSpinner} /> Loading today’s transits…</p>
+            </div>
+          )}
 
           {!loading && error && (
             <div className={styles.noDataContainer}>
@@ -50,6 +55,8 @@ export default function TransitsPage() {
 
           {!loading && transits && !error && (
             <>
+              <span className={styles.youAreHereBadge}>Today</span>
+              <p className={styles.explanationLine}>These are today’s planetary positions; major transits that affect charts are highlighted below.</p>
               <p className={styles.noDataMessage} style={{ marginBottom: 16 }}>
                 <strong>Date:</strong> {transits.date}
               </p>
@@ -110,6 +117,7 @@ export default function TransitsPage() {
                 </div>
               )}
 
+              <CalculationInfo showDasha={false} showAyanamsa={true} note="Positions are shown for today’s date." />
               {transits.source && (positions.length > 0 || major.length > 0) && (
                 <p style={{ marginTop: 16, fontSize: 12, color: "#6b7280" }}>Source: {transits.source}</p>
               )}
