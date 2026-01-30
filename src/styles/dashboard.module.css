@@ -1133,6 +1133,13 @@
   border-radius: 6px;
 }
 
+.activeDoshaItem {
+  background: linear-gradient(135deg, #fdf8f3 0%, #f5ebe0 100%);
+  border-left: 4px solid #6b4423;
+  padding: 12px 16px;
+  border-radius: 8px;
+}
+
 .strengthsChallenges {
   margin: 20px 0;
   padding: 20px;
@@ -1746,6 +1753,182 @@
 .loginButton:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* Calculation details bar – visible so results feel reliable */
+.calculationInfo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  padding: 12px 16px;
+  background: #f5ebe0;
+  border: 1px solid #e8ddd0;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #5c4033;
+  margin-top: 16px;
+}
+
+.calculationMethod {
+  font-weight: 600;
+}
+
+.calculationNote {
+  color: #6b5b52;
+}
+
+/* Trust note – privacy + reassurance so results feel trustworthy */
+.trustNote {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #4b5563;
+}
+
+.trustNoteText {
+  font-weight: 500;
+  color: #374151;
+}
+
+.trustNoteTip {
+  font-size: 12px;
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* Active vs past/future – current stands out */
+.resultBlockActive,
+.cardActive {
+  border: 2px solid #6b4423;
+  background: linear-gradient(135deg, #fdf8f3 0%, #f5ebe0 100%);
+  box-shadow: 0 4px 12px rgba(107, 68, 35, 0.15);
+}
+
+.resultBlockActive h3,
+.cardActive h3 {
+  color: #6b4423;
+}
+
+.youAreHereBadge {
+  display: inline-block;
+  background: #6b4423;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.upNextBadge {
+  display: inline-block;
+  background: #5c4033;
+  color: #f5ebe0;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.timelineItemActive {
+  background: linear-gradient(135deg, #fdf8f3 0%, #f5ebe0 100%);
+  border-left: 4px solid #6b4423;
+  box-shadow: 0 2px 8px rgba(107, 68, 35, 0.12);
+}
+
+.timelineItemPast {
+  opacity: 0.65;
+  color: #6b7280;
+}
+
+.timelineItemPast .timelineDate,
+.timelineItemPast .timelineDasha,
+.timelineItemPast .timelinePlanet {
+  color: inherit;
+}
+
+.cardPast {
+  opacity: 0.7;
+  background: #f9fafb;
+}
+
+.cardFuture {
+  opacity: 0.9;
+}
+
+/* Short explanation line for trust */
+.explanationLine {
+  font-size: 14px;
+  color: #5c4033;
+  font-style: italic;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #faf8f5;
+  border-radius: 6px;
+  border-left: 3px solid #6b4423;
+}
+
+/* Loading feedback */
+.loadingSpinner {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 3px solid #e8ddd0;
+  border-top-color: #6b4423;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loadingContainer p {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Smoother appearance for result blocks */
+.resultBlock,
+.planetCard,
+.timelineItem {
+  transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.resultBlock {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.mainContent > .resultBlock + .resultBlock,
+.mainContent > .card + .resultBlock {
+  margin-top: 20px;
 }
 
 /* 🌸 Soft Divine Background */

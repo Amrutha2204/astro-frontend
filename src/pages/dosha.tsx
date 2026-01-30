@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
+import CalculationInfo from "@/components/common/CalculationInfo";
+import TrustNote from "@/components/common/TrustNote";
 import { doshaApi, DoshaResponse } from "@/services/doshaService";
 import { showError } from "@/utils/toast";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
@@ -77,7 +79,7 @@ export default function DoshaPage() {
           <AppSidebar />
           <main className={styles.mainContent}>
             <div className={styles.loadingContainer}>
-              <p>Loading your Dosha analysis...</p>
+              <p><span className={styles.loadingSpinner} /> Loading your dosha check…</p>
             </div>
           </main>
         </div>
@@ -125,10 +127,11 @@ export default function DoshaPage() {
           </div>
 
           <div className={styles.kundliContainer}>
-            <h1 className={styles.sectionTitle}>Dosha Analysis</h1>
+            <h1 className={styles.sectionTitle}>Your dosha check</h1>
 
             {dosha && (
               <>
+                <p className={styles.explanationLine}>These results are based on your birth chart’s planetary positions.</p>
                 <div className={styles.doshaSummary}>
                   <div className={styles.doshaSummaryCard}>
                     <h3 className={styles.cardTitle}>Total Doshas</h3>
@@ -199,6 +202,8 @@ export default function DoshaPage() {
                     <p className={styles.cardDescription}>{dosha.bhakoot.description}</p>
                   </div>
                 </div>
+                <CalculationInfo showDasha={false} showAyanamsa={true} />
+                <TrustNote variant="loggedIn" />
               </>
             )}
           </div>

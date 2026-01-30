@@ -1,19 +1,9 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
+import Head from "next/head";
 import { useEffect } from "react";
 import { Provider, useStore } from "react-redux";
 import { Toaster } from "react-hot-toast";
-import { store } from "@/store";
-import { rehydrate } from "@/store/slices/authSlice";
-
-function RehydrateAuth() {
-  const s = useStore();
-  useEffect(() => {
-    const t = typeof window !== "undefined" ? window.localStorage.getItem("token") : null;
-    s.dispatch(rehydrate({ token: t }));
-  }, [s]);
-  return null;
-}
 
 export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
@@ -42,8 +32,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
 
   return (
-    <Provider store={store}>
-      <RehydrateAuth />
+    <>
       <Component {...pageProps} />
       <Toaster
         position="top-right"

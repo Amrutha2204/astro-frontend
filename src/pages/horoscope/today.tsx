@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
+import CalculationInfo from "@/components/common/CalculationInfo";
+import TrustNote from "@/components/common/TrustNote";
 import { horoscopeApi } from "@/services/horoscopeService";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
 import styles from "@/styles/dashboard.module.css";
@@ -61,7 +63,9 @@ export default function DailyHoroscopePage() {
           <main className={styles.mainContent}>
             <div className={styles.kundliContainer}>
               <h1 className={styles.sectionTitle}>🌙 Daily Horoscope</h1>
-              <p>Loading your personalized horoscope...</p>
+              <div className={styles.loadingContainer}>
+                <p><span className={styles.loadingSpinner} /> Loading today’s horoscope…</p>
+              </div>
             </div>
           </main>
         </div>
@@ -127,32 +131,32 @@ export default function DailyHoroscopePage() {
             
             {horoscope && (
               <>
+                <span className={styles.youAreHereBadge}>Today</span>
                 <div className={styles.infoGrid}>
-                  <div className={styles.infoCard}>
+                  <div className={`${styles.infoCard} ${styles.cardActive}`}>
                     <h3>Date</h3>
                     <p className={styles.infoValue}>{horoscope.date || new Date().toLocaleDateString()}</p>
                   </div>
-                  <div className={styles.infoCard}>
-                    <h3>Day Type</h3>
+                  <div className={`${styles.infoCard} ${styles.cardActive}`}>
+                    <h3>Day type</h3>
                     <p className={styles.infoValue}>{horoscope.dayType || "N/A"}</p>
                   </div>
                 </div>
 
                 <div style={{ marginTop: "30px" }}>
-                  <h2 className={styles.sectionTitle}>Main Theme</h2>
+                  <h2 className={styles.sectionTitle}>Today’s focus</h2>
                   <p style={{ fontSize: "18px", lineHeight: "1.6", marginBottom: "20px" }}>
                     {horoscope.mainTheme || "No theme available"}
                   </p>
                 </div>
 
                 {horoscope.reason && (
-                  <div style={{ marginTop: "20px" }}>
-                    <h3 className={styles.sectionTitle}>Why Today?</h3>
-                    <p style={{ fontSize: "16px", lineHeight: "1.6", color: "#666" }}>
-                      {horoscope.reason}
-                    </p>
+                  <div style={{ marginTop: "20px" }} className={styles.explanationLine}>
+                    <strong>Why today?</strong> {horoscope.reason}
                   </div>
                 )}
+                <CalculationInfo showDasha={false} showAyanamsa={true} />
+                <TrustNote variant="loggedIn" />
               </>
             )}
           </div>

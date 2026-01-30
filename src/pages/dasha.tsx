@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
+import CalculationInfo from "@/components/common/CalculationInfo";
+import TrustNote from "@/components/common/TrustNote";
 import { dashaApi, DashaResponse, DashaTimelineResponse } from "@/services/dashaService";
 import { showError } from "@/utils/toast";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
@@ -86,7 +88,7 @@ export default function DashaPage() {
           <AppSidebar />
           <main className={styles.mainContent}>
             <div className={styles.loadingContainer}>
-              <p>Loading your Dasha analysis...</p>
+              <p><span className={styles.loadingSpinner} /> Loading your period…</p>
             </div>
           </main>
         </div>
@@ -134,36 +136,42 @@ export default function DashaPage() {
           </div>
 
           <div className={styles.kundliContainer}>
-            <h1 className={styles.sectionTitle}>Dasha Analysis</h1>
+            <h1 className={styles.sectionTitle}>Your period (Dasha)</h1>
 
             {currentDasha && (
-              <div className={styles.infoGrid}>
-                <div className={styles.infoCard}>
-                  <h3 className={styles.cardTitle}>Current Mahadasha</h3>
-                  <p className={styles.cardValue}>{currentDasha.mahadasha}</p>
-                  <p className={styles.cardSubtext}>Planet: {currentDasha.planet}</p>
-                </div>
+              <>
+                <span className={styles.youAreHereBadge}>You are here</span>
+                <p className={styles.explanationLine}>You’re in this period because your birth chart places you in {currentDasha.mahadasha} from {formatDate(currentDasha.startDate)}.</p>
+                <div className={styles.infoGrid}>
+                  <div className={`${styles.infoCard} ${styles.cardActive}`}>
+                    <h3 className={styles.cardTitle}>Current Mahadasha</h3>
+                    <p className={styles.cardValue}>{currentDasha.mahadasha}</p>
+                    <p className={styles.cardSubtext}>Planet: {currentDasha.planet}</p>
+                  </div>
 
-                <div className={styles.infoCard}>
-                  <h3 className={styles.cardTitle}>Current Antardasha</h3>
-                  <p className={styles.cardValue}>{currentDasha.antardasha}</p>
-                  {currentDasha.pratyantardasha && (
-                    <p className={styles.cardSubtext}>Pratyantardasha: {currentDasha.pratyantardasha}</p>
-                  )}
-                </div>
+                  <div className={`${styles.infoCard} ${styles.cardActive}`}>
+                    <h3 className={styles.cardTitle}>Current Antardasha</h3>
+                    <p className={styles.cardValue}>{currentDasha.antardasha}</p>
+                    {currentDasha.pratyantardasha && (
+                      <p className={styles.cardSubtext}>Pratyantardasha: {currentDasha.pratyantardasha}</p>
+                    )}
+                  </div>
 
-                <div className={styles.infoCard}>
-                  <h3 className={styles.cardTitle}>Period</h3>
-                  <p className={styles.cardValue}>{formatDate(currentDasha.startDate)}</p>
-                  <p className={styles.cardSubtext}>to {formatDate(currentDasha.endDate)}</p>
-                </div>
+                  <div className={styles.infoCard}>
+                    <h3 className={styles.cardTitle}>Period</h3>
+                    <p className={styles.cardValue}>{formatDate(currentDasha.startDate)}</p>
+                    <p className={styles.cardSubtext}>to {formatDate(currentDasha.endDate)}</p>
+                  </div>
 
-                <div className={styles.infoCard}>
-                  <h3 className={styles.cardTitle}>Remaining Days</h3>
-                  <p className={styles.cardValue}>{currentDasha.remainingDays}</p>
-                  <p className={styles.cardSubtext}>days remaining</p>
+                  <div className={styles.infoCard}>
+                    <h3 className={styles.cardTitle}>Time left</h3>
+                    <p className={styles.cardValue}>{currentDasha.remainingDays}</p>
+                    <p className={styles.cardSubtext}>days in this period</p>
+                  </div>
                 </div>
-              </div>
+                <CalculationInfo showDasha={true} showAyanamsa={true} />
+                <TrustNote variant="loggedIn" />
+              </>
             )}
 
             {!showTimeline && (
@@ -180,28 +188,49 @@ export default function DashaPage() {
 
             {timeline && showTimeline && (
               <div style={{ marginTop: '30px' }}>
-                <h2 className={styles.sectionTitle}>Dasha Timeline (Next 10 Years)</h2>
+                <h2 className={styles.sectionTitle}>What’s next (next 10 years)</h2>
                 <div className={styles.timelineContainer}>
-                  {timeline.timeline.map((period, index) => (
-                    <div key={index} className={styles.timelineItem}>
-                      <div className={styles.timelineDate}>
-                        <strong>{formatDate(period.startDate)}</strong>
-                        <span> to </span>
-                        <strong>{formatDate(period.endDate)}</strong>
-                      </div>
-                      <div className={styles.timelineContent}>
-                        <div className={styles.timelinePlanet}>{period.planet}</div>
-                        <div className={styles.timelineDasha}>
-                          <span className={styles.timelineMahadasha}>{period.dasha}</span>
-                          <span className={styles.timelineAntardasha}> / {period.antardasha}</span>
-                          {period.pratyantardasha && (
-                            <span className={styles.timelinePratyantardasha}> / {period.pratyantardasha}</span>
+                  {(() => {
+                    const now = new Date();
+                    const currentIdx = timeline.timeline.findIndex((p) => {
+                      const s = new Date(p.startDate), e = new Date(p.endDate);
+                      return s <= now && e >= now;
+                    });
+                    return timeline.timeline.map((period, index) => {
+                      const start = new Date(period.startDate), end = new Date(period.endDate);
+                      const isPast = end < now;
+                      const isCurrent = start <= now && end >= now;
+                      const isNext = currentIdx >= 0 && index === currentIdx + 1;
+                      return (
+                        <div
+                          key={index}
+                          className={`${styles.timelineItem} ${isCurrent ? styles.timelineItemActive : ""} ${isPast ? styles.timelineItemPast : ""}`}
+                        >
+                          {(isCurrent || isNext) && (
+                            <span className={isCurrent ? styles.youAreHereBadge : styles.upNextBadge}>
+                              {isCurrent ? "You are here" : "Up next"}
+                            </span>
                           )}
+                          <div className={styles.timelineDate}>
+                            <strong>{formatDate(period.startDate)}</strong>
+                            <span> to </span>
+                            <strong>{formatDate(period.endDate)}</strong>
+                          </div>
+                          <div className={styles.timelineContent}>
+                            <div className={styles.timelinePlanet}>{period.planet}</div>
+                            <div className={styles.timelineDasha}>
+                              <span className={styles.timelineMahadasha}>{period.dasha}</span>
+                              <span className={styles.timelineAntardasha}> / {period.antardasha}</span>
+                              {period.pratyantardasha && (
+                                <span className={styles.timelinePratyantardasha}> / {period.pratyantardasha}</span>
+                              )}
+                            </div>
+                            <div className={styles.timelineDuration}>{period.duration} years</div>
+                          </div>
                         </div>
-                        <div className={styles.timelineDuration}>{period.duration} years</div>
-                      </div>
-                    </div>
-                  ))}
+                      );
+                    });
+                  })()}
                 </div>
               </div>
             )}
