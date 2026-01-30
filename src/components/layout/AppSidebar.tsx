@@ -3,6 +3,32 @@ import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { useCallback } from "react";
 import styles from "@/styles/dashboard.module.css";
+import { selectIsGuest, clearToken } from "@/store/slices/authSlice";
+
+type NavItem = { id: string; label: string; href: string };
+
+const GUEST_MENU: NavItem[] = [
+  { id: "home", label: "Home", href: "/" },
+  { id: "transits", label: "Transits", href: "/transits" },
+  { id: "calendar", label: "Calendar", href: "/calendar" },
+  { id: "horoscope", label: "Horoscope", href: "/guest-horoscope" },
+  { id: "dasha", label: "Dasha", href: "/guest-dasha" },
+  { id: "dosha", label: "Dosha", href: "/guest-dosha" },
+  { id: "compatibility", label: "Match", href: "/compatibility" },
+];
+
+const AUTH_MENU: NavItem[] = [
+  { id: "dashboard", label: "Dashboard", href: "/dashboard" },
+  { id: "kundli", label: "My Kundli", href: "/kundli" },
+  { id: "horoscope", label: "Horoscope", href: "/horoscope/today" },
+  { id: "calendar", label: "Calendar", href: "/calendar" },
+  { id: "transits", label: "Transits", href: "/transits" },
+  { id: "dasha", label: "Dasha", href: "/dasha" },
+  { id: "dosha", label: "Dosha Check", href: "/dosha" },
+  { id: "compatibility", label: "Match", href: "/compatibility" },
+  { id: "remedies", label: "Remedies", href: "/remedies" },
+  { id: "ai-assistant", label: "AI Assistant", href: "/ai-assistant/chat" },
+];
 
 const AppSidebar = () => {
   const router = useRouter();

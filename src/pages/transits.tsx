@@ -60,25 +60,67 @@ export default function TransitsPage() {
               <p className={styles.noDataMessage} style={{ marginBottom: 16 }}>
                 <strong>Date:</strong> {transits.date}
               </p>
-              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                {transits.planetTransits.map((t, index) => (
-                  <li
-                    key={index}
-                    style={{
-                      background: "#faf8f5",
-                      border: "1px solid #e8ddd0",
-                      padding: "12px 14px",
-                      borderRadius: "8px",
-                      marginBottom: "10px",
-                    }}
-                  >
-                    <strong>{t.planet}</strong> in <strong>{t.fromSign}</strong> → <strong>{t.toSign}</strong> ({t.degree}°)
-                  </li>
-                ))}
-              </ul>
-              <p style={{ marginTop: "1rem", fontSize: "12px", color: "#6b7280" }}>
-                Source: {transits.source}
-              </p>
+
+              {positions.length > 0 && (
+                <>
+                  <h3 style={{ fontSize: 16, fontWeight: 600, color: "#5c4033", marginBottom: 10 }}>
+                    Current positions
+                  </h3>
+                  <ul style={{ listStyle: "none", padding: 0, margin: "0 0 20px 0", display: "flex", flexWrap: "wrap", gap: 10 }}>
+                    {positions.map(([k, v]) => (
+                      <li
+                        key={k}
+                        style={{
+                          background: "#faf8f5",
+                          border: "1px solid #e8ddd0",
+                          padding: "10px 14px",
+                          borderRadius: 8,
+                        }}
+                      >
+                        <strong>{v?.name || k}</strong>: {typeof v?.sign === "object" ? (v.sign as { name?: string })?.name : String(v?.sign ?? "")}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+
+              {major.length > 0 && (
+                <>
+                  <h3 style={{ fontSize: 16, fontWeight: 600, color: "#5c4033", marginBottom: 10 }}>
+                    Major active transits
+                  </h3>
+                  <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                    {major.map((t, i) => (
+                      <li
+                        key={i}
+                        style={{
+                          background: "#faf8f5",
+                          border: "1px solid #e8ddd0",
+                          padding: "12px 14px",
+                          borderRadius: 8,
+                          marginBottom: 10,
+                        }}
+                      >
+                        <strong>{t.planet}</strong> in <strong>{t.sign}</strong>
+                        {t.description && ` — ${t.description}`}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+
+              {positions.length === 0 && major.length === 0 && (
+                <div className={styles.noDataContainer}>
+                  <div className={styles.noDataIcon}>🪐</div>
+                  <h3 className={styles.noDataTitle}>No transit data</h3>
+                  <p className={styles.noDataMessage}>Transit data is currently unavailable.</p>
+                </div>
+              )}
+
+              <CalculationInfo showDasha={false} showAyanamsa={true} note="Positions are shown for today’s date." />
+              {transits.source && (positions.length > 0 || major.length > 0) && (
+                <p style={{ marginTop: 16, fontSize: 12, color: "#6b7280" }}>Source: {transits.source}</p>
+              )}
             </>
           )}
 
