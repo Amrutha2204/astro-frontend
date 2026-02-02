@@ -1,6 +1,6 @@
 import { request, AUTH_BASE, ASTRO_BASE } from "./fetcher";
 
-// ----- Auth types (signup/login may be used elsewhere) -----
+// -------------------- Auth Interfaces --------------------
 export interface SignUpRequest {
   name: string;
   email: string;
@@ -28,7 +28,7 @@ export interface SignUpResponse {
   userId: string;
 }
 
-// ----- Astro response types -----
+// -------------------- Astro Interfaces --------------------
 export interface KundliResponse {
   lagna: string;
   moonSign: string;
@@ -77,7 +77,6 @@ export interface GuestCalendarResponse {
   source: string;
 }
 
-/** Festival calendar – no auth (guest + logged-in) */
 export interface FestivalEntry {
   name: string;
   month: number;
@@ -107,7 +106,6 @@ export interface AuspiciousDayResponse {
   nakshatra?: string;
 }
 
-/** Shareable card – requires auth */
 export interface CreateShareableCardDto {
   type: "horoscope" | "kundli_summary";
   title?: string;
@@ -124,8 +122,48 @@ export interface StoredCardResponse {
   createdAt: string;
 }
 
-// ----- Astro API (uses shared fetcher) -----
+// -------------------- New Transit Interfaces --------------------
+export interface Retrograde {
+  planet: string;
+  startDate: string;
+  endDate: string;
+  durationDays: number;
+  description: string;
+}
+
+export interface RetrogradesResponse {
+  fromDate: string;
+  toDate: string;
+  retrogrades: Retrograde[];
+}
+
+export interface MajorTransit {
+  planet: string;
+  fromSign: string;
+  toSign: string;
+  date: string;
+  description: string;
+}
+
+export interface MajorTransitsResponse {
+  fromDate: string;
+  toDate: string;
+  transits: MajorTransit[];
+}
+
+export interface Eclipse {
+  date: string;
+  type: string;
+  maximum?: string;
+  umbralMagnitude?: number;
+  penumbralMagnitude?: number;
+  sarosNumber?: number;
+  sarosMember?: number;
+}
+
+// -------------------- Astro API --------------------
 export const astroApi = {
+  // -------------------- Kundli & Natal --------------------
   async getMyKundli(token: string, chartType?: string): Promise<KundliResponse> {
     const t = token?.trim();
     if (!t || t.split(".").length !== 3) throw new Error("Invalid token format. Please login again.");
@@ -136,10 +174,7 @@ export const astroApi = {
     });
   },
 
-  async getNatalChart(
-    token: string,
-    chartType?: string
-  ): Promise<{ sunSign: string; moonSign: string; ascendant: string; planetSignList: Array<{ planet: string; sign: string }>; source: string }> {
+  async getNatalChart(token: string, chartType?: string) {
     const t = token?.trim();
     if (!t || t.split(".").length !== 3) throw new Error("Invalid token format. Please login again.");
     return request(ASTRO_BASE, "/api/v1/astrology/natal-chart", {
@@ -149,6 +184,7 @@ export const astroApi = {
     });
   },
 
+  // -------------------- Today Transit --------------------
   async getTodayTransit(token: string, date?: string): Promise<TransitResponse> {
     const t = token?.trim();
     if (!t || t.split(".").length !== 3) throw new Error("Invalid token format. Please login again.");
@@ -160,11 +196,10 @@ export const astroApi = {
   },
 
   async getTransitsToday(): Promise<TransitsTodayResponse> {
-    return request<TransitsTodayResponse>(ASTRO_BASE, "/api/v1/astrology/transits/today", {
-      method: "GET",
-    });
+    return request<TransitsTodayResponse>(ASTRO_BASE, "/api/v1/astrology/transits/today", { method: "GET" });
   },
 
+  // -------------------- Calendar --------------------
   async getTodayCalendar(token: string, date?: string): Promise<CalendarResponse> {
     const t = token?.trim();
     if (!t || t.split(".").length !== 3) throw new Error("Invalid token format. Please login again.");
@@ -176,10 +211,7 @@ export const astroApi = {
   },
 
   async getGuestKundli(dto: { dob: string; birthTime: string; placeOfBirth: string }): Promise<KundliResponse> {
-    return request<KundliResponse>(ASTRO_BASE, "/api/v1/kundli/guest", {
-      method: "POST",
-      body: dto,
-    });
+    return request<KundliResponse>(ASTRO_BASE, "/api/v1/kundli/guest", { method: "POST", body: dto });
   },
 
   async getGuestCalendar(city?: string): Promise<GuestCalendarResponse> {
@@ -189,7 +221,6 @@ export const astroApi = {
     });
   },
 
-  /** Festivals for date (YYYY-MM-DD) or month (YYYY-MM) – no token */
   async getFestivals(dateOrMonth: string): Promise<FestivalsResponse> {
     return request<FestivalsResponse>(ASTRO_BASE, "/api/v1/astrology/calendar/festivals", {
       method: "GET",
@@ -197,7 +228,6 @@ export const astroApi = {
     });
   },
 
-  /** Muhurat for a day – no token */
   async getMuhurat(date: string, placeOfBirth?: string): Promise<MuhuratResponse> {
     return request<MuhuratResponse>(ASTRO_BASE, "/api/v1/astrology/calendar/muhurat", {
       method: "GET",
@@ -205,7 +235,6 @@ export const astroApi = {
     });
   },
 
-  /** Auspicious day check – no token */
   async getAuspiciousDay(date: string, placeOfBirth?: string): Promise<AuspiciousDayResponse> {
     return request<AuspiciousDayResponse>(ASTRO_BASE, "/api/v1/astrology/calendar/auspicious-day", {
       method: "GET",
@@ -213,17 +242,36 @@ export const astroApi = {
     });
   },
 
-  /** Create shareable card – requires token */
-  async createShareableCard(
-    token: string,
-    dto: CreateShareableCardDto
-  ): Promise<StoredCardResponse> {
+  // -------------------- Shareable Cards --------------------
+  async createShareableCard(token: string, dto: CreateShareableCardDto): Promise<StoredCardResponse> {
     const t = token?.trim();
     if (!t || t.split(".").length !== 3) throw new Error("Invalid token. Please login again.");
     return request<StoredCardResponse>(ASTRO_BASE, "/api/v1/shareable-card", {
       method: "POST",
       token: t,
       body: dto,
+    });
+  },
+
+  // -------------------- Retrogrades & Major Transits & Eclipses --------------------
+  async getRetrogrades(from: string, to: string): Promise<RetrogradesResponse> {
+    return request<RetrogradesResponse>(ASTRO_BASE, "/api/v1/astrology/transits/retrogrades", {
+      method: "GET",
+      params: { fromDate: from, toDate: to },
+    });
+  },
+
+  async getMajorTransits(from: string, to: string): Promise<MajorTransitsResponse> {
+    return request<MajorTransitsResponse>(ASTRO_BASE, "/api/v1/astrology/transits/major", {
+      method: "GET",
+      params: { fromDate: from, toDate: to },
+    });
+  },
+
+  async getEclipses(from: string): Promise<{ solar: Eclipse[]; lunar: Eclipse[] }> {
+    return request<{ solar: Eclipse[]; lunar: Eclipse[] }>(ASTRO_BASE, "/api/v1/astrology/transits/eclipses", {
+      method: "GET",
+      params: { fromDate: from },
     });
   },
 };
