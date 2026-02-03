@@ -37,11 +37,11 @@ export default function TransitsPage() {
       <div className={styles.dashboardContent}>
         <AppSidebar />
         <main className={styles.mainContent}>
-          <h2 className={styles.pageTitle}>Today’s transits</h2>
+          <h2 className={styles.pageTitle}>Today&apos;s transits</h2>
 
           {loading && (
             <div className={styles.loadingContainer}>
-              <p><span className={styles.loadingSpinner} /> Loading today’s transits…</p>
+              <p><span className={styles.loadingSpinner} /> Loading today&apos;s transits…</p>
             </div>
           )}
 
@@ -56,7 +56,7 @@ export default function TransitsPage() {
           {!loading && transits && !error && (
             <>
               <span className={styles.youAreHereBadge}>Today</span>
-              <p className={styles.explanationLine}>These are today’s planetary positions; major transits that affect charts are highlighted below.</p>
+              <p className={styles.explanationLine}>These are today&apos;s planetary positions; major transits that affect charts are highlighted below.</p>
               <p className={styles.noDataMessage} style={{ marginBottom: 16 }}>
                 <strong>Date:</strong> {transits.date}
               </p>
@@ -117,7 +117,7 @@ export default function TransitsPage() {
                 </div>
               )}
 
-              <CalculationInfo showDasha={false} showAyanamsa={true} note="Positions are shown for today’s date." />
+              <CalculationInfo showDasha={false} showAyanamsa={true} note="Positions are shown for today&apos;s date." />
               {transits.source && (positions.length > 0 || major.length > 0) && (
                 <p style={{ marginTop: 16, fontSize: 12, color: "#6b7280" }}>Source: {transits.source}</p>
               )}

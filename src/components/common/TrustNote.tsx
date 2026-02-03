@@ -14,6 +14,9 @@ const messages = {
   loggedIn: "This result is based on your saved birth details.",
 };
 
+const guidanceLine =
+  "For guidance only. Consider consulting an expert for major life decisions.";
+
 const accuracyTip =
   "For best accuracy, use a precise birth time (hours and minutes).";
 
@@ -28,6 +31,7 @@ export default function TrustNote({
       role="status"
     >
       <span className={styles.trustNoteText}>{messages[variant]}</span>
+      <span className={styles.trustNoteTip}>{guidanceLine}</span>
       {showAccuracyTip && (
         <span className={styles.trustNoteTip}>{accuracyTip}</span>
       )}

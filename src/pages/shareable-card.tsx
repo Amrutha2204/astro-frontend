@@ -70,9 +70,9 @@ export default function ShareableCardPage() {
         const payload: Record<string, unknown> =
           type === "horoscope"
             ? {
-                dayType: dayType || "Good",
-                mainTheme: mainTheme || "—",
-                reason: reason || "—",
+                dayType: (dayType && dayType.trim()) || "Based on today's chart",
+                mainTheme: (mainTheme && mainTheme.trim()) || "General planetary influence",
+                reason: (reason && reason.trim()) || "Derived from current transits and Vedic methods.",
               }
             : {};
         if (type === "kundli_summary") {

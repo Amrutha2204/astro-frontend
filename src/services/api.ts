@@ -105,6 +105,7 @@ export interface AuspiciousDayResponse {
   reason: string;
   tithi?: string;
   nakshatra?: string;
+  source?: string;
 }
 
 /** Shareable card – requires auth */
