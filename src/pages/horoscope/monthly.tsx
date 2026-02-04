@@ -80,10 +80,11 @@ export default function MonthlyHoroscopePage() {
           <main className={styles.mainContent}>
             <div className={styles.kundliContainer}>
               <h1 className={styles.sectionTitle}>📆 Monthly Horoscope</h1>
-              <div style={{ color: "red", margin: "20px 0" }}>
+              <div className="my-5 text-red-600">
+
                 <p><strong>Error:</strong> {error}</p>
               </div>
-              <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+              <div className="mt-5 flex gap-3">
                 <button onClick={fetchHoroscope} className={styles.primaryButton}>
                   Retry
                 </button>
@@ -151,7 +152,7 @@ export default function MonthlyHoroscopePage() {
                 )}
 
                 {horoscope.predictions && Array.isArray(horoscope.predictions) && horoscope.predictions.length > 0 && (
-                  <div style={{ marginTop: "30px" }}>
+                  <div className="mt-8">
                     <h2 className={styles.sectionTitle}>Daily predictions</h2>
                     <div className={styles.planetsGrid}>
                       {horoscope.predictions.map((prediction: any, index: number) => {
@@ -174,22 +175,28 @@ export default function MonthlyHoroscopePage() {
                               }) : `Day ${index + 1}`}
                             </h4>
                             {prediction.horoscope?.dayType && (
-                              <p style={{ marginBottom: "8px" }}>
-                                <strong>Type:</strong> <span style={{ 
-                                  color: prediction.horoscope.dayType === 'Good' ? '#10b981' : 
-                                         prediction.horoscope.dayType === 'Challenging' ? '#ef4444' : '#6b7280'
-                                }}>
+                              <p className="mb-2">
+                                <strong>Type:</strong> 
+                                <span
+                                  className={`font-semibold ${
+                                  prediction.horoscope.dayType === "Good"
+                                  ? "text-emerald-500"
+                                  : prediction.horoscope.dayType === "Challenging"
+                                  ? "text-red-500"
+                                  : "text-gray-500"
+                                }`}
+                              >
                                   {prediction.horoscope.dayType}
                                 </span>
                               </p>
                             )}
                             {prediction.horoscope?.mainTheme && (
-                              <p style={{ marginTop: "8px", fontSize: "14px", lineHeight: "1.5" }}>
+                              <p className="mt-2 text-sm leading-relaxed">
                                 <strong>Focus:</strong> {prediction.horoscope.mainTheme}
                               </p>
                             )}
                             {prediction.horoscope?.reason && (
-                              <p style={{ marginTop: "10px", fontSize: "13px", color: "#666", fontStyle: "italic" }}>
+                              <p className="mt-2.5 text-xs italic text-gray-600">
                                 {prediction.horoscope.reason}
                               </p>
                             )}

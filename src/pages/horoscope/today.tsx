@@ -82,10 +82,10 @@ export default function DailyHoroscopePage() {
           <main className={styles.mainContent}>
             <div className={styles.kundliContainer}>
               <h1 className={styles.sectionTitle}>🌙 Daily Horoscope</h1>
-              <div style={{ color: "red", margin: "20px 0" }}>
+              <div className="my-5 text-red-600">
                 <p><strong>Error:</strong> {error}</p>
               </div>
-              <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+              <div className="mt-5 flex gap-3">
                 <button onClick={fetchHoroscope} className={styles.primaryButton}>
                   Retry
                 </button>
@@ -142,16 +142,15 @@ export default function DailyHoroscopePage() {
                     <p className={styles.infoValue}>{horoscope.dayType || "N/A"}</p>
                   </div>
                 </div>
-
-                <div style={{ marginTop: "30px" }}>
+                <div className="mt-8">
                   <h2 className={styles.sectionTitle}>Today’s focus</h2>
-                  <p style={{ fontSize: "18px", lineHeight: "1.6", marginBottom: "20px" }}>
+                  <p className="mb-5 text-lg leading-relaxed">
                     {horoscope.mainTheme || "No theme available"}
                   </p>
                 </div>
 
                 {horoscope.reason && (
-                  <div style={{ marginTop: "20px" }} className={styles.explanationLine}>
+                  <div className={`mt-5 ${styles.explanationLine}`}>
                     <strong>Why today?</strong> {horoscope.reason}
                   </div>
                 )}
