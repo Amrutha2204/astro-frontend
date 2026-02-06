@@ -27,10 +27,7 @@ const AUTH_MENU: NavItem[] = [
   { id: "dosha", label: "Dosha Check", href: "/dosha" },
   { id: "compatibility", label: "Match", href: "/compatibility" },
   { id: "remedies", label: "Remedies", href: "/remedies" },
-<<<<<<< HEAD
-=======
   { id: "shareable-card", label: "Shareable Card", href: "/shareable-card" },
->>>>>>> ee93625fe639b332b5c1cf019d90908bec6dac2a
   { id: "ai-assistant", label: "AI Assistant", href: "/ai-assistant/chat" },
 ];
 
@@ -87,8 +84,4 @@ const AppSidebar = () => {
   );
 };
 
-<<<<<<< HEAD
 export default AppSidebar;
-=======
-export default AppSidebar;
->>>>>>> ee93625fe639b332b5c1cf019d90908bec6dac2a

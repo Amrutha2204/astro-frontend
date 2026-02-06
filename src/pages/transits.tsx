@@ -2,10 +2,8 @@ import { useEffect, useState } from "react";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
 import CalculationInfo from "@/components/common/CalculationInfo";
-
 import dashboardStyles from "@/styles/dashboard.module.css";
 import styles from "@/styles/transits.module.css";
-
 import {
   astroApi,
   TransitsTodayResponse,
@@ -16,7 +14,6 @@ import {
 
 type TabId = "today" | "retrogrades" | "major" | "eclipses";
 
-// Helper to get today in YYYY-MM-DD format
 function todayStr() {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
@@ -24,7 +21,6 @@ function todayStr() {
   ).padStart(2, "0")}`;
 }
 
-// Group items by Month Year for display
 function groupByMonth<T extends { date?: string; startDate?: string }>(items: T[]) {
   const map: Record<string, T[]> = {};
   items.forEach((item) => {
@@ -39,7 +35,6 @@ function groupByMonth<T extends { date?: string; startDate?: string }>(items: T[
   return map;
 }
 
-// Format date in a prettier way
 function formatDate(dateStr: string | undefined) {
   if (!dateStr) return "-";
   const d = new Date(dateStr);
@@ -67,24 +62,20 @@ export default function TransitsPage() {
   const [solarEclipses, setSolarEclipses] = useState<Eclipse[]>([]);
   const [lunarEclipses, setLunarEclipses] = useState<Eclipse[]>([]);
 
-  // Fetch today’s planetary positions
   useEffect(() => {
     astroApi.getTransitsToday().then(setTodayData);
   }, []);
 
-  // Load retrogrades based on selected range
   const loadRetrogrades = async () => {
     const data = await astroApi.getRetrogrades(retroFrom, retroTo);
     setRetroData(data.retrogrades);
   };
 
-  // Load major transits based on selected range
   const loadMajor = async () => {
     const data = await astroApi.getMajorTransits(majorFrom, majorTo);
     setMajorData(data.transits);
   };
 
-  // Load eclipses
   const loadEclipses = async () => {
     const data = await astroApi.getEclipses(eclipseFrom);
     setSolarEclipses(data.solar);
@@ -98,8 +89,6 @@ export default function TransitsPage() {
         <AppSidebar />
         <main className={dashboardStyles.mainContent}>
           <h1 className={styles.pageTitle}>Planetary Transits</h1>
-
-          {/* Tabs */}
           <div className={styles.tabs}>
             {[
               { id: "today", label: "Today" },
