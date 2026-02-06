@@ -101,9 +101,9 @@ export default function AIChatPage() {
 
           <div className={styles.kundliContainer}>
             <h1 className={styles.sectionTitle}>AI Astrology Assistant</h1>
-            <p style={{ color: '#6b7280', marginBottom: '20px' }}>
-              Ask any astrology-related questions and get personalized insights based on your birth chart.
-            </p>
+            <p className="text-sm text-gray-500 mb-6">
+            Ask any astrology-related questions and get personalized insights based on your birth chart.
+          </p>
 
             <div className={styles.chatContainer}>
               <div className={styles.chatMessages}>

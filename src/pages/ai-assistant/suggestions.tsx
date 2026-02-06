@@ -144,16 +144,16 @@ export default function SuggestionsPage() {
             {suggestions && (
               <>
                 <div className={styles.suggestionsHeader}>
-                  <p style={{ color: '#6b7280', marginBottom: '10px' }}>
-                    Personalized suggestions for {formatDate(suggestions.date)}
+                  <p className="text-sm text-gray-500 mb-2">
+                      Personalized suggestions for {formatDate(suggestions.date)}
                   </p>
                   {suggestions.overallTheme && (
                     <div className={styles.overallTheme}>
-                      <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#dc2626', marginBottom: '10px' }}>
-                        Overall Theme
+                      <h3 className="text-lg font-semibold text-red-600 mb-2">
+                          Overall Theme
                       </h3>
-                      <p style={{ fontSize: '16px', color: '#374151', fontStyle: 'italic' }}>
-                        {suggestions.overallTheme}
+                      <p className="text-base text-gray-700 italic">
+                          {suggestions.overallTheme}
                       </p>
                     </div>
                   )}
