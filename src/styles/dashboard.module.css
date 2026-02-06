@@ -1929,5 +1929,9 @@
 .mainContent > .resultBlock + .resultBlock,
 .mainContent > .card + .resultBlock {
   margin-top: 20px;
+<<<<<<< HEAD
+}
+=======
 }
 
+>>>>>>> ee93625fe639b332b5c1cf019d90908bec6dac2a

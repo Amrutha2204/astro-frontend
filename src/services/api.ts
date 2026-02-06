@@ -218,6 +218,7 @@ export const astroApi = {
     return request<GuestCalendarResponse>(ASTRO_BASE, "/api/v1/astrology/calendar/today/guest", {
       method: "GET",
       params: city?.trim() ? { placeOfBirth: city.trim() } : undefined,
+<<<<<<< HEAD
     });
   },
 
@@ -275,3 +276,62 @@ export const astroApi = {
     });
   },
 };
+=======
+    });
+  },
+
+  async getFestivals(dateOrMonth: string): Promise<FestivalsResponse> {
+    return request<FestivalsResponse>(ASTRO_BASE, "/api/v1/astrology/calendar/festivals", {
+      method: "GET",
+      params: { date: dateOrMonth },
+    });
+  },
+
+  async getMuhurat(date: string, placeOfBirth?: string): Promise<MuhuratResponse> {
+    return request<MuhuratResponse>(ASTRO_BASE, "/api/v1/astrology/calendar/muhurat", {
+      method: "GET",
+      params: placeOfBirth?.trim() ? { date, placeOfBirth: placeOfBirth.trim() } : { date },
+    });
+  },
+
+  async getAuspiciousDay(date: string, placeOfBirth?: string): Promise<AuspiciousDayResponse> {
+    return request<AuspiciousDayResponse>(ASTRO_BASE, "/api/v1/astrology/calendar/auspicious-day", {
+      method: "GET",
+      params: placeOfBirth?.trim() ? { date, placeOfBirth: placeOfBirth.trim() } : { date },
+    });
+  },
+
+  // -------------------- Shareable Cards --------------------
+  async createShareableCard(token: string, dto: CreateShareableCardDto): Promise<StoredCardResponse> {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) throw new Error("Invalid token. Please login again.");
+    return request<StoredCardResponse>(ASTRO_BASE, "/api/v1/shareable-card", {
+      method: "POST",
+      token: t,
+      body: dto,
+    });
+  },
+
+  // -------------------- Retrogrades & Major Transits & Eclipses --------------------
+  async getRetrogrades(from: string, to: string): Promise<RetrogradesResponse> {
+    return request<RetrogradesResponse>(ASTRO_BASE, "/api/v1/astrology/transits/retrogrades", {
+      method: "GET",
+      params: { fromDate: from, toDate: to },
+    });
+  },
+
+  async getMajorTransits(from: string, to: string): Promise<MajorTransitsResponse> {
+    return request<MajorTransitsResponse>(ASTRO_BASE, "/api/v1/astrology/transits/major", {
+      method: "GET",
+      params: { fromDate: from, toDate: to },
+    });
+  },
+
+  async getEclipses(from: string): Promise<{ solar: Eclipse[]; lunar: Eclipse[] }> {
+    return request<{ solar: Eclipse[]; lunar: Eclipse[] }>(ASTRO_BASE, "/api/v1/astrology/transits/eclipses", {
+      method: "GET",
+      params: { fromDate: from },
+    });
+  },
+};
+>>>>>>> ee93625fe639b332b5c1cf019d90908bec6dac2a

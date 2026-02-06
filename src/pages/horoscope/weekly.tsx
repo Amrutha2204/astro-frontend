@@ -80,10 +80,10 @@ export default function WeeklyHoroscopePage() {
           <main className={styles.mainContent}>
             <div className={styles.kundliContainer}>
               <h1 className={styles.sectionTitle}>📅 Weekly Horoscope</h1>
-              <div style={{ color: "red", margin: "20px 0" }}>
+              <div className="my-5 text-red-600">
                 <p><strong>Error:</strong> {error}</p>
               </div>
-              <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+              <div className="mt-5 flex gap-3">
                 <button onClick={fetchHoroscope} className={styles.primaryButton}>
                   Retry
                 </button>
@@ -146,7 +146,11 @@ export default function WeeklyHoroscopePage() {
                 )}
 
                 {horoscope.predictions && Array.isArray(horoscope.predictions) && horoscope.predictions.length > 0 && (
+<<<<<<< HEAD
+                  <div className="mt-8">
+=======
                   <div style={{ marginTop: "30px" }}>
+>>>>>>> ee93625fe639b332b5c1cf019d90908bec6dac2a
                     <h2 className={styles.sectionTitle}>Daily predictions</h2>
                     <div className={styles.planetsGrid}>
                       {horoscope.predictions.map((prediction: any, index: number) => {
@@ -170,7 +174,11 @@ export default function WeeklyHoroscopePage() {
                               }) : `Day ${index + 1}`}
                             </h4>
                             {prediction.horoscope?.dayType && (
+<<<<<<< HEAD
+                              <p className="mb-2">
+=======
                               <p style={{ marginBottom: "8px" }}>
+>>>>>>> ee93625fe639b332b5c1cf019d90908bec6dac2a
                                 <strong>Type:</strong> <span style={{ 
                                   color: prediction.horoscope.dayType === 'Good' ? '#10b981' : 
                                          prediction.horoscope.dayType === 'Challenging' ? '#ef4444' : '#6b7280'
@@ -180,12 +188,20 @@ export default function WeeklyHoroscopePage() {
                               </p>
                             )}
                             {prediction.horoscope?.mainTheme && (
+<<<<<<< HEAD
+                              <p className="mt-2 text-sm leading-relaxed">
+=======
                               <p style={{ marginTop: "8px", fontSize: "14px", lineHeight: "1.5" }}>
+>>>>>>> ee93625fe639b332b5c1cf019d90908bec6dac2a
                                 <strong>Focus:</strong> {prediction.horoscope.mainTheme}
                               </p>
                             )}
                             {prediction.horoscope?.reason && (
+<<<<<<< HEAD
+                              <p className="mt-2 text-xs text-gray-500 italic">
+=======
                               <p style={{ marginTop: "10px", fontSize: "13px", color: "#666", fontStyle: "italic" }}>
+>>>>>>> ee93625fe639b332b5c1cf019d90908bec6dac2a
                                 {prediction.horoscope.reason}
                               </p>
                             )}

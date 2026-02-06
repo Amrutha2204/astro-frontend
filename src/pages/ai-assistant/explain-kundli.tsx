@@ -57,9 +57,10 @@ export default function ExplainKundliPage() {
 
           <div className={styles.kundliContainer}>
             <h1 className={styles.sectionTitle}>AI Kundli Explanation</h1>
-            <p style={{ color: '#6b7280', marginBottom: '30px' }}>
-              Get a detailed AI-powered explanation of your birth chart. Choose a focus area or get an overall explanation.
-            </p>
+            <p className="text-sm text-gray-500 mb-8">
+  Get a detailed AI-powered explanation of your birth chart. Choose a focus area or get an overall explanation.
+</p>
+
 
             <div className={styles.explainKundliForm}>
               <div className={styles.focusSelector}>
@@ -81,9 +82,9 @@ export default function ExplainKundliPage() {
               <button
                 onClick={handleExplain}
                 disabled={loading}
-                className={styles.loginButton}
-                style={{ maxWidth: '300px', margin: '20px auto 0' }}
+                className={`${styles.loginButton} max-w-[300px] mx-auto mt-5`}
               >
+
                 {loading ? 'Generating Explanation...' : 'Explain My Kundli'}
               </button>
             </div>
@@ -119,7 +120,11 @@ export default function ExplainKundliPage() {
                   <div className={styles.explanationContent}>
                     {explanation.explanation.text.split('\n').map((paragraph, index) => (
                       paragraph.trim() && (
-                        <p key={index} style={{ marginBottom: '15px', lineHeight: '1.8', color: '#374151' }}>
+                        <p
+                          key={index}
+                          className="mb-4 leading-relaxed text-gray-700"
+                        >
+
                           {paragraph.trim()}
                         </p>
                       )
@@ -127,7 +132,7 @@ export default function ExplainKundliPage() {
                   </div>
                 </div>
 
-                <div style={{ marginTop: '20px', textAlign: 'center' }}>
+                  <div className="mt-5 text-center">
                   <button
                     onClick={handleExplain}
                     disabled={loading}
