@@ -122,8 +122,10 @@ export default function CalendarPage() {
   return (
     <div className={styles.dashboardContainer}>
       <AppHeader />
+
       <div className={styles.dashboardContent}>
         <AppSidebar />
+
         <main className={styles.mainContent}>
           <div className={styles.kundliContainer}>
             <h1 className={styles.pageTitle}>Festival Calendar</h1>
