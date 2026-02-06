@@ -326,4 +326,8 @@ export default function GuestKundliPage() {
       </div>
     </div>
   );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> ee93625fe639b332b5c1cf019d90908bec6dac2a
