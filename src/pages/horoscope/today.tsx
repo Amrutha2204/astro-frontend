@@ -143,7 +143,7 @@ export default function DailyHoroscopePage() {
                   </div>
                 </div>
                 <div className="mt-8">
-                  <h2 className={styles.sectionTitle}>Today’s focus</h2>
+                  <h2 className={styles.sectionTitle}>Today's focus</h2>
                   <p className="mb-5 text-lg leading-relaxed">
                     {horoscope.mainTheme || "No theme available"}
                   </p>

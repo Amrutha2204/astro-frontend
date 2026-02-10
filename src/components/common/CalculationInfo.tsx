@@ -11,7 +11,7 @@ type Props = {
 };
 
 const defaultNote = "Birth time is interpreted in the local timezone of the birth place.";
-const methodologyLine = "Based on standard Vedic astrology methods.";
+const methodologyLine = "Based on standard Vedic astrology methods. Data from Swiss Ephemeris where applicable.";
 
 export default function CalculationInfo({
   showDasha = true,

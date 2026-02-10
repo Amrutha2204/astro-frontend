@@ -248,6 +248,9 @@ export default function CalendarPage() {
                     <h3 className={styles.sectionTitle}>
                       Festivals {festivalsByMonth ? `in ${festivalsData.dateOrMonth}` : `on ${festivalsData.dateOrMonth}`}
                     </h3>
+                    <p className={styles.explanationLine} style={{ marginBottom: 12 }}>
+                      Festival dates are approximate; many follow the lunar calendar and vary by year.
+                    </p>
                     {festivalsData.festivals.length === 0 ? (
                       <p className={styles.noDataMessage}>No festivals found for this date or month.</p>
                     ) : (
@@ -320,6 +323,9 @@ export default function CalendarPage() {
                       </span>
                     </div>
                     <h3 className={styles.cardTitle} style={{ marginBottom: 10 }}>Good periods (UTC)</h3>
+                    <p className={styles.explanationLine} style={{ marginBottom: 10, fontSize: 13 }}>
+                      Times are in UTC. Convert to your local time zone for your location.
+                    </p>
                     <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
                       {muhuratData.goodPeriods.map((p, i) => (
                         <li key={i} className={styles.infoItem} style={{ marginBottom: 8 }}>
@@ -400,6 +406,9 @@ export default function CalendarPage() {
                       )}
                     </div>
                     <p className={styles.explanationLine}>{auspiciousData.reason}</p>
+                    {auspiciousData.source && (
+                      <p style={{ marginTop: 12, fontSize: 12, color: "#6b7280" }}>Source: {auspiciousData.source}</p>
+                    )}
                   </>
                 )}
               </>

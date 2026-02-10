@@ -104,6 +104,7 @@ export interface AuspiciousDayResponse {
   reason: string;
   tithi?: string;
   nakshatra?: string;
+  source?: string;
 }
 
 export interface CreateShareableCardDto {
