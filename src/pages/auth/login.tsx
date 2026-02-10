@@ -14,9 +14,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   const submit = (e?: React.FormEvent) => {
-    if (e) {
-      e.preventDefault();
-    }
+    if (e) e.preventDefault();
 
     const trimmedEmail = email.trim();
     const trimmedPassword = password.trim();
@@ -28,17 +26,10 @@ export default function LoginPage() {
 
     setLoading(true);
 
-    // Use Promise.catch to prevent unhandled rejection - don't use async/await
-    const loginPromise = loginUser({ 
-      email: trimmedEmail.toLowerCase(), 
-      password: trimmedPassword 
-    });
-
-    loginPromise
+    loginUser({ email: trimmedEmail.toLowerCase(), password: trimmedPassword })
       .then((res) => {
-        // Check if response status is 401
         if (res.status === 401) {
-          showError("Invalid email or password. Please check your credentials and try again.");
+          showError("Invalid email or password. Please check your credentials.");
           setLoading(false);
           return;
         }
@@ -49,14 +40,21 @@ export default function LoginPage() {
           setLoading(false);
           return;
         }
+
         dispatch(setToken(token));
+
+        // Save birthPlace from login response
+        if (res.data.user?.birthPlace) {
+          localStorage.setItem("user", JSON.stringify(res.data.user));
+        }
+
         showSuccess("Login successful!");
         router.push("/dashboard");
       })
       .catch((err: unknown) => {
         setLoading(false);
         const errorMessage =
-          (err && typeof err === "object" && "message" in err && typeof (err as Error).message === "string")
+          err && typeof err === "object" && "message" in err && typeof (err as Error).message === "string"
             ? (err as Error).message
             : "Invalid email or password";
         showError(errorMessage);

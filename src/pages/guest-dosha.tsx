@@ -6,6 +6,7 @@ import TrustNote from "@/components/common/TrustNote";
 import { doshaApi } from "@/services/doshaService";
 import styles from "@/styles/dashboard.module.css";
 import formStyles from "@/styles/birthDetails.module.css";
+import Loading from "@/components/ui/Loading";
 
 export default function GuestDoshaPage() {
   const [fullName, setFullName] = useState("");

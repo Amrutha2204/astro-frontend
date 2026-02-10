@@ -32,8 +32,15 @@ export const registerUser = (data: {
 
 /** Login. Returns { status, data }. Check status (e.g. 401) before using data. */
 export const loginUser = (data: { email: string; password: string }) =>
-  request<{ accessToken?: string; user?: { id: string; name: string; roleId: number } }>(
+  request<{ 
+    accessToken?: string; 
+    user?: { id: string; name: string; roleId: number; birthPlace?: string };
+   }>(
     AUTH_BASE,
     "/api/v1/auth/login",
     { method: "POST", body: data, noThrow: true }
-  ) as Promise<{ status: number; data: { accessToken?: string; user?: { id: string; name: string; roleId: number } } }>;
+  ) as Promise<{ 
+    status: number; 
+    data: { 
+      accessToken?: string; 
+      user?: { id: string; name: string; roleId: number; birthPlace?: string} } }>;

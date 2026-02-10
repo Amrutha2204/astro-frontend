@@ -9,6 +9,8 @@ import { doshaApi, DoshaResponse } from "@/services/doshaService";
 import { showError } from "@/utils/toast";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
 import styles from "@/styles/dashboard.module.css";
+import ErrorMessage from "@/components/ui/ErrorMessage";
+import Loading from "@/components/ui/Loading";
 
 const REDIRECT_DELAY_MS = 2000;
 
@@ -78,9 +80,7 @@ export default function DoshaPage() {
         <div className={styles.dashboardContent}>
           <AppSidebar />
           <main className={styles.mainContent}>
-            <div className={styles.loadingContainer}>
-              <p><span className={styles.loadingSpinner} /> Loading your dosha check…</p>
-            </div>
+            <Loading text="Loading your Dosha Check..." />
           </main>
         </div>
       </div>
@@ -95,7 +95,7 @@ export default function DoshaPage() {
           <AppSidebar />
           <main className={styles.mainContent}>
             <div className={styles.errorContainer}>
-              <p className={styles.errorText}>Error: {error}</p>
+              {error && <ErrorMessage message={error} />}
               <div className={styles.buttonGroup}>
                 <button onClick={fetchDosha} className={styles.backButton}>
                   🔄 Retry

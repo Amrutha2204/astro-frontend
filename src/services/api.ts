@@ -20,7 +20,12 @@ export interface LoginRequest {
 
 export interface LoginResponse {
   accessToken: string;
-  user: { id: string; name: string; roleId: number };
+  user: { 
+    id: string; 
+    name: string; 
+    roleId: number;
+    birthPlace?:string;
+   };
 }
 
 export interface SignUpResponse {

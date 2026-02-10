@@ -4,9 +4,10 @@ import { useDispatch, useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
 import { remediesApi, RemedyRecommendations } from "@/services/remediesService";
-import { showError } from "@/utils/toast";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
 import styles from "@/styles/dashboard.module.css";
+import ErrorMessage from "@/components/ui/ErrorMessage";
+import Loading from "@/components/ui/Loading";
 
 const REDIRECT_DELAY_MS = 2000;
 
@@ -36,7 +37,6 @@ export default function RemediesPage() {
       const e = err as { message?: string };
       const msg = e.message || "Failed to load remedies";
       setError(msg);
-      showError(msg);
     } finally {
       setLoading(false);
     }
@@ -111,38 +111,13 @@ export default function RemediesPage() {
         <div className={styles.dashboardContent}>
           <AppSidebar />
           <main className={styles.mainContent}>
-            <div className={styles.loadingContainer}>
-              <p>Loading your personalized remedies...</p>
-            </div>
+            <Loading text="Loading your Remedies.."/>
           </main>
         </div>
       </div>
     );
   }
 
-  if (error) {
-    return (
-      <div className={styles.dashboardContainer}>
-        <AppHeader />
-        <div className={styles.dashboardContent}>
-          <AppSidebar />
-          <main className={styles.mainContent}>
-            <div className={styles.errorContainer}>
-              <p className={styles.errorText}>Error: {error}</p>
-              <div className={styles.buttonGroup}>
-                <button onClick={fetchRemedies} className={styles.backButton}>
-                  🔄 Retry
-                </button>
-                <button onClick={() => router.push("/auth/login")} className={styles.backButton}>
-                  Go to Login
-                </button>
-              </div>
-            </div>
-          </main>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className={styles.dashboardContainer}>
@@ -161,6 +136,7 @@ export default function RemediesPage() {
 
           <div className={styles.kundliContainer}>
             <h1 className={styles.sectionTitle}>Astrological Remedies</h1>
+            {error && <ErrorMessage message={error} />}
             <p style={{ color: '#6b7280', marginBottom: '30px' }}>
               Personalized remedies and recommendations based on your birth chart to enhance positive energies and mitigate challenges.
             </p>

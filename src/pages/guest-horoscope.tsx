@@ -6,6 +6,7 @@ import TrustNote from "@/components/common/TrustNote";
 import { horoscopeApi } from "@/services/horoscopeService";
 import styles from "@/styles/dashboard.module.css";
 import formStyles from "@/styles/birthDetails.module.css";
+import Loading from "@/components/ui/Loading";
 
 export default function GuestHoroscopePage() {
   const [fullName, setFullName] = useState("");

@@ -6,6 +6,7 @@ import TrustNote from "@/components/common/TrustNote";
 import { dashaApi, type GuestBirthDto } from "@/services/dashaService";
 import styles from "@/styles/dashboard.module.css";
 import formStyles from "@/styles/birthDetails.module.css";
+import Loading from "@/components/ui/Loading";
 
 export default function GuestDashaPage() {
   const [fullName, setFullName] = useState("");

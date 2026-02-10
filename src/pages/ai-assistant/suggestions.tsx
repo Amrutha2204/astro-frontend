@@ -7,6 +7,7 @@ import { aiAssistantApi, SuggestionsResponse } from "@/services/aiAssistantServi
 import { showError, showSuccess } from "@/utils/toast";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
 import styles from "@/styles/dashboard.module.css";
+import ErrorMessage from "@/components/ui/ErrorMessage";
 
 const REDIRECT_DELAY_MS = 2000;
 
@@ -36,7 +37,6 @@ export default function SuggestionsPage() {
       const e = err as { message?: string };
       const msg = e.message || "Failed to load suggestions";
       setError(msg);
-      showError(msg);
     } finally {
       setLoading(false);
     }
@@ -101,28 +101,26 @@ export default function SuggestionsPage() {
   }
 
   if (error) {
-    return (
-      <div className={styles.dashboardContainer}>
-        <AppHeader />
-        <div className={styles.dashboardContent}>
-          <AppSidebar />
-          <main className={styles.mainContent}>
-            <div className={styles.errorContainer}>
-              <p className={styles.errorText}>Error: {error}</p>
-              <div className={styles.buttonGroup}>
-                <button onClick={fetchSuggestions} className={styles.backButton}>
-                  🔄 Retry
-                </button>
-                <button onClick={() => router.push("/auth/login")} className={styles.backButton}>
-                  Go to Login
-                </button>
-              </div>
-            </div>
-          </main>
-        </div>
+  return (
+    <div className={styles.dashboardContainer}>
+      <AppHeader />
+      <div className={styles.dashboardContent}>
+        <AppSidebar />
+        <main className={styles.mainContent}>
+          <ErrorMessage message={error} />
+          <div className={styles.buttonGroup}>
+            <button onClick={fetchSuggestions} className={styles.backButton}>
+              🔄 Retry
+            </button>
+            <button onClick={() => router.push("/auth/login")} className={styles.backButton}>
+              Go to Login
+            </button>
+          </div>
+        </main>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
   return (
     <div className={styles.dashboardContainer}>

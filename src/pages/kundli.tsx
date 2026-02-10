@@ -6,6 +6,8 @@ import AppSidebar from "@/components/layout/AppSidebar";
 import { astroApi, KundliResponse } from "@/services/api";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
 import styles from "@/styles/dashboard.module.css";
+import ErrorMessage from "@/components/ui/ErrorMessage";
+import Loading from "@/components/ui/Loading";
 
 const REDIRECT_DELAY_MS = 2000;
 
@@ -59,53 +61,7 @@ export default function KundliPage() {
         <div className={styles.dashboardContent}>
           <AppSidebar />
           <main className={styles.mainContent}>
-            <div className={styles.loadingContainer}>
-              <p>Loading your Kundli...</p>
-            </div>
-          </main>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className={styles.dashboardContainer}>
-        <AppHeader />
-        <div className={styles.dashboardContent}>
-          <AppSidebar />
-          <main className={styles.mainContent}>
-            <div className={styles.errorContainer}>
-              <p className={styles.errorText}>Error: {error}</p>
-              {error.includes("Invalid token") && (
-                <p className={styles.errorHint}>
-                  Please log out and log in again to get a fresh token.
-                </p>
-              )}
-              <div className={styles.errorActions}>
-                <button
-                  className={styles.retryButton}
-                  onClick={() => {
-                    setError(null);
-                    setLoading(true);
-                    fetchKundli();
-                  }}
-                >
-                  Retry
-                </button>
-                {error.includes("Invalid token") && (
-                  <button
-                    className={styles.retryButton}
-                    onClick={() => {
-                      dispatch(clearToken());
-                      router.push("/auth/login");
-                    }}
-                  >
-                    Go to Login
-                  </button>
-                )}
-              </div>
-            </div>
+            <Loading text="Loading your Kundli..." />
           </main>
         </div>
       </div>
@@ -120,6 +76,7 @@ export default function KundliPage() {
         <main className={styles.mainContent}>
           <div className={styles.kundliContainer}>
             <h1 className={styles.pageTitle}>My Kundli</h1>
+            {error && <ErrorMessage message={error} />}
 
             {kundli && (
               <div className={styles.kundliContent}>

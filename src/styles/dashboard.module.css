@@ -133,12 +133,11 @@
 .dashboardContent {
   display: flex;
   flex: 1;
-  min-height: 0;
-  overflow: hidden;
+  width: 100%;
 }
 
 .sidebar {
-  width: 250px;
+  width: 260px;
   background: #6b4423;
   color: white;
   display: flex;
@@ -149,6 +148,7 @@
   left: 0;
   box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .sidebarHeader {
@@ -248,12 +248,13 @@
 
 .mainContent {
   flex: 1;
-  padding: 30px;
+  padding: 24px;
   margin-left: 250px;
   overflow-y: auto;
   overflow-x: hidden;
   background: #faf8f5;
   height: calc(100vh - 50px);
+  width: 100%;
 }
 
 .noDataContainer {
@@ -1929,4 +1930,39 @@
 .mainContent > .resultBlock + .resultBlock,
 .mainContent > .card + .resultBlock {
   margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+  .dashboardContent {
+    display: block;        /* 🔑 STOP flex on mobile */
+  }
+
+  .sidebar {
+    display: none;         /* 🔑 Hide sidebar */
+  }
+
+  .mainContent {
+    width: 100%;
+    max-width: 100%;
+    padding: 16px;
+    margin-left: 0;
+  }
+
+  .servicesGrid {
+    grid-template-columns: 1fr; /* single column cards */
+    gap: 16px;
+  }
+
+  .banner {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .bannerAstrologers {
+    margin-top: 12px;
+  }
+  .kundliContainer {
+    max-width: 100%;
+    margin: 0;
+  }
 }

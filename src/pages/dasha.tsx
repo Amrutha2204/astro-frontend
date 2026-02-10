@@ -9,6 +9,8 @@ import { dashaApi, DashaResponse, DashaTimelineResponse } from "@/services/dasha
 import { showError } from "@/utils/toast";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
 import styles from "@/styles/dashboard.module.css";
+import ErrorMessage from "@/components/ui/ErrorMessage";
+import Loading from "@/components/ui/Loading";
 
 const REDIRECT_DELAY_MS = 2000;
 
@@ -87,9 +89,7 @@ export default function DashaPage() {
         <div className={styles.dashboardContent}>
           <AppSidebar />
           <main className={styles.mainContent}>
-            <div className={styles.loadingContainer}>
-              <p><span className={styles.loadingSpinner} /> Loading your period…</p>
-            </div>
+           <Loading text="Loading your period..."/> 
           </main>
         </div>
       </div>
@@ -104,7 +104,7 @@ export default function DashaPage() {
           <AppSidebar />
           <main className={styles.mainContent}>
             <div className={styles.errorContainer}>
-              <p className={styles.errorText}>Error: {error}</p>
+              <ErrorMessage message={error} />
               <div className={styles.buttonGroup}>
                 <button onClick={fetchDasha} className={styles.backButton}>
                   🔄 Retry

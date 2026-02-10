@@ -10,6 +10,7 @@ import TrustNote from "@/components/common/TrustNote";
 import styles from "@/styles/guestKundli.module.css";
 import formStyles from "@/styles/birthDetails.module.css";
 import dStyles from "@/styles/dashboard.module.css";
+import Loading from "@/components/ui/Loading";
 
 const SESSION_KEY = "guestKundli";
 

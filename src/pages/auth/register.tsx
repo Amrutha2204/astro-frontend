@@ -98,7 +98,10 @@ export default function Register() {
           };
 
       const res = await registerUser(payload as any);
-
+      
+      if (formData.birthPlace.trim()) {
+  localStorage.setItem("birthPlace", formData.birthPlace.trim());
+}
       showSuccess("Registration successful! Please login.");
       setTimeout(() => {
         router.push("/auth/login");

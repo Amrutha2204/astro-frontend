@@ -65,3 +65,24 @@ body {
   color: var(--text);
 }
 
+.error-box {
+  padding: 14px;
+  margin-top: 16px;
+  background: #fff4e5;
+  border: 1px solid #ffd8a8;
+  color: #7a4b00;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}

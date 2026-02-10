@@ -6,6 +6,8 @@ import AppSidebar from "@/components/layout/AppSidebar";
 import { astroApi } from "@/services/api";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
 import styles from "@/styles/dashboard.module.css";
+import ErrorMessage from "@/components/ui/ErrorMessage";
+import Loading from "@/components/ui/Loading";
 
 const REDIRECT_DELAY_MS = 2000;
 
@@ -69,33 +71,6 @@ export default function NatalChartPage() {
     );
   }
 
-  if (error) {
-    return (
-      <div className={styles.dashboardContainer}>
-        <AppHeader />
-        <div className={styles.dashboardContent}>
-          <AppSidebar />
-          <main className={styles.mainContent}>
-            <div className={styles.kundliContainer}>
-              <h1 className={styles.sectionTitle}>⭐ Natal Chart</h1>
-              <div style={{ color: "red", margin: "20px 0" }}>
-                <p><strong>Error:</strong> {error}</p>
-              </div>
-              <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
-                <button onClick={fetchNatalChart} className={styles.primaryButton}>
-                  Retry
-                </button>
-                <button onClick={() => router.push("/auth/login")} className={styles.secondaryButton}>
-                  Go to Login
-                </button>
-              </div>
-            </div>
-          </main>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className={styles.dashboardContainer}>
       <AppHeader />
@@ -124,6 +99,7 @@ export default function NatalChartPage() {
             </div>
 
             <h1 className={styles.sectionTitle}>⭐ Natal Chart</h1>
+            {error && <ErrorMessage message={error} />}
             
             {natalChart && (
               <>

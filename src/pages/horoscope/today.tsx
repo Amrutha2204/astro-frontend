@@ -8,6 +8,7 @@ import TrustNote from "@/components/common/TrustNote";
 import { horoscopeApi } from "@/services/horoscopeService";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
 import styles from "@/styles/dashboard.module.css";
+import ErrorMessage from "@/components/ui/ErrorMessage";
 
 const REDIRECT_DELAY_MS = 2000;
 
@@ -82,9 +83,7 @@ export default function DailyHoroscopePage() {
           <main className={styles.mainContent}>
             <div className={styles.kundliContainer}>
               <h1 className={styles.sectionTitle}>🌙 Daily Horoscope</h1>
-              <div className="my-5 text-red-600">
-                <p><strong>Error:</strong> {error}</p>
-              </div>
+              <ErrorMessage message={error} />
               <div className="mt-5 flex gap-3">
                 <button onClick={fetchHoroscope} className={styles.primaryButton}>
                   Retry

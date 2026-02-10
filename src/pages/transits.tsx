@@ -4,6 +4,8 @@ import AppSidebar from "@/components/layout/AppSidebar";
 import CalculationInfo from "@/components/common/CalculationInfo";
 import dashboardStyles from "@/styles/dashboard.module.css";
 import styles from "@/styles/transits.module.css";
+import ErrorMessage from "@/components/ui/ErrorMessage";
+import Loading from "@/components/ui/Loading";
 import {
   astroApi,
   TransitsTodayResponse,
@@ -42,11 +44,15 @@ function formatDate(dateStr: string | undefined) {
 }
 
 export default function TransitsPage() {
+  const [loading, setLoading] = useState(false);
+  const [place, setPlace] = useState("");
+  const [storedUser, setStoredUser] = useState<any>(null);
+  const [isMounted, setIsMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<TabId>("today");
 
   /* TODAY */
   const [todayData, setTodayData] = useState<TransitsTodayResponse | null>(null);
-
+  const [error, setError] = useState<string | null>(null);
   /* RETROGRADES */
   const [retroFrom, setRetroFrom] = useState(todayStr());
   const [retroTo, setRetroTo] = useState(todayStr());
@@ -62,25 +68,75 @@ export default function TransitsPage() {
   const [solarEclipses, setSolarEclipses] = useState<Eclipse[]>([]);
   const [lunarEclipses, setLunarEclipses] = useState<Eclipse[]>([]);
 
-  useEffect(() => {
-    astroApi.getTransitsToday().then(setTodayData);
-  }, []);
+ useEffect(() => {
+  astroApi
+    .getTransitsToday()
+    .then(setTodayData)
+    .catch(() => {
+      setError("Unable to load transits. Please try again later.");
+    });
+}, []);
+
+ useEffect(() => {
+  setIsMounted(true);
+
+  const user = localStorage.getItem("user");
+  if (user) {
+    const parsed = JSON.parse(user);
+    setStoredUser(parsed);
+    setPlace(parsed.birthPlace || "");
+  }
+}, []);
+useEffect(() => {
+  setLoading(true);
+  astroApi
+    .getTransitsToday()
+    .then(setTodayData)
+    .catch(() => {
+      setError("Unable to load transits. Please try again later.");
+    })
+    .finally(() => setLoading(false));
+}, []);
 
   const loadRetrogrades = async () => {
+     if (!place) {
+    setError("Please enter birth place");
+    return;
+  }
+  try {
     const data = await astroApi.getRetrogrades(retroFrom, retroTo);
     setRetroData(data.retrogrades);
-  };
+  } catch {
+    setError("Unable to load retrogrades. Please try again later.");
+  }
+};
 
-  const loadMajor = async () => {
+const loadMajor = async () => {
+   if (!place) {
+    setError("Please enter birth place");
+    return;
+  }
+  try {
     const data = await astroApi.getMajorTransits(majorFrom, majorTo);
     setMajorData(data.transits);
-  };
+  } catch {
+    setError("Unable to load major transits. Please try again later.");
+  }
+};
 
   const loadEclipses = async () => {
+     if (!place) {
+    setError("Please enter birth place");
+    return;
+  }
+  try {
     const data = await astroApi.getEclipses(eclipseFrom);
     setSolarEclipses(data.solar);
     setLunarEclipses(data.lunar);
-  };
+  } catch {
+    setError("Unable to load eclipses. Please try again later.");
+  }
+};
 
   return (
     <div className={dashboardStyles.dashboardContainer}>
@@ -89,6 +145,22 @@ export default function TransitsPage() {
         <AppSidebar />
         <main className={dashboardStyles.mainContent}>
           <h1 className={styles.pageTitle}>Planetary Transits</h1>
+          {loading && <div>Loading...</div>}
+          <div className={styles.filterCard}>
+          <h3>📍 Birth Place</h3>
+
+          {storedUser?.birthPlace ? (
+          <p><strong>{place}</strong></p>
+        ) : (
+        <input
+            type="text"
+              placeholder="Enter birth place"
+              value={place}
+              onChange={(e) => setPlace(e.target.value)}
+          />
+        )}
+      </div>
+          {error && <ErrorMessage message={error} />}
           <div className={styles.tabs}>
             {[
               { id: "today", label: "Today" },

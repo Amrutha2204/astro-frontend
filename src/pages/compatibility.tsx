@@ -8,6 +8,7 @@ import { getCoordinatesFromCity } from "@/utils/coordinates";
 import { showError, showSuccess, showWarning } from "@/utils/toast";
 import { selectToken } from "@/store/slices/authSlice";
 import styles from "@/styles/dashboard.module.css";
+import Loading from "@/components/ui/Loading";
 
 const REDIRECT_DELAY_MS = 2000;
 

@@ -10,6 +10,8 @@ import { ASTRO_BASE } from "@/services/fetcher";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
 import styles from "@/styles/dashboard.module.css";
 import formStyles from "@/styles/birthDetails.module.css";
+import ErrorMessage from "@/components/ui/ErrorMessage";
+import Loading from "@/components/ui/Loading";
 
 const REDIRECT_DELAY_MS = 2000;
 
@@ -128,38 +130,6 @@ export default function ShareableCardPage() {
     );
   }
 
-  if (error && !card) {
-    return (
-      <div className={styles.dashboardContainer}>
-        <AppHeader />
-        <div className={styles.dashboardContent}>
-          <AppSidebar />
-          <main className={styles.mainContent}>
-            <div className={styles.errorContainer}>
-              <p className={styles.errorText}>Error: {error}</p>
-              <div className={styles.buttonGroup}>
-                <button
-                  type="button"
-                  onClick={() => setError(null)}
-                  className={styles.backButton}
-                >
-                  Try again
-                </button>
-                <button
-                  type="button"
-                  onClick={() => router.push("/auth/login")}
-                  className={styles.backButton}
-                >
-                  Go to Login
-                </button>
-              </div>
-            </div>
-          </main>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className={styles.dashboardContainer}>
       <AppHeader />
@@ -178,6 +148,8 @@ export default function ShareableCardPage() {
             </div>
 
             <h1 className={styles.sectionTitle}>Shareable Card</h1>
+            {loading && <p>Creating card, please wait…</p>}
+            {error && <ErrorMessage message={error} />}
             <p className={styles.explanationLine}>
               Create an image or PDF card (e.g. daily horoscope or kundli summary) to
               download or share.
