@@ -43,6 +43,7 @@ export default function ShareableCardPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [card, setCard] = useState<StoredCardResponse | null>(null);
+  const [shareLinks, setShareLinks] = useState<{ whatsapp: string; twitter: string; telegram: string } | null>(null);
 
   useEffect(() => {
     setDate(getDefaultDate());
@@ -96,6 +97,13 @@ export default function ShareableCardPage() {
         };
         const result = await astroApi.createShareableCard(t, dto);
         setCard(result);
+        setShareLinks(null);
+        try {
+          const links = await astroApi.getShareLinks(t, result.imageUrl, title || result.id);
+          setShareLinks(links);
+        } catch {
+          // share links optional
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to create card");
       } finally {
@@ -258,7 +266,7 @@ export default function ShareableCardPage() {
                     }}
                   />
                 </div>
-                <div className={styles.buttonGroup} style={{ justifyContent: "flex-start" }}>
+                <div className={styles.buttonGroup} style={{ justifyContent: "flex-start", flexWrap: "wrap", gap: 8 }}>
                   <a
                     href={fileUrl(card.imageUrl)}
                     download
@@ -280,6 +288,37 @@ export default function ShareableCardPage() {
                     >
                       Download PDF
                     </a>
+                  )}
+                  {shareLinks && (
+                    <>
+                      <a
+                        href={shareLinks.whatsapp}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.retryButton}
+                        style={{ textDecoration: "none", color: "#fff" }}
+                      >
+                        Share on WhatsApp
+                      </a>
+                      <a
+                        href={shareLinks.twitter}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.retryButton}
+                        style={{ textDecoration: "none", color: "#fff" }}
+                      >
+                        Share on Twitter
+                      </a>
+                      <a
+                        href={shareLinks.telegram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.retryButton}
+                        style={{ textDecoration: "none", color: "#fff" }}
+                      >
+                        Share on Telegram
+                      </a>
+                    </>
                   )}
                 </div>
                 <CalculationInfo

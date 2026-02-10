@@ -259,6 +259,16 @@ export const astroApi = {
     });
   },
 
+  async getShareLinks(token: string, url: string, title?: string): Promise<{ whatsapp: string; twitter: string; telegram: string }> {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) throw new Error("Invalid token. Please login again.");
+    return request<{ whatsapp: string; twitter: string; telegram: string }>(ASTRO_BASE, "/api/v1/shareable-card/share-links", {
+      method: "POST",
+      token: t,
+      body: { url, title },
+    });
+  },
+
   // -------------------- Retrogrades & Major Transits & Eclipses --------------------
   async getRetrogrades(from: string, to: string): Promise<RetrogradesResponse> {
     return request<RetrogradesResponse>(ASTRO_BASE, "/api/v1/astrology/transits/retrogrades", {

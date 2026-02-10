@@ -130,6 +130,34 @@ export default function Dashboard() {
       description: "Personalized daily suggestions based on transits",
       onClick: () => router.push("/ai-assistant/suggestions"),
     },
+    {
+      id: "subscription",
+      title: "Subscription Plans",
+      icon: "📋",
+      description: "View and manage your subscription",
+      onClick: () => router.push("/subscription/plans"),
+    },
+    {
+      id: "payment",
+      title: "Wallet & Payment",
+      icon: "💰",
+      description: "Add money to wallet and pay with Razorpay",
+      onClick: () => router.push("/payment"),
+    },
+    {
+      id: "reports",
+      title: "Premium Reports",
+      icon: "📄",
+      description: "Generate and download Kundli PDF reports",
+      onClick: () => router.push("/reports"),
+    },
+    {
+      id: "notifications",
+      title: "Notifications",
+      icon: "🔔",
+      description: "Daily horoscope push notification settings",
+      onClick: () => router.push("/settings/notifications"),
+    },
   ];
 
   if (!rehydrated || isGuest) {

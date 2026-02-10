@@ -29,6 +29,10 @@ const AUTH_MENU: NavItem[] = [
   { id: "remedies", label: "Remedies", href: "/remedies" },
   { id: "shareable-card", label: "Shareable Card", href: "/shareable-card" },
   { id: "ai-assistant", label: "AI Assistant", href: "/ai-assistant/chat" },
+  { id: "subscription", label: "Subscription", href: "/subscription/plans" },
+  { id: "payment", label: "Wallet & Payment", href: "/payment" },
+  { id: "reports", label: "Premium Reports", href: "/reports" },
+  { id: "notifications", label: "Notifications", href: "/settings/notifications" },
 ];
 
 const AppSidebar = () => {
