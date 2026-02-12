@@ -4,7 +4,9 @@ import { useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
 import { compatibilityApi, CompatibilityRequest, GunaMilanResponse, MarriageCompatibilityResponse } from "@/services/compatibilityService";
-import { getCoordinatesFromCity } from "@/utils/coordinates";
+import { paymentApi } from "@/services/paymentService";
+import { reportsApi, GenerateReportResponse } from "@/services/reportsService";
+import { getCoordinatesFromCity, isCityRecognized } from "@/utils/coordinates";
 import { showError, showSuccess, showWarning } from "@/utils/toast";
 import { selectToken } from "@/store/slices/authSlice";
 import styles from "@/styles/dashboard.module.css";
@@ -31,6 +33,13 @@ export default function CompatibilityPage() {
   const [calculationType, setCalculationType] = useState<'guna-milan' | 'marriage'>('guna-milan');
   const [gunaMilanResult, setGunaMilanResult] = useState<GunaMilanResponse | null>(null);
   const [marriageResult, setMarriageResult] = useState<MarriageCompatibilityResponse | null>(null);
+  const [unlocked, setUnlocked] = useState(false);
+  const [leadEmail, setLeadEmail] = useState("");
+  const [unlockLoading, setUnlockLoading] = useState(false);
+  const [unknownTime1, setUnknownTime1] = useState(false);
+  const [unknownTime2, setUnknownTime2] = useState(false);
+  const [reportPaying, setReportPaying] = useState(false);
+  const [reportDownload, setReportDownload] = useState<GenerateReportResponse | null>(null);
   const [partner1, setPartner1] = useState<PartnerFormData>({
     name: '',
     year: new Date().getFullYear() - 25,
@@ -91,8 +100,8 @@ export default function CompatibilityPage() {
   };
 
   const requestBody: CompatibilityRequest = {
-    partner1: { year: partner1.year, month: partner1.month, day: partner1.day, hour: partner1.hour, minute: partner1.minute, latitude: partner1.latitude, longitude: partner1.longitude, birthPlace: partner1.birthPlace },
-    partner2: { year: partner2.year, month: partner2.month, day: partner2.day, hour: partner2.hour, minute: partner2.minute, latitude: partner2.latitude, longitude: partner2.longitude, birthPlace: partner2.birthPlace },
+    partner1: { year: partner1.year, month: partner1.month, day: partner1.day, hour: unknownTime1 ? 12 : partner1.hour, minute: unknownTime1 ? 0 : partner1.minute, latitude: partner1.latitude, longitude: partner1.longitude, birthPlace: partner1.birthPlace },
+    partner2: { year: partner2.year, month: partner2.month, day: partner2.day, hour: unknownTime2 ? 12 : partner2.hour, minute: unknownTime2 ? 0 : partner2.minute, latitude: partner2.latitude, longitude: partner2.longitude, birthPlace: partner2.birthPlace },
   };
 
   const calculateGunaMilan = async () => {
@@ -106,6 +115,8 @@ export default function CompatibilityPage() {
         : await compatibilityApi.calculateGunaMilanGuest(requestBody);
       setGunaMilanResult(result);
       setMarriageResult(null);
+      setReportDownload(null);
+      setUnlocked(!!useAuth);
       showSuccess("Guna Milan calculated successfully!");
     } catch (err) {
       const error = err as { message?: string };
@@ -127,6 +138,8 @@ export default function CompatibilityPage() {
         : await compatibilityApi.calculateMarriageCompatibilityGuest(requestBody);
       setMarriageResult(result);
       setGunaMilanResult(null);
+      setReportDownload(null);
+      setUnlocked(!!useAuth);
       showSuccess("Marriage compatibility calculated successfully!");
     } catch (err) {
       const error = err as { message?: string };
@@ -152,6 +165,119 @@ export default function CompatibilityPage() {
     }
   };
 
+  const handleUnlock = () => {
+    const email = leadEmail.trim();
+    if (!email) {
+      showError("Please enter your email to unlock the full report.");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showError("Please enter a valid email address.");
+      return;
+    }
+    setUnlockLoading(true);
+    setUnlocked(true);
+    setUnlockLoading(false);
+    showSuccess("Full report unlocked.");
+  };
+
+  const loadRazorpay = (): Promise<void> => {
+    if (typeof window === "undefined") return Promise.reject(new Error("No window"));
+    const w = window as any;
+    if (w.Razorpay) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+      const s = document.createElement("script");
+      s.src = "https://checkout.razorpay.com/v1/checkout.js";
+      s.async = true;
+      s.onload = () => resolve();
+      s.onerror = () => reject(new Error("Failed to load Razorpay"));
+      document.body.appendChild(s);
+    });
+  };
+
+  const getCompatibilityPartnersForReport = () => ({
+    partner1: {
+      year: partner1.year,
+      month: partner1.month,
+      day: partner1.day,
+      hour: unknownTime1 ? 12 : partner1.hour,
+      minute: unknownTime1 ? 0 : partner1.minute,
+      latitude: partner1.latitude,
+      longitude: partner1.longitude,
+    },
+    partner2: {
+      year: partner2.year,
+      month: partner2.month,
+      day: partner2.day,
+      hour: unknownTime2 ? 12 : partner2.hour,
+      minute: unknownTime2 ? 0 : partner2.minute,
+      latitude: partner2.latitude,
+      longitude: partner2.longitude,
+    },
+  });
+
+  const handleGetPdfReport = async () => {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) {
+      showError("Please log in to get a PDF report.");
+      return;
+    }
+    setReportPaying(true);
+    setReportDownload(null);
+    try {
+      await loadRazorpay();
+      const res = await paymentApi.createOrder(t, 99, "Compatibility PDF Report");
+      const w = window as any;
+      if (!w.Razorpay) {
+        showError("Payment gateway could not be loaded. Try again.");
+        return;
+      }
+      const options = {
+        key: res.keyId,
+        amount: res.amount,
+        currency: res.currency,
+        order_id: res.orderId,
+        name: "Astro",
+        description: "Compatibility PDF Report — ₹99",
+        handler: async (response: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) => {
+          try {
+            await paymentApi.verify(t, response.razorpay_order_id, response.razorpay_payment_id, response.razorpay_signature);
+            const report = await reportsApi.purchaseOneTime(t, "compatibility_summary", getCompatibilityPartnersForReport());
+            setReportDownload(report);
+            showSuccess("Report ready! Download below.");
+          } catch (e) {
+            showError(e instanceof Error ? e.message : "Payment or report failed");
+          } finally {
+            setReportPaying(false);
+          }
+        },
+        modal: { ondismiss: () => setReportPaying(false) },
+      };
+      const rzp = new w.Razorpay(options);
+      rzp.on("payment.failed", () => {
+        showError("Payment failed or was cancelled.");
+        setReportPaying(false);
+      });
+      rzp.open();
+    } catch (err) {
+      showError(err instanceof Error ? err.message : "Could not start payment");
+      setReportPaying(false);
+    }
+  };
+
+  const shareUrl = typeof window !== "undefined" ? window.location.origin + "/compatibility" : "";
+  const handleShareWhatsApp = () => {
+    let text = "Check our compatibility score on Jyotishya Darshan — ";
+    if (gunaMilanResult) {
+      text += `Guna Milan ${gunaMilanResult.totalScore}/${gunaMilanResult.maxScore} - ${gunaMilanResult.verdict}. `;
+    } else if (marriageResult) {
+      text += `Marriage match ${marriageResult.gunaMilan.totalScore}/${marriageResult.gunaMilan.maxScore} - ${marriageResult.gunaMilan.verdict}. `;
+    }
+    text += shareUrl;
+    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
   const main = (
     <main className={styles.mainContent}>
       <div className={styles.pageHeader}>
@@ -168,6 +294,9 @@ export default function CompatibilityPage() {
                     setCalculationType('guna-milan');
                     setGunaMilanResult(null);
                     setMarriageResult(null);
+                    setUnlocked(false);
+                    setUnknownTime1(false);
+                    setUnknownTime2(false);
                   }}
                 >
                   Guna Milan
@@ -178,6 +307,9 @@ export default function CompatibilityPage() {
                     setCalculationType('marriage');
                     setGunaMilanResult(null);
                     setMarriageResult(null);
+                    setUnlocked(false);
+                    setUnknownTime1(false);
+                    setUnknownTime2(false);
                   }}
                 >
                   Full Marriage Compatibility
@@ -203,9 +335,10 @@ export default function CompatibilityPage() {
                         type="text"
                         value={partner1.birthPlace}
                         onChange={(e) => handlePartner1Change('birthPlace', e.target.value)}
-                        placeholder="City, State"
+                        placeholder="e.g. Mumbai, Delhi, London"
                         required
                       />
+                      <p className={styles.compatTimeHint}>Use a city from our list (Indian and major international, e.g. Mumbai, London, Dubai). Unrecognized names fall back to Delhi.</p>
                     </div>
                   </div>
                   <div className={styles.formRow}>
@@ -239,25 +372,40 @@ export default function CompatibilityPage() {
                       </div>
                     </div>
                     <div className={styles.inputGroup}>
-                      <label>Birth Time (Optional)</label>
-                      <div className={styles.timeInputs}>
-                        <input
-                          type="number"
-                          value={partner1.hour}
-                          onChange={(e) => handlePartner1Change('hour', parseInt(e.target.value) || 12)}
-                          placeholder="Hour"
-                          min="0"
-                          max="23"
-                        />
-                        <input
-                          type="number"
-                          value={partner1.minute}
-                          onChange={(e) => handlePartner1Change('minute', parseInt(e.target.value) || 0)}
-                          placeholder="Minute"
-                          min="0"
-                          max="59"
-                        />
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 4 }}>
+                        <label style={{ marginBottom: 0 }}>Birth Time (Optional)</label>
+                        <button
+                          type="button"
+                          onClick={() => setUnknownTime1((p) => !p)}
+                          className={styles.compatUnknownTimeBtn}
+                          aria-pressed={unknownTime1}
+                        >
+                          {unknownTime1 ? "✓ I don't know" : "I don't know birth time"}
+                        </button>
                       </div>
+                      {!unknownTime1 && (
+                        <div className={styles.timeInputs}>
+                          <input
+                            type="number"
+                            value={partner1.hour}
+                            onChange={(e) => handlePartner1Change('hour', parseInt(e.target.value) || 12)}
+                            placeholder="Hour"
+                            min="0"
+                            max="23"
+                          />
+                          <input
+                            type="number"
+                            value={partner1.minute}
+                            onChange={(e) => handlePartner1Change('minute', parseInt(e.target.value) || 0)}
+                            placeholder="Minute"
+                            min="0"
+                            max="59"
+                          />
+                        </div>
+                      )}
+                      {unknownTime1 && (
+                        <p className={styles.compatTimeHint}>Noon (12:00) will be used. Lagna may be approximate.</p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -280,9 +428,10 @@ export default function CompatibilityPage() {
                         type="text"
                         value={partner2.birthPlace}
                         onChange={(e) => handlePartner2Change('birthPlace', e.target.value)}
-                        placeholder="City, State"
+                        placeholder="e.g. Mumbai, Delhi, London"
                         required
                       />
+                      <p className={styles.compatTimeHint}>Use a city from our list (Indian and major international, e.g. Mumbai, London, Dubai). Unrecognized names fall back to Delhi.</p>
                     </div>
                   </div>
                   <div className={styles.formRow}>
@@ -316,25 +465,40 @@ export default function CompatibilityPage() {
                       </div>
                     </div>
                     <div className={styles.inputGroup}>
-                      <label>Birth Time (Optional)</label>
-                      <div className={styles.timeInputs}>
-                        <input
-                          type="number"
-                          value={partner2.hour}
-                          onChange={(e) => handlePartner2Change('hour', parseInt(e.target.value) || 12)}
-                          placeholder="Hour"
-                          min="0"
-                          max="23"
-                        />
-                        <input
-                          type="number"
-                          value={partner2.minute}
-                          onChange={(e) => handlePartner2Change('minute', parseInt(e.target.value) || 0)}
-                          placeholder="Minute"
-                          min="0"
-                          max="59"
-                        />
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 4 }}>
+                        <label style={{ marginBottom: 0 }}>Birth Time (Optional)</label>
+                        <button
+                          type="button"
+                          onClick={() => setUnknownTime2((p) => !p)}
+                          className={styles.compatUnknownTimeBtn}
+                          aria-pressed={unknownTime2}
+                        >
+                          {unknownTime2 ? "✓ I don't know" : "I don't know birth time"}
+                        </button>
                       </div>
+                      {!unknownTime2 && (
+                        <div className={styles.timeInputs}>
+                          <input
+                            type="number"
+                            value={partner2.hour}
+                            onChange={(e) => handlePartner2Change('hour', parseInt(e.target.value) || 12)}
+                            placeholder="Hour"
+                            min="0"
+                            max="23"
+                          />
+                          <input
+                            type="number"
+                            value={partner2.minute}
+                            onChange={(e) => handlePartner2Change('minute', parseInt(e.target.value) || 0)}
+                            placeholder="Minute"
+                            min="0"
+                            max="59"
+                          />
+                        </div>
+                      )}
+                      {unknownTime2 && (
+                        <p className={styles.compatTimeHint}>Noon (12:00) will be used. Lagna may be approximate.</p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -355,6 +519,11 @@ export default function CompatibilityPage() {
             {gunaMilanResult && (
               <div className={styles.compatibilityResult}>
                 <h2 className={styles.sectionTitle}>Guna Milan Results</h2>
+                {(!isCityRecognized(partner1.birthPlace) || !isCityRecognized(partner2.birthPlace)) && (
+                  <div className={styles.birthPlaceWarning} role="alert">
+                    One or more birth places were not recognized, so Delhi was used for coordinates. For accurate results, use a city from our list (e.g. Mumbai, Delhi, London, Dubai).
+                  </div>
+                )}
                 <div className={styles.gunaMilanSummary}>
                   <div className={styles.gunaMilanCard}>
                     <h3 className={styles.cardTitle}>Total Score</h3>
@@ -366,23 +535,69 @@ export default function CompatibilityPage() {
                     </p>
                   </div>
                 </div>
-                <div className={styles.gunasList}>
-                  {gunaMilanResult.gunas.map((guna, index) => (
-                    <div key={index} className={styles.gunaCard}>
-                      <div className={styles.gunaHeader}>
-                        <h4 className={styles.gunaName}>{guna.name}</h4>
-                        <span className={styles.gunaScore}>{guna.score} / {guna.maxScore}</span>
-                      </div>
-                      <p className={styles.gunaDescription}>{guna.description}</p>
-                    </div>
-                  ))}
+                <div className={styles.shareRow}>
+                  <button type="button" onClick={handleShareWhatsApp} className={styles.whatsappShareBtn} aria-label="Share via WhatsApp">
+                    Share via WhatsApp
+                  </button>
                 </div>
+                {token && (
+                  <div className={styles.reportOneTimeBlock}>
+                    <h3 className={styles.reportOneTimeTitle}>Get full report as PDF</h3>
+                    <p className={styles.reportOneTimeText}>One-time purchase — ₹99. Download a detailed compatibility PDF.</p>
+                    {reportDownload ? (
+                      <a href={reportDownload.downloadUrl} target="_blank" rel="noopener noreferrer" className={styles.reportDownloadBtn}>
+                        Download report
+                      </a>
+                    ) : (
+                      <button type="button" onClick={handleGetPdfReport} disabled={reportPaying} className={styles.reportPayBtn}>
+                        {reportPaying ? "Opening payment…" : "Get PDF report — ₹99"}
+                      </button>
+                    )}
+                  </div>
+                )}
+                {!unlocked && (
+                  <div className={styles.leadGate}>
+                    <h3 className={styles.cardTitle}>Unlock full report</h3>
+                    <p className={styles.leadGateText}>See detailed guna-wise breakdown and descriptions.</p>
+                    <div className={styles.leadGateForm}>
+                      <input
+                        type="email"
+                        placeholder="Enter your email"
+                        value={leadEmail}
+                        onChange={(e) => setLeadEmail(e.target.value)}
+                        className={styles.leadGateInput}
+                      />
+                      <button type="button" onClick={handleUnlock} disabled={unlockLoading} className={styles.loginButton}>
+                        {unlockLoading ? "Unlocking…" : "Get full report"}
+                      </button>
+                    </div>
+                    <p className={styles.leadGatePrivacy}>We use your email only to send this report. No spam.</p>
+                  </div>
+                )}
+                {unlocked && (
+                  <div className={styles.gunasList}>
+                    {gunaMilanResult.gunas.map((guna, index) => (
+                      <div key={index} className={styles.gunaCard}>
+                        <div className={styles.gunaHeader}>
+                          <h4 className={styles.gunaName}>{guna.name}</h4>
+                          <span className={styles.gunaScore}>{guna.score} / {guna.maxScore}</span>
+                        </div>
+                        <p className={styles.gunaDescription}>{guna.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
             {marriageResult && (
               <div className={styles.compatibilityResult}>
                 <h2 className={styles.sectionTitle}>Marriage Compatibility Results</h2>
+                {(!isCityRecognized(partner1.birthPlace) || !isCityRecognized(partner2.birthPlace)) && (
+                  <div className={styles.birthPlaceWarning} role="alert">
+                    One or more birth places were not recognized, so Delhi was used for coordinates. For accurate results, use a city from our list (e.g. Mumbai, Delhi, London, Dubai).
+                  </div>
+                )}
                 <div className={styles.gunaMilanSummary}>
                   <div className={styles.gunaMilanCard}>
                     <h3 className={styles.cardTitle}>Guna Milan Score</h3>
@@ -394,6 +609,47 @@ export default function CompatibilityPage() {
                     </p>
                   </div>
                 </div>
+                <div className={styles.shareRow}>
+                  <button type="button" onClick={handleShareWhatsApp} className={styles.whatsappShareBtn} aria-label="Share via WhatsApp">
+                    Share via WhatsApp
+                  </button>
+                </div>
+                {token && (
+                  <div className={styles.reportOneTimeBlock}>
+                    <h3 className={styles.reportOneTimeTitle}>Get full report as PDF</h3>
+                    <p className={styles.reportOneTimeText}>One-time purchase — ₹99. Download compatibility report with doshas, strengths and remedies.</p>
+                    {reportDownload ? (
+                      <a href={reportDownload.downloadUrl} target="_blank" rel="noopener noreferrer" className={styles.reportDownloadBtn}>
+                        Download report
+                      </a>
+                    ) : (
+                      <button type="button" onClick={handleGetPdfReport} disabled={reportPaying} className={styles.reportPayBtn}>
+                        {reportPaying ? "Opening payment…" : "Get PDF report — ₹99"}
+                      </button>
+                    )}
+                  </div>
+                )}
+                {!unlocked && (
+                  <div className={styles.leadGate}>
+                    <h3 className={styles.cardTitle}>Unlock full report</h3>
+                    <p className={styles.leadGateText}>See doshas (Manglik, Nadi, Bhakoot), strengths, challenges, remedies and overall verdict.</p>
+                    <div className={styles.leadGateForm}>
+                      <input
+                        type="email"
+                        placeholder="Enter your email"
+                        value={leadEmail}
+                        onChange={(e) => setLeadEmail(e.target.value)}
+                        className={styles.leadGateInput}
+                      />
+                      <button type="button" onClick={handleUnlock} disabled={unlockLoading} className={styles.loginButton}>
+                        {unlockLoading ? "Unlocking…" : "Get full report"}
+                      </button>
+                    </div>
+                    <p className={styles.leadGatePrivacy}>We use your email only to send this report. No spam.</p>
+                  </div>
+                )}
+                {unlocked && (
+                  <>
                 <div className={styles.doshaCompatibility}>
                   <h3 className={styles.cardTitle}>Dosha Compatibility</h3>
                   <div className={styles.doshaList}>
@@ -408,6 +664,26 @@ export default function CompatibilityPage() {
                     </div>
                   </div>
                 </div>
+
+                {/* Manglik-specific section: impact summary + remedies when relevant */}
+                <div className={styles.manglikSection}>
+                  <h3 className={styles.cardTitle}>Manglik impact</h3>
+                  <p className={styles.manglikSummary}>
+                    {marriageResult.doshas.manglik.toLowerCase().includes("cancel")
+                      ? "When both partners are Manglik, the dosha is considered cancelled — no additional remedies are required for Manglik in this match."
+                      : marriageResult.doshas.manglik.toLowerCase().includes("remed")
+                        ? "Manglik dosha is present in this match. Simple remedies can help. Below are commonly suggested practices (for guidance only; consult an expert for personalised advice)."
+                        : "Manglik status has been considered in the overall compatibility above."}
+                  </p>
+                  {marriageResult.doshas.manglik.toLowerCase().includes("remed") && (
+                    <ul className={styles.manglikRemedies}>
+                      <li><strong>Tuesday fasting:</strong> Observe a simple fast on Tuesdays, or avoid non-veg and alcohol.</li>
+                      <li><strong>Hanuman mantra:</strong> Chant “Om Hanumate Namah” or “Hanuman Chalisa” regularly for strength and calm.</li>
+                      <li><strong>Donation:</strong> Donate red items (e.g. cloth, lentils) or offer at Hanuman temple on Tuesdays.</li>
+                    </ul>
+                  )}
+                </div>
+
                 {marriageResult.strengths.length > 0 && (
                   <div className={styles.strengthsChallenges}>
                     <h3 className={styles.cardTitle} style={{ color: '#10b981' }}>Strengths</h3>
@@ -432,6 +708,8 @@ export default function CompatibilityPage() {
                   <h3 className={styles.cardTitle}>Overall Verdict</h3>
                   <p className={styles.verdictText}>{marriageResult.overallVerdict}</p>
                 </div>
+                  </>
+                )}
               </div>
             )}
           </div>

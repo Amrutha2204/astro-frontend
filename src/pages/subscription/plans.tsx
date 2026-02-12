@@ -28,20 +28,25 @@ export default function SubscriptionPlansPage() {
       setTimeout(() => router.push("/auth/login"), REDIRECT_DELAY_MS);
       return;
     }
+    setLoading(true);
+    setError(null);
     try {
-      setLoading(true);
-      const [plansData, subData] = await Promise.all([
-        subscriptionApi.getPlans(),
-        subscriptionApi.getMySubscription(t),
-      ]);
+      const plansData = await subscriptionApi.getPlans();
       setPlans(plansData);
-      setMySubscription(subData);
-      setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load plans");
-    } finally {
-      setLoading(false);
+      const msg = err instanceof Error ? err.message : "Failed to load plans";
+      setError(msg === "Failed to fetch"
+        ? "Cannot reach the server. Check that the backend is running (e.g. astro-service on port 8002) and NEXT_PUBLIC_ASTRO_API_URL is correct."
+        : msg);
+      setPlans([]);
     }
+    try {
+      const subData = await subscriptionApi.getMySubscription(t);
+      setMySubscription(subData);
+    } catch {
+      setMySubscription(null);
+    }
+    setLoading(false);
   }, [token, dispatch, router]);
 
   useEffect(() => {
@@ -97,7 +102,14 @@ export default function SubscriptionPlansPage() {
                 )}
               </p>
             )}
-            {error && <p className={styles.errorText}>{error}</p>}
+            {error && (
+              <div className={styles.errorContainer} style={{ marginBottom: "1rem" }}>
+                <p className={styles.errorText}>{error}</p>
+                <button type="button" className={styles.retryButton} onClick={fetchData}>
+                  Retry
+                </button>
+              </div>
+            )}
             {loading ? (
               <p>Loading plans…</p>
             ) : (

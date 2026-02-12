@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useRouter } from "next/router";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
 import CalculationInfo from "@/components/common/CalculationInfo";
@@ -9,13 +10,14 @@ import formStyles from "@/styles/birthDetails.module.css";
 import Loading from "@/components/ui/Loading";
 
 export default function GuestHoroscopePage() {
+  const router = useRouter();
   const [fullName, setFullName] = useState("");
   const [dob, setDob] = useState("");
   const [birthTime, setBirthTime] = useState("");
   const [placeOfBirth, setPlaceOfBirth] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<{ dayType: string; mainTheme: string; reason: string; date: string; source: string } | null>(null);
+  const [result, setResult] = useState<{ dayType: string; mainTheme: string; reason: string; date: string; source: string; doAvoid?: string; goodTime?: string } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,10 +66,40 @@ export default function GuestHoroscopePage() {
               <h3 className="mb-2">{fullName.trim() ? `Today for ${fullName.trim()}` : "Today’s focus"}: {result.dayType}</h3>
               <p><strong>Focus:</strong> {result.mainTheme}</p>
               {result.reason && <p><strong>Why:</strong> {result.reason}</p>}
+              {result.doAvoid && <p><strong>Do / Avoid today:</strong> {result.doAvoid}</p>}
+              {result.goodTime && <p><strong>Good time:</strong> {result.goodTime}</p>}
               <p className={styles.explanationLine}>Today’s focus is based on your Moon sign and current planetary positions.</p>
               <CalculationInfo showDasha={false} showAyanamsa={true} />
               <TrustNote variant="guest" showAccuracyTip />
               <p className="text-xs text-gray-500 mt-2">Date: {result.date} · {result.source}</p>
+
+              <div className={styles.sevenDayPreviewWrap}>
+                <h3>Next 7 days</h3>
+                <div className={styles.sevenDayPreviewBlur}>
+                  <p>Mon — Steady progress; good for routine tasks.</p>
+                  <p>Tue — Focus on communication and short travel.</p>
+                  <p>Wed — Favorable for finances and decisions.</p>
+                  <p>Thu — Emotional clarity; relationships in focus.</p>
+                  <p>Fri — Creative energy; avoid haste.</p>
+                  <p>Sat — Rest and reflection recommended.</p>
+                  <p>Sun — New beginnings; plan for the week ahead.</p>
+                </div>
+                <div className={styles.sevenDayPreviewCta}>
+                  <p>Sign up or log in to see your personalized week ahead</p>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "center" }}>
+                    <button type="button" onClick={() => router.push("/auth/register")}>
+                      Sign up free
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => router.push("/auth/login")}
+                      className={styles.sevenDayCtaSecondary}
+                    >
+                      Log in
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </main>

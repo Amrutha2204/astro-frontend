@@ -10,9 +10,10 @@ import {
   FestivalsResponse,
   MuhuratResponse,
   AuspiciousDayResponse,
+  RahuYamagandamResponse,
 } from "@/services/api";
 
-type TabId = "today" | "festivals" | "muhurat" | "auspicious";
+type TabId = "today" | "festivals" | "muhurat" | "auspicious" | "rahu";
 
 function getTodayStr(): string {
   const d = new Date();
@@ -62,7 +63,11 @@ const [place, setPlace] = useState<string>(
   );
   const [auspiciousError, setAuspiciousError] = useState<string | null>(null);
 
-  /** ✅ Fetch TODAY automatically */
+  /** Fetch TODAY automatically when tab is today */
+  const [rahuDate, setRahuDate] = useState(getTodayStr());
+  const [rahuLoading, setRahuLoading] = useState(false);
+  const [rahuData, setRahuData] = useState<RahuYamagandamResponse | null>(null);
+  const [rahuError, setRahuError] = useState<string | null>(null);
   useEffect(() => {
     if (activeTab !== "today") return;
 
@@ -138,11 +143,25 @@ const [place, setPlace] = useState<string>(
   };
 
   /** ---------------- UI ---------------- */
+  const fetchRahuYamagandam = async () => {
+    try {
+      setRahuLoading(true);
+      setRahuError(null);
+      const data = await astroApi.getRahuYamagandam(rahuDate, place);
+      setRahuData(data);
+    } catch (e) {
+      setRahuError(e instanceof Error ? e.message : "Failed to load Rahu Kaal / Yamagandam");
+    } finally {
+      setRahuLoading(false);
+    }
+  };
+
   const tabs: { id: TabId; label: string }[] = [
     { id: "today", label: "Today" },
     { id: "festivals", label: "Festivals" },
     { id: "muhurat", label: "Muhurat" },
     { id: "auspicious", label: "Auspicious Day" },
+    { id: "rahu", label: "Rahu Kaal / Yamagandam" },
   ];
 
   return (
@@ -316,7 +335,80 @@ const [place, setPlace] = useState<string>(
               </>
             )}
 
-            <CalculationInfo showDasha={false} showAyanamsa={true} />
+            {activeTab === "rahu" && (
+              <>
+                <div style={{ marginBottom: 20, display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+                  <label className={formStyles.label} style={{ marginBottom: 0 }}>Date</label>
+                  <input
+                    type="date"
+                    className={formStyles.input}
+                    value={rahuDate}
+                    onChange={(e) => setRahuDate(e.target.value)}
+                    style={{ marginBottom: 0, maxWidth: 160 }}
+                  />
+                  <label className={formStyles.label} style={{ marginBottom: 0 }}>Place</label>
+                  <input
+                    type="text"
+                    className={formStyles.input}
+                    value={place}
+                    onChange={(e) => setPlace(e.target.value)}
+                    placeholder="Delhi"
+                    style={{ marginBottom: 0, maxWidth: 140 }}
+                  />
+                  <button
+                    type="button"
+                    onClick={fetchRahuYamagandam}
+                    disabled={rahuLoading}
+                    className={styles.retryButton}
+                  >
+                    {rahuLoading ? "Loading…" : "Get Rahu Kaal / Yamagandam"}
+                  </button>
+                </div>
+                {rahuError && (
+                  <p className={styles.noDataMessage} style={{ marginBottom: 12 }}>{rahuError}</p>
+                )}
+                {rahuData && (
+                  <>
+                    <div className={styles.infoItem} style={{ marginBottom: 12 }}>
+                      <span className={styles.infoLabel}>Date</span>
+                      <span className={styles.infoValue}>{rahuData.date}</span>
+                    </div>
+                    <div className={styles.infoItem} style={{ marginBottom: 12 }}>
+                      <span className={styles.infoLabel}>Sun (UTC)</span>
+                      <span className={styles.infoValue}>
+                        Sunrise {rahuData.sunrise} · Sunset {rahuData.sunset}
+                      </span>
+                    </div>
+                    <p className={styles.explanationLine} style={{ marginBottom: 16, fontSize: 13 }}>
+                      Times are in UTC. Convert to your local time zone. These periods are traditionally considered inauspicious for starting important work.
+                    </p>
+                    <div className={styles.infoItem} style={{ marginBottom: 12, borderLeft: "4px solid #b45309" }}>
+                      <span className={styles.infoLabel}>Rahu Kaal</span>
+                      <span className={styles.infoValue}>
+                        {rahuData.rahuKaal.start} – {rahuData.rahuKaal.end}
+                      </span>
+                      <p className={styles.cardDescription} style={{ marginTop: 8, marginBottom: 0 }}>
+                        {rahuData.rahuKaal.note}
+                      </p>
+                    </div>
+                    <div className={styles.infoItem} style={{ marginBottom: 12, borderLeft: "4px solid #92400e" }}>
+                      <span className={styles.infoLabel}>Yamagandam</span>
+                      <span className={styles.infoValue}>
+                        {rahuData.yamagandam.start} – {rahuData.yamagandam.end}
+                      </span>
+                      <p className={styles.cardDescription} style={{ marginTop: 8, marginBottom: 0 }}>
+                        {rahuData.yamagandam.note}
+                      </p>
+                    </div>
+                    {rahuData.source && (
+                      <p style={{ marginTop: 12, fontSize: 12, color: "#6b7280" }}>Source: {rahuData.source}</p>
+                    )}
+                  </>
+                )}
+              </>
+            )}
+
+            <CalculationInfo showDasha={false} showAyanamsa={true} note="Calendar data uses Swiss Ephemeris." />
           </div>
         </main>
       </div>

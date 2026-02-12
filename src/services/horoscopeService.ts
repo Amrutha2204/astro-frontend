@@ -6,6 +6,10 @@ export interface DailyHoroscopeResponse {
   reason: string;
   date: string;
   source: string;
+  /** Do / Avoid today — directive line (India MVP). */
+  doAvoid?: string;
+  /** Good time or not recommended (India MVP). */
+  goodTime?: string;
 }
 
 export interface WeeklyHoroscopeResponse {

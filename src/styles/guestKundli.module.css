@@ -105,6 +105,34 @@
   border-color: #b47b45;
 }
 
+.unknownTimeBtn[aria-pressed="true"] {
+  background: #e8d0a9;
+  border-color: #b47b45;
+  font-weight: 600;
+}
+
+.timeRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.timeRowLabel {
+  margin-bottom: 0;
+}
+
+.unknownTimeNote {
+  font-size: 13px;
+  color: #7a5c3c;
+  background: #fdf8f3;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border-left: 4px solid #b47b45;
+  margin: 0 0 16px 0;
+}
+
 .guestNote {
   font-size: 13px;
   color: #7a5c3c;

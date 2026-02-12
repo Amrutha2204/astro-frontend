@@ -107,9 +107,33 @@
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.filters button:hover {
+.filters button:hover:not(:disabled) {
   transform: translateY(-1px);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.filters button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.errorText {
+  margin-top: 10px;
+  color: #b91c1c;
+  font-size: 14px;
+}
+
+.hintText {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #6b5b52;
+}
+
+.emptyText {
+  padding: 20px;
+  text-align: center;
+  color: #6b5b52;
+  font-size: 15px;
 }
 
 /* =========================

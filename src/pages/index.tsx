@@ -3,20 +3,23 @@ import Link from "next/link";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
 import PageHead from "@/components/common/PageHead";
+import { useLanguage } from "@/contexts/LanguageContext";
 import styles from "@/styles/home.module.css";
 import dStyles from "@/styles/dashboard.module.css";
 
-const QUICK_LINKS = [
-  { label: "Today's Horoscope", desc: "Daily prediction for your zodiac sign", href: "/guest-horoscope" },
-  { label: "Match / Compatibility", desc: "Check compatibility with your partner", href: "/compatibility" },
-  { label: "Calendar (Panchang)", desc: "Auspicious days and festivals", href: "/calendar" },
-  { label: "Transits", desc: "Current planetary positions", href: "/transits" },
-  { label: "Dasha", desc: "Planetary periods in your life", href: "/guest-dasha" },
-  { label: "Dosha Check", desc: "Manglik and other dosha analysis", href: "/guest-dosha" },
+const QUICK_LINK_KEYS = [
+  { labelKey: "freeKundli", descKey: "freeKundliDesc", href: "/guest-kundli" },
+  { labelKey: "todaysHoroscope", descKey: "todaysHoroscopeDesc", href: "/guest-horoscope" },
+  { labelKey: "matchCompatibility", descKey: "matchCompatibilityDesc", href: "/compatibility" },
+  { labelKey: "calendarPanchang", descKey: "calendarPanchangDesc", href: "/calendar" },
+  { labelKey: "transits", descKey: "transitsDesc", href: "/transits" },
+  { labelKey: "dasha", descKey: "dashaDesc", href: "/guest-dasha" },
+  { labelKey: "doshaCheck", descKey: "doshaCheckDesc", href: "/guest-dosha" },
 ];
 
 export default function Home() {
   const router = useRouter();
+  const { t } = useLanguage();
 
   return (
     <div className={dStyles.dashboardContainer}>
@@ -27,23 +30,28 @@ export default function Home() {
         <main className={dStyles.mainContent}>
           <div className={styles.container}>
             <header className={styles.header}>
-              <h1>🪔 Jyotishya Darshan</h1>
-              <p>Vedic Horoscope • Marriage Match • Panchang</p>
+              <h1>🪔 {t("appName")}</h1>
+              <p className={styles.tagline}>{t("tagline")}</p>
+              <ul className={styles.benefits}>
+                <li>{t("benefit1")}</li>
+                <li>{t("benefit2")}</li>
+                <li>{t("benefit3")}</li>
+              </ul>
+              <p className={styles.socialProof}>{t("socialProof")}</p>
               <div className={styles.actions}>
-                <button onClick={() => router.push("/auth/login")}>Login</button>
-                <button onClick={() => router.push("/auth/register")}>Register</button>
+                <button onClick={() => router.push("/auth/login")}>{t("login")}</button>
+                <button onClick={() => router.push("/auth/register")}>{t("register")}</button>
               </div>
             </header>
             <section className={styles.content}>
-              <h2>What would you like to explore?</h2>
-              <p>
-                Choose a service below. No login needed to try Horoscope, Match, Calendar, Transits, Dasha and Dosha.
-              </p>
+              <h2>{t("whatToExplore")}</h2>
+              <p>{t("chooseService")}</p>
+              <p className={styles.disclaimer}>{t("disclaimer")}</p>
               <div className={styles.serviceCards}>
-                {QUICK_LINKS.map((item) => (
+                {QUICK_LINK_KEYS.map((item) => (
                   <Link key={item.href} href={item.href} className={styles.serviceCard}>
-                    <h3>{item.label}</h3>
-                    <p>{item.desc}</p>
+                    <h3>{t(item.labelKey)}</h3>
+                    <p>{t(item.descKey)}</p>
                   </Link>
                 ))}
               </div>

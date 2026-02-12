@@ -112,6 +112,15 @@ export interface AuspiciousDayResponse {
   source?: string;
 }
 
+export interface RahuYamagandamResponse {
+  date: string;
+  sunrise: string;
+  sunset: string;
+  rahuKaal: { start: string; end: string; note: string };
+  yamagandam: { start: string; end: string; note: string };
+  source: string;
+}
+
 export interface CreateShareableCardDto {
   type: "horoscope" | "kundli_summary";
   title?: string;
@@ -170,13 +179,16 @@ export interface Eclipse {
 // -------------------- Astro API --------------------
 export const astroApi = {
   // -------------------- Kundli & Natal --------------------
-  async getMyKundli(token: string, chartType?: string): Promise<KundliResponse> {
+  async getMyKundli(token: string, chartType?: string, system?: "vedic" | "western"): Promise<KundliResponse> {
     const t = token?.trim();
     if (!t || t.split(".").length !== 3) throw new Error("Invalid token format. Please login again.");
+    const params: Record<string, string> = {};
+    if (chartType) params.chartType = chartType;
+    if (system) params.system = system;
     return request<KundliResponse>(ASTRO_BASE, "/api/v1/kundli/my-kundli", {
       method: "GET",
       token: t,
-      params: chartType ? { chartType } : undefined,
+      params: Object.keys(params).length ? params : undefined,
     });
   },
 
@@ -216,8 +228,24 @@ export const astroApi = {
     });
   },
 
-  async getGuestKundli(dto: { dob: string; birthTime: string; placeOfBirth: string }): Promise<KundliResponse> {
-    return request<KundliResponse>(ASTRO_BASE, "/api/v1/kundli/guest", { method: "POST", body: dto });
+  async getGuestKundli(dto: {
+    dob: string;
+    birthTime?: string;
+    placeOfBirth: string;
+    unknownTime?: boolean;
+  }): Promise<KundliResponse> {
+    const body: Record<string, unknown> = {
+      dob: dto.dob,
+      placeOfBirth: dto.placeOfBirth,
+    };
+    if (dto.unknownTime) {
+      body.unknownTime = true;
+    } else if (dto.birthTime?.trim()) {
+      body.birthTime = dto.birthTime.trim();
+    } else {
+      body.unknownTime = true;
+    }
+    return request<KundliResponse>(ASTRO_BASE, "/api/v1/kundli/guest", { method: "POST", body });
   },
 
   async getGuestCalendar(city?: string): Promise<GuestCalendarResponse> {
@@ -243,6 +271,13 @@ export const astroApi = {
 
   async getAuspiciousDay(date: string, placeOfBirth?: string): Promise<AuspiciousDayResponse> {
     return request<AuspiciousDayResponse>(ASTRO_BASE, "/api/v1/astrology/calendar/auspicious-day", {
+      method: "GET",
+      params: placeOfBirth?.trim() ? { date, placeOfBirth: placeOfBirth.trim() } : { date },
+    });
+  },
+
+  async getRahuYamagandam(date: string, placeOfBirth?: string): Promise<RahuYamagandamResponse> {
+    return request<RahuYamagandamResponse>(ASTRO_BASE, "/api/v1/astrology/calendar/rahu-yamagandam", {
       method: "GET",
       params: placeOfBirth?.trim() ? { date, placeOfBirth: placeOfBirth.trim() } : { date },
     });
@@ -288,6 +323,69 @@ export const astroApi = {
     return request<{ solar: Eclipse[]; lunar: Eclipse[] }>(ASTRO_BASE, "/api/v1/astrology/transits/eclipses", {
       method: "GET",
       params: { fromDate: from },
+    });
+  },
+};
+
+export interface AdminStats {
+  reportCount: number;
+  transactionCount: number;
+  successPaymentCount: number;
+  activeSubscriptionCount: number;
+  totalRevenuePaise: number;
+}
+
+export interface AdminTransaction {
+  id: string;
+  userId: string;
+  type: string;
+  status: string;
+  amountPaise: string;
+  description: string | null;
+  createdAt: string;
+}
+
+export interface AdminReport {
+  id: string;
+  userId: string;
+  reportType: string;
+  filename: string;
+  createdAt: string;
+}
+
+export const adminApi = {
+  async getStats(token: string): Promise<AdminStats> {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) throw new Error("Invalid token. Please login again.");
+    return request<AdminStats>(ASTRO_BASE, "/api/v1/admin/stats", {
+      method: "GET",
+      token: t,
+    });
+  },
+
+  async getTransactions(token: string, limit?: number, offset?: number): Promise<{ items: AdminTransaction[]; total: number }> {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) throw new Error("Invalid token. Please login again.");
+    const params: Record<string, string> = {};
+    if (limit != null) params.limit = String(limit);
+    if (offset != null) params.offset = String(offset);
+    return request<{ items: AdminTransaction[]; total: number }>(ASTRO_BASE, "/api/v1/admin/transactions", {
+      method: "GET",
+      token: t,
+      params: Object.keys(params).length ? params : undefined,
+    });
+  },
+
+  async getReports(token: string, limit?: number, offset?: number): Promise<{ items: AdminReport[]; total: number }> {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) throw new Error("Invalid token. Please login again.");
+    const params: Record<string, string> = {};
+    if (limit != null) params.limit = String(limit);
+    if (offset != null) params.offset = String(offset);
+    return request<{ items: AdminReport[]; total: number }>(ASTRO_BASE, "/api/v1/admin/reports", {
+      method: "GET",
+      token: t,
+      params: Object.keys(params).length ? params : undefined,
     });
   },
 };

@@ -26,6 +26,52 @@
   color: #6b5b52;
 }
 
+.tagline {
+  margin-bottom: 20px !important;
+}
+
+.benefits {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px 0;
+  text-align: left;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.benefits li {
+  font-size: 14px;
+  color: #5c5047;
+  line-height: 1.6;
+  padding: 6px 0 6px 28px;
+  position: relative;
+}
+
+.benefits li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #6b4423;
+  font-weight: 700;
+}
+
+.socialProof {
+  font-size: 13px !important;
+  color: #6b5b52 !important;
+  font-style: italic;
+  margin-bottom: 8px !important;
+}
+
+.disclaimer {
+  font-size: 12px !important;
+  color: #8a7a6f !important;
+  margin-top: 16px !important;
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .actions {
   margin-top: 24px;
   display: flex;

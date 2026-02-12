@@ -62,6 +62,8 @@ export default function TransitsPage() {
   const [majorFrom, setMajorFrom] = useState(todayStr());
   const [majorTo, setMajorTo] = useState(todayStr());
   const [majorData, setMajorData] = useState<MajorTransitsResponse["transits"]>([]);
+  const [majorLoading, setMajorLoading] = useState(false);
+  const [majorError, setMajorError] = useState<string | null>(null);
 
   /* ECLIPSES */
   const [eclipseFrom, setEclipseFrom] = useState(todayStr());
@@ -111,18 +113,20 @@ useEffect(() => {
   }
 };
 
-const loadMajor = async () => {
-   if (!place) {
-    setError("Please enter birth place");
-    return;
-  }
-  try {
-    const data = await astroApi.getMajorTransits(majorFrom, majorTo);
-    setMajorData(data.transits);
-  } catch {
-    setError("Unable to load major transits. Please try again later.");
-  }
-};
+  const loadMajor = async () => {
+    setMajorError(null);
+    setMajorLoading(true);
+    try {
+      const data = await astroApi.getMajorTransits(majorFrom, majorTo);
+      setMajorData(data.transits ?? []);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Failed to load transits.";
+      setMajorError(msg);
+      setMajorData([]);
+    } finally {
+      setMajorLoading(false);
+    }
+  };
 
   const loadEclipses = async () => {
      if (!place) {
@@ -237,9 +241,23 @@ const loadMajor = async () => {
                   <div className={styles.dateBox}>
                     <input type="date" value={majorTo} onChange={(e) => setMajorTo(e.target.value)} />
                   </div>
-                  <button onClick={loadMajor}>Get Transits</button>
+                  <button onClick={loadMajor} disabled={majorLoading}>
+                    {majorLoading ? "Loading…" : "Get Transits"}
+                  </button>
                 </div>
+                {majorError && (
+                  <p className={styles.errorText} role="alert">
+                    {majorError}
+                  </p>
+                )}
+                <p className={styles.hintText}>
+                  Use a range of at least a few days to see Jupiter/Saturn sign changes. Same start and end date shows transits that occurred on that day.
+                </p>
               </div>
+
+              {majorLoading ? null : Object.keys(groupByMonth(majorData)).length === 0 && !majorError ? (
+                <p className={styles.emptyText}>No major sign changes (Jupiter, Saturn) in this date range. Try a wider range (e.g. 1–2 months).</p>
+              ) : null}
 
               {Object.entries(groupByMonth(majorData)).map(([month, list]) => (
                 <div key={month}>

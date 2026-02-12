@@ -33,4 +33,26 @@ export const reportsApi = {
       token: t,
     });
   },
+
+  /** One-time paid report (₹99): deducts from wallet and returns report. For compatibility_summary pass partner details. */
+  async purchaseOneTime(
+    token: string,
+    reportType: "kundli_summary" | "compatibility_summary",
+    compatibilityPartners?: {
+      partner1: { year: number; month: number; day: number; hour?: number; minute?: number; latitude: number; longitude: number };
+      partner2: { year: number; month: number; day: number; hour?: number; minute?: number; latitude: number; longitude: number };
+    },
+  ): Promise<GenerateReportResponse> {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) throw new Error("Invalid token. Please login again.");
+    const body: { reportType: string; compatibilityPartners?: typeof compatibilityPartners } = { reportType };
+    if (reportType === "compatibility_summary" && compatibilityPartners) {
+      body.compatibilityPartners = compatibilityPartners;
+    }
+    return request<GenerateReportResponse>(ASTRO_BASE, "/api/v1/reports/purchase-one-time", {
+      method: "POST",
+      token: t,
+      body,
+    });
+  },
 };

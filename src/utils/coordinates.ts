@@ -35,6 +35,29 @@ const CITY_COORDINATES: Record<string, { lat: number; lng: number }> = {
   raipur: { lat: 21.2514, lng: 81.6296 },
   kota: { lat: 25.2138, lng: 75.8648 },
   mysore: { lat: 12.2958, lng: 76.6394 },
+  // Major international (e.g. for NRI / global users)
+  london: { lat: 51.5074, lng: -0.1278 },
+  "new york": { lat: 40.7128, lng: -74.006 },
+  newyork: { lat: 40.7128, lng: -74.006 },
+  dubai: { lat: 25.2048, lng: 55.2708 },
+  singapore: { lat: 1.3521, lng: 103.8198 },
+  sydney: { lat: -33.8688, lng: 151.2093 },
+  toronto: { lat: 43.6532, lng: -79.3832 },
+  melbourne: { lat: -37.8136, lng: 144.9631 },
+  "hong kong": { lat: 22.3193, lng: 114.1694 },
+  hongkong: { lat: 22.3193, lng: 114.1694 },
+  "kuala lumpur": { lat: 3.139, lng: 101.6869 },
+  kualalumpur: { lat: 3.139, lng: 101.6869 },
+  "abu dhabi": { lat: 24.4539, lng: 54.3773 },
+  abudhabi: { lat: 24.4539, lng: 54.3773 },
+  doha: { lat: 25.2854, lng: 51.5310 },
+  "san francisco": { lat: 37.7749, lng: -122.4194 },
+  sanfrancisco: { lat: 37.7749, lng: -122.4194 },
+  "los angeles": { lat: 34.0522, lng: -118.2437 },
+  losangeles: { lat: 34.0522, lng: -118.2437 },
+  chicago: { lat: 41.8781, lng: -87.6298 },
+  houston: { lat: 29.7604, lng: -95.3698 },
+  boston: { lat: 42.3601, lng: -71.0589 },
 };
 
 export function getCoordinatesFromCity(cityName: string): {
@@ -61,5 +84,16 @@ export function getCoordinatesFromCity(cityName: string): {
 
   // Default to Delhi if not found
   return { lat: 28.6139, lng: 77.209 };
+}
+
+/** Returns true if the given city name was found in the known list (no fallback used). */
+export function isCityRecognized(cityName: string): boolean {
+  if (!cityName?.trim()) return false;
+  const normalizedCity = cityName.toLowerCase().trim();
+  if (CITY_COORDINATES[normalizedCity]) return true;
+  for (const city of Object.keys(CITY_COORDINATES)) {
+    if (normalizedCity.includes(city) || city.includes(normalizedCity)) return true;
+  }
+  return false;
 }
 

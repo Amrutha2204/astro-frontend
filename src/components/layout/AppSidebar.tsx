@@ -3,12 +3,13 @@ import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { useCallback } from "react";
 import styles from "@/styles/dashboard.module.css";
-import { selectIsGuest, clearToken } from "@/store/slices/authSlice";
+import { selectIsGuest, selectRoleId, clearToken, ADMIN_ROLE_ID } from "@/store/slices/authSlice";
 
 type NavItem = { id: string; label: string; href: string };
 
 const GUEST_MENU: NavItem[] = [
   { id: "home", label: "Home", href: "/" },
+  { id: "kundli", label: "Free Kundli", href: "/guest-kundli" },
   { id: "transits", label: "Transits", href: "/transits" },
   { id: "calendar", label: "Calendar", href: "/calendar" },
   { id: "horoscope", label: "Horoscope", href: "/guest-horoscope" },
@@ -17,7 +18,7 @@ const GUEST_MENU: NavItem[] = [
   { id: "compatibility", label: "Match", href: "/compatibility" },
 ];
 
-const AUTH_MENU: NavItem[] = [
+const AUTH_MENU_BASE: NavItem[] = [
   { id: "dashboard", label: "Dashboard", href: "/dashboard" },
   { id: "kundli", label: "My Kundli", href: "/kundli" },
   { id: "horoscope", label: "Horoscope", href: "/horoscope/today" },
@@ -39,13 +40,19 @@ const AppSidebar = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const isGuest = useSelector(selectIsGuest);
+  const roleId = useSelector(selectRoleId);
+  const isAdmin = roleId === ADMIN_ROLE_ID;
 
   const handleLogout = useCallback(() => {
     dispatch(clearToken());
     router.push("/auth/login");
   }, [dispatch, router]);
 
-  const menuItems = isGuest ? GUEST_MENU : AUTH_MENU;
+  const menuItems = isGuest
+    ? GUEST_MENU
+    : isAdmin
+      ? [...AUTH_MENU_BASE, { id: "admin", label: "Admin", href: "/admin" }]
+      : AUTH_MENU_BASE;
 
   return (
     <aside className={styles.sidebar}>

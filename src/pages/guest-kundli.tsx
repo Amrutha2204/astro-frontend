@@ -21,6 +21,7 @@ type GuestSession = {
     dob: string;
     birthTime: string;
     placeOfBirth: string;
+    unknownTime?: boolean;
   };
   kundli: KundliResponse;
 };
@@ -49,7 +50,7 @@ function CreateAccountButton({
   birthDetails,
   router,
 }: {
-  birthDetails: { name?: string; dob: string; birthTime: string; placeOfBirth: string };
+  birthDetails: { name?: string; dob: string; birthTime: string; placeOfBirth: string; unknownTime?: boolean };
   router: ReturnType<typeof useRouter>;
 }) {
   const [linking, setLinking] = useState(false);
@@ -60,7 +61,7 @@ function CreateAccountButton({
         name: birthDetails.name?.trim() || "Guest",
         dob: birthDetails.dob,
         birthPlace: birthDetails.placeOfBirth,
-        birthTime: birthDetails.birthTime,
+        birthTime: birthDetails.unknownTime ? "12:00:00" : birthDetails.birthTime,
       });
       router.push(`/auth/register?guestId=${encodeURIComponent(res.guestId)}`);
     } catch {
@@ -91,6 +92,7 @@ export default function GuestKundliPage() {
   const [gender, setGender] = useState<"male" | "female" | "">("");
   const [dob, setDob] = useState("");
   const [birthTime, setBirthTime] = useState("");
+  const [unknownTime, setUnknownTime] = useState(false);
   const [placeOfBirth, setPlaceOfBirth] = useState("");
 
   const [loading, setLoading] = useState(false);
@@ -103,8 +105,12 @@ export default function GuestKundliPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!dob.trim() || !birthTime.trim() || !placeOfBirth.trim()) {
-      setError("Please fill Date of Birth, Birth Time and Place of Birth.");
+    if (!dob.trim() || !placeOfBirth.trim()) {
+      setError("Please fill Date of Birth and Place of Birth.");
+      return;
+    }
+    if (!unknownTime && !birthTime.trim()) {
+      setError("Please enter birth time or select \"I don't know my birth time\".");
       return;
     }
     setError(null);
@@ -112,16 +118,18 @@ export default function GuestKundliPage() {
     try {
       const kundli = await astroApi.getGuestKundli({
         dob: dob.trim(),
-        birthTime: birthTime.trim(),
+        birthTime: unknownTime ? undefined : birthTime.trim(),
         placeOfBirth: placeOfBirth.trim(),
+        unknownTime: unknownTime || undefined,
       });
       const session: GuestSession = {
         birthDetails: {
           name: name.trim() || undefined,
           gender: gender || undefined,
           dob: dob.trim(),
-          birthTime: birthTime.trim(),
+          birthTime: unknownTime ? "12:00:00" : birthTime.trim(),
           placeOfBirth: placeOfBirth.trim(),
+          unknownTime: unknownTime || undefined,
         },
         kundli,
       };
@@ -143,6 +151,7 @@ export default function GuestKundliPage() {
     setGender("");
     setDob("");
     setBirthTime("");
+    setUnknownTime(false);
     setPlaceOfBirth("");
   };
 
@@ -231,6 +240,9 @@ export default function GuestKundliPage() {
                   </div>
                 )}
 
+                {b.unknownTime && (
+                  <p className={styles.unknownTimeNote}>Birth time was not provided; noon (12:00) was used for this chart. Lagna and house positions may be approximate.</p>
+                )}
                 <CalculationInfo showDasha={true} showAyanamsa={true} className={dStyles.calculationInfo} />
                 <TrustNote variant="guest" showAccuracyTip />
                 <div className={dStyles.sourceInfo}>
@@ -283,16 +295,38 @@ export default function GuestKundliPage() {
               required
             />
 
-            <label className={formStyles.label}>Birth time *</label>
-            <input
-              type="time"
-              className={formStyles.input}
-              value={birthTime}
-              onChange={(e) => setBirthTime(e.target.value)}
-              step="1"
-              required
-            />
-            <p className={formStyles.hint}>Use hours and minutes; add seconds if known for better accuracy.</p>
+            <div className={styles.timeRow}>
+              <label className={`${formStyles.label} ${styles.timeRowLabel}`}>Birth time {unknownTime ? "" : "*"}</label>
+              <button
+                type="button"
+                className={styles.unknownTimeBtn}
+                onClick={() => {
+                  setUnknownTime((prev) => {
+                    if (!prev) setBirthTime("12:00");
+                    return !prev;
+                  });
+                }}
+                aria-pressed={unknownTime}
+              >
+                {unknownTime ? "✓ I don't know my birth time" : "I don't know my birth time"}
+              </button>
+            </div>
+            {!unknownTime && (
+              <>
+                <input
+                  type="time"
+                  className={formStyles.input}
+                  value={birthTime}
+                  onChange={(e) => setBirthTime(e.target.value)}
+                  step="1"
+                  required
+                />
+                <p className={formStyles.hint}>Use hours and minutes; add seconds if known for better accuracy.</p>
+              </>
+            )}
+            {unknownTime && (
+              <p className={formStyles.hint}>Noon (12:00) will be used — Lagna and house positions may be approximate.</p>
+            )}
 
             <label className={formStyles.label}>Birth place (city) *</label>
             <input
