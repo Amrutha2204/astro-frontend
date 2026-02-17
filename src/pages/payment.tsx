@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
-import { paymentApi, WalletBalanceResponse } from "@/services/paymentService";
+import { paymentApi, WalletBalanceResponse, UserTransaction } from "@/services/paymentService";
 import { showError, showSuccess } from "@/utils/toast";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
 import styles from "@/styles/dashboard.module.css";
@@ -16,8 +16,11 @@ export default function PaymentPage() {
   const rehydrated = useSelector(selectIsRehydrated);
   const token = useSelector(selectToken);
   const [balance, setBalance] = useState<WalletBalanceResponse | null>(null);
+  const [transactions, setTransactions] = useState<UserTransaction[]>([]);
+  const [transactionsTotal, setTransactionsTotal] = useState(0);
   const [amountRupees, setAmountRupees] = useState("");
   const [loading, setLoading] = useState(true);
+  const [loadingTx, setLoadingTx] = useState(true);
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -40,6 +43,22 @@ export default function PaymentPage() {
     }
   }, [token, dispatch, router]);
 
+  const fetchTransactions = useCallback(async () => {
+    const t = token?.trim();
+    if (!t) return;
+    setLoadingTx(true);
+    try {
+      const res = await paymentApi.getMyTransactions(t, 30, 0);
+      setTransactions(res.items);
+      setTransactionsTotal(res.total);
+    } catch {
+      setTransactions([]);
+      setTransactionsTotal(0);
+    } finally {
+      setLoadingTx(false);
+    }
+  }, [token]);
+
   useEffect(() => {
     if (!rehydrated) return;
     if (!token?.trim() || token.trim().split(".").length !== 3) {
@@ -48,7 +67,8 @@ export default function PaymentPage() {
       return;
     }
     fetchBalance();
-  }, [rehydrated, token, dispatch, router, fetchBalance]);
+    fetchTransactions();
+  }, [rehydrated, token, dispatch, router, fetchBalance, fetchTransactions]);
 
   const handleCreateOrder = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,6 +96,7 @@ export default function PaymentPage() {
               await paymentApi.verify(t, response.razorpay_order_id, response.razorpay_payment_id, response.razorpay_signature);
               showSuccess("Payment successful. Wallet updated.");
               fetchBalance();
+              fetchTransactions();
             } catch (e) {
               showError(e instanceof Error ? e.message : "Verification failed");
             }
@@ -142,6 +163,40 @@ export default function PaymentPage() {
               <p style={{ fontSize: "0.85rem", color: "#666", marginTop: "0.5rem" }}>
                 If Razorpay is not loaded, you will be redirected to plans page. Load the Razorpay script on your site for in-page checkout.
               </p>
+            </div>
+
+            <div style={{ marginTop: "2rem" }}>
+              <h2 className={styles.adminSectionTitle}>Transaction history ({transactionsTotal})</h2>
+              {loadingTx ? (
+                <p>Loading…</p>
+              ) : transactions.length === 0 ? (
+                <p className={styles.explanationLine}>No transactions yet.</p>
+              ) : (
+                <div className={styles.adminTableWrap}>
+                  <table className={styles.adminTable}>
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Amount</th>
+                        <th>Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {transactions.map((tx) => (
+                        <tr key={tx.id}>
+                          <td>{new Date(tx.createdAt).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })}</td>
+                          <td>{tx.type}</td>
+                          <td>{tx.status}</td>
+                          <td>₹{(Number(tx.amountPaise) / 100).toFixed(2)}</td>
+                          <td>{tx.description || "—"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
         </main>
