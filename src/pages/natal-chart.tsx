@@ -8,6 +8,22 @@ import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/auth
 import styles from "@/styles/dashboard.module.css";
 import ErrorMessage from "@/components/ui/ErrorMessage";
 import Loading from "@/components/ui/Loading";
+import SunSignExplorer from "@/components/common/SunSignExplorer";
+
+const sunSignMeaning: Record<string, string> = {
+  Aries: "Action-driven, bold, energetic. You thrive on initiative.",
+  Taurus: "Grounded, patient, and stable. You build lasting foundations.",
+  Gemini: "Curious communicator who adapts quickly.",
+  Cancer: "Emotional protector with strong intuition.",
+  Leo: "Confident leader who shines through creativity.",
+  Virgo: "Analytical thinker focused on improvement.",
+  Libra: "Diplomatic harmonizer seeking balance.",
+  Scorpio: "Intense transformer driven by truth.",
+  Sagittarius: "Explorer seeking wisdom and freedom.",
+  Capricorn: "Disciplined builder focused on success.",
+  Aquarius: "Innovative thinker valuing independence.",
+  Pisces: "Intuitive dreamer with deep compassion."
+};
 
 const REDIRECT_DELAY_MS = 2000;
 
@@ -105,9 +121,18 @@ export default function NatalChartPage() {
               <>
                 <div className={styles.infoGrid}>
                   <div className={styles.infoCard}>
-                    <h3>Sun Sign</h3>
-                    <p className={styles.infoValue}>{natalChart.sunSign || "N/A"}</p>
-                  </div>
+  <h3>Sun Sign</h3>
+
+  <p className={styles.infoValue}>
+    {natalChart.sunSign || "N/A"}
+  </p>
+
+  {natalChart.sunSign && (
+    <p style={{ marginTop: "8px", opacity: 0.85 }}>
+      {sunSignMeaning[natalChart.sunSign] || ""}
+    </p>
+  )}
+</div>
                   <div className={styles.infoCard}>
                     <h3>Moon Sign</h3>
                     <p className={styles.infoValue}>{natalChart.moonSign || "N/A"}</p>
@@ -131,6 +156,9 @@ export default function NatalChartPage() {
                     </div>
                   </div>
                 )}
+                {natalChart.sunSign && (
+      <SunSignExplorer userSign={natalChart.sunSign} />
+    )}
               </>
             )}
           </div>
