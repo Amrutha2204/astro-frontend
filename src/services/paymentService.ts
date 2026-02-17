@@ -41,4 +41,34 @@ export const paymentApi = {
       token: t,
     });
   },
+
+  async getMyTransactions(
+    token: string,
+    limit?: number,
+    offset?: number
+  ): Promise<{ items: UserTransaction[]; total: number }> {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) throw new Error("Invalid token. Please login again.");
+    const params: Record<string, string> = {};
+    if (limit != null) params.limit = String(limit);
+    if (offset != null) params.offset = String(offset);
+    return request<{ items: UserTransaction[]; total: number }>(
+      ASTRO_BASE,
+      "/api/v1/payment/transactions/me",
+      {
+        method: "GET",
+        token: t,
+        params: Object.keys(params).length ? params : undefined,
+      }
+    );
+  },
 };
+
+export interface UserTransaction {
+  id: string;
+  type: string;
+  status: string;
+  amountPaise: string;
+  description: string | null;
+  createdAt: string;
+}

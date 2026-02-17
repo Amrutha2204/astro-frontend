@@ -6,13 +6,15 @@ import AppSidebar from "@/components/layout/AppSidebar";
 import ServiceCard from "@/components/common/ServiceCard";
 import styles from "@/styles/dashboard.module.css";
 import { store } from "@/store";
-import { selectIsRehydrated, selectIsGuest, clearToken } from "@/store/slices/authSlice";
+import { selectIsRehydrated, selectIsGuest, selectToken, clearToken } from "@/store/slices/authSlice";
+import { getUserDetails } from "@/services/userService";
 
 export default function Dashboard() {
   const router = useRouter();
   const dispatch = useDispatch();
   const rehydrated = useSelector(selectIsRehydrated);
   const isGuest = useSelector(selectIsGuest);
+  const token = useSelector(selectToken);
 
   useEffect(() => {
     if (!rehydrated) return;
@@ -21,6 +23,19 @@ export default function Dashboard() {
       router.replace("/auth/login");
     }
   }, [rehydrated, isGuest, dispatch, router]);
+
+  useEffect(() => {
+    if (!rehydrated || isGuest || !token?.trim()) return;
+    getUserDetails(token)
+      .then((data: unknown) => {
+        const d = data as { dob?: string; birthPlace?: string } | null;
+        const hasBirthData = d?.dob && d?.birthPlace && String(d.dob).trim() && String(d.birthPlace).trim();
+        if (!hasBirthData) router.replace("/birth-details");
+      })
+      .catch(() => {
+        router.replace("/birth-details");
+      });
+  }, [rehydrated, isGuest, token, router]);
 
   useEffect(() => {
     const handlePopState = () => {

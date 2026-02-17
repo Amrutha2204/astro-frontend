@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
@@ -7,16 +8,19 @@ import {
   AdminStats,
   AdminTransaction,
   AdminReport,
+  AdminContent,
 } from "@/services/api";
-import { selectToken, selectIsRehydrated } from "@/store/slices/authSlice";
+import { selectToken, selectIsRehydrated, selectRoleId, ADMIN_ROLE_ID } from "@/store/slices/authSlice";
 import dashboardStyles from "@/styles/dashboard.module.css";
 import styles from "@/styles/dashboard.module.css";
 
-type AdminTab = "overview" | "transactions" | "reports";
+type AdminTab = "overview" | "transactions" | "reports" | "content";
 
 export default function AdminPage() {
+  const router = useRouter();
   const token = useSelector(selectToken);
   const rehydrated = useSelector(selectIsRehydrated);
+  const roleId = useSelector(selectRoleId);
   const [activeTab, setActiveTab] = useState<AdminTab>("overview");
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [transactions, setTransactions] = useState<AdminTransaction[]>([]);
@@ -26,6 +30,10 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [loadingTx, setLoadingTx] = useState(false);
   const [loadingReports, setLoadingReports] = useState(false);
+  const [loadingContent, setLoadingContent] = useState(false);
+  const [savingContent, setSavingContent] = useState(false);
+  const [content, setContent] = useState<AdminContent>({});
+  const [aiEnabled, setAiEnabled] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchStats = useCallback(async () => {
@@ -81,10 +89,63 @@ export default function AdminPage() {
     }
   }, [token]);
 
+  const fetchContent = useCallback(async () => {
+    const t = token?.trim();
+    if (!t) return;
+    setLoadingContent(true);
+    try {
+      const [contentRes, aiRes] = await Promise.all([
+        adminApi.getContent(t),
+        adminApi.getAiEnabled(t),
+      ]);
+      setContent(contentRes);
+      setAiEnabled(aiRes.enabled);
+    } catch {
+      setContent({});
+      setAiEnabled(true);
+    } finally {
+      setLoadingContent(false);
+    }
+  }, [token]);
+
+  const saveContent = useCallback(async () => {
+    const t = token?.trim();
+    if (!t) return;
+    setSavingContent(true);
+    try {
+      await adminApi.setContent(t, content);
+      setError(null);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to save content.");
+    } finally {
+      setSavingContent(false);
+    }
+  }, [token, content]);
+
+  const saveAiEnabled = useCallback(async (enabled: boolean) => {
+    const t = token?.trim();
+    if (!t) return;
+    try {
+      await adminApi.setAiEnabled(t, enabled);
+      setAiEnabled(enabled);
+      setError(null);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to update AI setting.");
+    }
+  }, [token]);
+
   useEffect(() => {
     if (!rehydrated) return;
     fetchStats();
   }, [rehydrated, fetchStats]);
+
+  // Redirect non-admin users to dashboard
+  useEffect(() => {
+    if (!rehydrated || !token) return;
+    if (roleId !== undefined && roleId !== ADMIN_ROLE_ID) {
+      router.replace("/dashboard");
+    }
+  }, [rehydrated, token, roleId, router]);
 
   useEffect(() => {
     if (activeTab === "transactions" && token) fetchTransactions();
@@ -94,6 +155,10 @@ export default function AdminPage() {
     if (activeTab === "reports" && token) fetchReports();
   }, [activeTab, token, fetchReports]);
 
+  useEffect(() => {
+    if (activeTab === "content" && token) fetchContent();
+  }, [activeTab, token, fetchContent]);
+
   if (!rehydrated || !token) {
     return (
       <div className={dashboardStyles.dashboardContainer}>
@@ -102,6 +167,20 @@ export default function AdminPage() {
           <AppSidebar />
           <main className={dashboardStyles.mainContent}>
             <p>Please log in to access this page.</p>
+          </main>
+        </div>
+      </div>
+    );
+  }
+
+  if (roleId !== undefined && roleId !== ADMIN_ROLE_ID) {
+    return (
+      <div className={dashboardStyles.dashboardContainer}>
+        <AppHeader />
+        <div className={dashboardStyles.dashboardContent}>
+          <AppSidebar />
+          <main className={dashboardStyles.mainContent}>
+            <p>Redirecting…</p>
           </main>
         </div>
       </div>
@@ -120,14 +199,14 @@ export default function AdminPage() {
           <h1 className={styles.pageTitle}>Admin</h1>
 
           <div className={styles.adminTabs}>
-            {(["overview", "transactions", "reports"] as const).map((tab) => (
+            {(["overview", "transactions", "reports", "content"] as const).map((tab) => (
               <button
                 key={tab}
                 type="button"
                 onClick={() => setActiveTab(tab)}
                 className={activeTab === tab ? styles.activeTab : styles.tab}
               >
-                {tab === "overview" ? "Overview" : tab === "transactions" ? "Transactions" : "Reports"}
+                {tab === "overview" ? "Overview" : tab === "transactions" ? "Transactions" : tab === "reports" ? "Reports" : "Content"}
               </button>
             ))}
           </div>
@@ -140,7 +219,17 @@ export default function AdminPage() {
 
           {activeTab === "overview" && (
             <>
-              {loading && <p>Loading…</p>}
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+                <button
+                  type="button"
+                  onClick={() => fetchStats()}
+                  disabled={loading}
+                  className={styles.retryButton}
+                >
+                  {loading ? "Loading…" : "Refresh stats"}
+                </button>
+              </div>
+              {loading && !stats && <p>Loading…</p>}
               {!loading && stats && (
                 <div className={styles.adminStatsGrid}>
                   <div className={styles.adminStatCard}>
@@ -170,7 +259,12 @@ export default function AdminPage() {
 
           {activeTab === "transactions" && (
             <div className={styles.adminSection}>
-              <h2 className={styles.adminSectionTitle}>Recent transactions ({transactionsTotal})</h2>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                <h2 className={styles.adminSectionTitle} style={{ marginBottom: 0 }}>Recent transactions ({transactionsTotal})</h2>
+                <button type="button" onClick={() => fetchTransactions()} disabled={loadingTx} className={styles.retryButton}>
+                  {loadingTx ? "Loading…" : "Refresh"}
+                </button>
+              </div>
               {loadingTx ? (
                 <p>Loading…</p>
               ) : (
@@ -210,7 +304,12 @@ export default function AdminPage() {
 
           {activeTab === "reports" && (
             <div className={styles.adminSection}>
-              <h2 className={styles.adminSectionTitle}>Recent reports ({reportsTotal})</h2>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                <h2 className={styles.adminSectionTitle} style={{ marginBottom: 0 }}>Recent reports ({reportsTotal})</h2>
+                <button type="button" onClick={() => fetchReports()} disabled={loadingReports} className={styles.retryButton}>
+                  {loadingReports ? "Loading…" : "Refresh"}
+                </button>
+              </div>
               {loadingReports ? (
                 <p>Loading…</p>
               ) : (
@@ -240,6 +339,68 @@ export default function AdminPage() {
                     </tbody>
                   </table>
                 </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === "content" && (
+            <div className={styles.adminSection}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                <h2 className={styles.adminSectionTitle} style={{ marginBottom: 0 }}>Content & AI</h2>
+                <button type="button" onClick={() => fetchContent()} disabled={loadingContent} className={styles.retryButton}>
+                  {loadingContent ? "Loading…" : "Refresh"}
+                </button>
+              </div>
+              {loadingContent ? (
+                <p>Loading…</p>
+              ) : (
+                <>
+                  <div style={{ marginBottom: 16 }}>
+                    <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
+                      <input
+                        type="checkbox"
+                        checked={aiEnabled}
+                        onChange={(e) => saveAiEnabled(e.target.checked)}
+                      />
+                      <span>AI assistant enabled</span>
+                    </label>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 16 }}>
+                    <label>
+                      <span style={{ display: "block", marginBottom: 4 }}>Sun sign meanings</span>
+                      <textarea
+                        value={content.sunSignMeanings ?? ""}
+                        onChange={(e) => setContent((c) => ({ ...c, sunSignMeanings: e.target.value }))}
+                        rows={4}
+                        className={styles.adminTable}
+                        style={{ width: "100%", maxWidth: 600 }}
+                      />
+                    </label>
+                    <label>
+                      <span style={{ display: "block", marginBottom: 4 }}>Planet meanings</span>
+                      <textarea
+                        value={content.planetMeanings ?? ""}
+                        onChange={(e) => setContent((c) => ({ ...c, planetMeanings: e.target.value }))}
+                        rows={4}
+                        className={styles.adminTable}
+                        style={{ width: "100%", maxWidth: 600 }}
+                      />
+                    </label>
+                    <label>
+                      <span style={{ display: "block", marginBottom: 4 }}>Transit interpretations</span>
+                      <textarea
+                        value={content.transitInterpretations ?? ""}
+                        onChange={(e) => setContent((c) => ({ ...c, transitInterpretations: e.target.value }))}
+                        rows={4}
+                        className={styles.adminTable}
+                        style={{ width: "100%", maxWidth: 600 }}
+                      />
+                    </label>
+                  </div>
+                  <button type="button" onClick={() => saveContent()} disabled={savingContent} className={styles.retryButton}>
+                    {savingContent ? "Saving…" : "Save content"}
+                  </button>
+                </>
               )}
             </div>
           )}

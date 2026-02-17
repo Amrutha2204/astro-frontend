@@ -353,6 +353,12 @@ export interface AdminReport {
   createdAt: string;
 }
 
+export interface AdminContent {
+  sunSignMeanings?: string;
+  planetMeanings?: string;
+  transitInterpretations?: string;
+}
+
 export const adminApi = {
   async getStats(token: string): Promise<AdminStats> {
     const t = token?.trim();
@@ -386,6 +392,38 @@ export const adminApi = {
       method: "GET",
       token: t,
       params: Object.keys(params).length ? params : undefined,
+    });
+  },
+
+  async getContent(token: string): Promise<AdminContent> {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) throw new Error("Invalid token. Please login again.");
+    return request<AdminContent>(ASTRO_BASE, "/api/v1/admin/content", { method: "GET", token: t });
+  },
+
+  async setContent(token: string, content: AdminContent): Promise<void> {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) throw new Error("Invalid token. Please login again.");
+    return request<void>(ASTRO_BASE, "/api/v1/admin/content", {
+      method: "PUT",
+      token: t,
+      body: content,
+    });
+  },
+
+  async getAiEnabled(token: string): Promise<{ enabled: boolean }> {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) throw new Error("Invalid token. Please login again.");
+    return request<{ enabled: boolean }>(ASTRO_BASE, "/api/v1/admin/ai-enabled", { method: "GET", token: t });
+  },
+
+  async setAiEnabled(token: string, enabled: boolean): Promise<void> {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) throw new Error("Invalid token. Please login again.");
+    return request<void>(ASTRO_BASE, "/api/v1/admin/ai-enabled", {
+      method: "PUT",
+      token: t,
+      body: { enabled },
     });
   },
 };

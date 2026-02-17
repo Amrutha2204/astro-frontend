@@ -1,14 +1,30 @@
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import styles from "@/styles/dashboard.module.css";
-import { selectIsGuest } from "@/store/slices/authSlice";
+import { selectIsGuest, selectToken, selectIsRehydrated } from "@/store/slices/authSlice";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { paymentApi } from "@/services/paymentService";
 
 const AppHeader = () => {
   const router = useRouter();
   const isGuest = useSelector(selectIsGuest);
+  const token = useSelector(selectToken);
+  const rehydrated = useSelector(selectIsRehydrated);
+  const [walletBalance, setWalletBalance] = useState<number | null>(null);
   const { locale, setLocale, t } = useLanguage();
+
+  useEffect(() => {
+    if (!rehydrated || isGuest || !token?.trim() || token.split(".").length !== 3) {
+      setWalletBalance(null);
+      return;
+    }
+    paymentApi
+      .getBalance(token)
+      .then((r) => setWalletBalance(r.balanceRupees))
+      .catch(() => setWalletBalance(null));
+  }, [rehydrated, isGuest, token]);
 
   const handleClose = () => {
     if (typeof window !== "undefined" && window.history.length > 1) {
@@ -59,7 +75,9 @@ const AppHeader = () => {
         ) : (
           <div className={styles.currency}>
             <span className={styles.currencySymbol}>₹</span>
-            <span className={styles.currencyAmount}>0.0</span>
+            <span className={styles.currencyAmount}>
+              {walletBalance === null ? "—" : walletBalance.toFixed(2)}
+            </span>
           </div>
         )}
       </div>
