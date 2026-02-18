@@ -25,11 +25,32 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* ---------- LIGHT THEME ---------- */
 :root {
-  --primary: #2563eb;
-  --background: #ffffff;
-  --text: #111827;
-  --border: #d1d5db;
+  --bg-main: #faf8f5;       /* warm cream */
+  --bg-card: #ffffff;
+
+  --text-main: #3d2b1f;
+  --text-soft: #6b4423;
+
+  --header-bg: #8b4513;
+  --sidebar-bg: #7a3e12;
+
+  --border: #e5d6c7;
+}
+
+/* ---------- DARK THEME (same palette) ---------- */
+.dark {
+  --bg-main: #2b1a12;      /* dark warm brown */
+  --bg-card: #3a2418;
+
+  --text-main: #f3e6d8;
+  --text-soft: #d6b89b;
+
+  --header-bg: #5c2f0e;
+  --sidebar-bg: #4a240a;
+
+  --border: #5a3b29;
 }
 
 body {

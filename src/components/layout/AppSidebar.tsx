@@ -28,6 +28,7 @@ const AUTH_MENU_BASE: NavItem[] = [
   { id: "dosha", label: "Dosha Check", href: "/dosha" },
   { id: "compatibility", label: "Match", href: "/compatibility" },
   { id: "remedies", label: "Remedies", href: "/remedies" },
+  { id: "family", label: "Family Profiles", href: "/familyProfiles" },
   { id: "shareable-card", label: "Shareable Card", href: "/shareable-card" },
   { id: "ai-assistant", label: "AI Assistant", href: "/ai-assistant/chat" },
   { id: "subscription", label: "Subscription", href: "/subscription/plans" },

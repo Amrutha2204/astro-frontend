@@ -6,6 +6,7 @@ import styles from "@/styles/dashboard.module.css";
 import { selectIsGuest, selectToken, selectIsRehydrated } from "@/store/slices/authSlice";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { paymentApi } from "@/services/paymentService";
+import ThemeToggle from "@/components/common/ThemeToggle";
 
 const AppHeader = () => {
   const router = useRouter();
@@ -49,6 +50,7 @@ const AppHeader = () => {
       </div>
 
       <div className={styles.headerRight}>
+        <ThemeToggle />
         <div className={styles.langToggle}>
           <button
             type="button"
