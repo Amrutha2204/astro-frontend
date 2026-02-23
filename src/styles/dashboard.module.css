@@ -2,11 +2,12 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #ffffff;
+  background: var(--bg-main);
+  color: var(--text-main);
 }
 
 .header {
-  background: #8b4513;
+  background: var(--accent);
   height: 50px;
   display: flex;
   align-items: center;
@@ -163,7 +164,7 @@
 
 .sidebar {
   width: 260px;
-  background: #6b4423;
+  background: var(--accent);
   color: white;
   display: flex;
   flex-direction: column;
@@ -277,7 +278,7 @@
   margin-left: 250px;
   overflow-y: auto;
   overflow-x: hidden;
-  background: #faf8f5;
+  background: var(--bg-main);
   height: calc(100vh - 50px);
   width: 100%;
 }
@@ -415,8 +416,10 @@
 }
 
 .serviceCard {
-  background: white;
-  border: 1px solid #e5e7eb;
+  background: var(--card-bg);
+color: var(--text-main);
+border-color: var(--border);
+  border: 1px solid;
   border-radius: 8px;
   padding: 20px;
   cursor: pointer;
@@ -447,7 +450,7 @@
 
 .cardDescription {
   font-size: 13px;
-  color: #6b7280;
+  color: var(--muted);
   margin: 0 0 12px 0;
   line-height: 1.5;
 }
@@ -592,7 +595,7 @@
 .infoLabel {
   font-size: 14px;
   font-weight: 600;
-  color: #6b7280;
+  color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -1501,7 +1504,7 @@
 .aiMessage {
   align-self: flex-start;
   max-width: 70%;
-  background: #f9fafb;
+  background: var(--muted);
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   padding: 12px 16px;

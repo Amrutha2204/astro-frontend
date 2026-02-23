@@ -7,6 +7,7 @@ import { Toaster } from "react-hot-toast";
 import { store } from "@/store";
 import { rehydrate } from "@/store/slices/authSlice";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
+import {ThemeProvider} from "@/components/common/ThemeToggle";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 
 function RehydrateAuth() {
@@ -51,11 +52,13 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta name="description" content="Vedic horoscope, Kundli, Dasha, Dosha check, marriage match, and Panchang. Try free without login." />
       </Head>
       <RehydrateAuth />
+      <ThemeProvider>
       <LanguageProvider>
         <ErrorBoundary>
           <Component {...pageProps} />
         </ErrorBoundary>
       </LanguageProvider>
+      </ThemeProvider>
       <Toaster
         position="top-right"
         toastOptions={{

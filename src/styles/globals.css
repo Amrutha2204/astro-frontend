@@ -1,109 +1,61 @@
 @import "tailwindcss";
 
+/* ================================= */
+/* THEME VARIABLES */
+/* ================================= */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* LIGHT */
+  --bg-main: #f6f7fb;
+  --card-bg: #ffffff;
+  --text-main: #2c2c54;
+  --accent: #6b4423;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+[data-theme="dark"] {
+  /* soft warm dark background */
+  --bg-main: #d6c29f;
+
+  /* card surface */
+  --card-bg: #f3dcc5;
+
+  /* readable warm text */
+  --text-main: #171616;
+
+  /* devotional gold accent */
+  --accent: #86530c;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* ================================= */
+/* GLOBAL STYLES */
+/* ================================= */
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--bg-main);
+  color: var(--text-main);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background 0.25s ease, color 0.25s ease;
 }
 
-/* ---------- LIGHT THEME ---------- */
-:root {
-  --bg-main: #faf8f5;       /* warm cream */
-  --bg-card: #ffffff;
-
-  --text-main: #3d2b1f;
-  --text-soft: #6b4423;
-
-  --header-bg: #8b4513;
-  --sidebar-bg: #7a3e12;
-
-  --border: #e5d6c7;
-}
-
-/* ---------- DARK THEME (same palette) ---------- */
-.dark {
-  --bg-main: #2b1a12;      /* dark warm brown */
-  --bg-card: #3a2418;
-
-  --text-main: #f3e6d8;
-  --text-soft: #d6b89b;
-
-  --header-bg: #5c2f0e;
-  --sidebar-bg: #4a240a;
-
-  --border: #5a3b29;
-}
-
-body {
-  background: var(--background);
-  color: var(--text);
-}
+/* UI helpers */
 
 .btn {
   padding: 10px 18px;
   border-radius: 6px;
-  border: none;
   cursor: pointer;
   font-weight: 600;
 }
 
 .btn-primary {
-  background: var(--primary);
+  background: var(--accent);
   color: white;
-}
-
-.btn-secondary {
-  background: transparent;
-  color: var(--primary);
-  border: 1px solid var(--primary);
 }
 
 .input-field {
   width: 100%;
   padding: 10px;
   border-radius: 6px;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text);
-}
-
-.error-box {
-  padding: 14px;
-  margin-top: 16px;
-  background: #fff4e5;
-  border: 1px solid #ffd8a8;
-  color: #7a4b00;
-  border-radius: 8px;
-  font-size: 14px;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-html,
-body {
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
+  border: 1px solid #ccc;
+  background: var(--card-bg);
+  color: var(--text-main);
 }

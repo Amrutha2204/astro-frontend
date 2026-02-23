@@ -1,36 +1,57 @@
-"use client";
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 
-import { useEffect, useState } from "react";
+type Theme = "light" | "dark";
 
-export default function ThemeToggle() {
-  const [dark, setDark] = useState(false);
+interface ThemeContextType {
+  theme: Theme;
+  toggleTheme: () => void;
+}
+
+const ThemeContext = createContext<ThemeContextType | null>(null);
+
+// ✅ REAL PROVIDER
+export const ThemeProvider = ({ children }: { children: ReactNode }) => {
+  const [theme, setTheme] = useState<Theme>("light");
 
   useEffect(() => {
-    const saved = localStorage.getItem("theme");
-
-    if (saved === "dark") {
-      document.documentElement.className = "dark";
-      setDark(true);
+    const saved = localStorage.getItem("theme") as Theme | null;
+    if (saved) {
+      setTheme(saved);
+      document.documentElement.setAttribute("data-theme", saved);
     }
   }, []);
 
-  const toggle = () => {
-    const html = document.documentElement;
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
 
-    if (html.className === "dark") {
-      html.className = "";
-      localStorage.setItem("theme", "light");
-      setDark(false);
-    } else {
-      html.className = "dark";
-      localStorage.setItem("theme", "dark");
-      setDark(true);
-    }
+    setTheme(newTheme);
+    localStorage.setItem("theme", newTheme);
+    document.documentElement.setAttribute("data-theme", newTheme);
   };
 
   return (
-    <button onClick={toggle}>
-      {dark ? "☀ Light" : "🌙 Dark"}
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+
+// hook
+export const useTheme = () => {
+  const ctx = useContext(ThemeContext);
+  if (!ctx) throw new Error("useTheme must be inside ThemeProvider");
+  return ctx;
+};
+
+// ✅ toggle button
+const ThemeToggle = () => {
+  const { theme, toggleTheme } = useTheme();
+
+  return (
+    <button onClick={toggleTheme}>
+      {theme === "dark" ? "☀ Light" : "🌙 Dark"}
     </button>
   );
-}
+};
+
+export default ThemeToggle;
