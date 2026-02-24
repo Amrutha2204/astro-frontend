@@ -1,4 +1,5 @@
 import { request, ASTRO_BASE } from "./fetcher";
+import { isValidJwtFormat } from "@/utils/auth";
 
 export interface PartnerBirthDetails {
   year: number;
@@ -74,7 +75,7 @@ export const compatibilityApi = {
 
   calculateGunaMilan(token: string, data: CompatibilityRequest): Promise<GunaMilanResponse> {
     const t = token?.trim();
-    if (!t || t.split(".").length !== 3) throw new Error("Invalid token format. Please login again.");
+    if (!isValidJwtFormat(t)) throw new Error("Invalid token format. Please login again.");
     return request<GunaMilanResponse>(ASTRO_BASE, "/api/v1/compatibility/guna-milan", {
       method: "POST",
       token: t,
@@ -84,7 +85,7 @@ export const compatibilityApi = {
 
   calculateMarriageCompatibility(token: string, data: CompatibilityRequest): Promise<MarriageCompatibilityResponse> {
     const t = token?.trim();
-    if (!t || t.split(".").length !== 3) throw new Error("Invalid token format. Please login again.");
+    if (!isValidJwtFormat(t)) throw new Error("Invalid token format. Please login again.");
     return request<MarriageCompatibilityResponse>(ASTRO_BASE, "/api/v1/compatibility/marriage", {
       method: "POST",
       token: t,

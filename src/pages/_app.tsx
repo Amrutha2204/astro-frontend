@@ -22,7 +22,7 @@ export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     const handleError = (event: ErrorEvent) => {
       const err = event.error;
-      if (err?.response?.status || err?.message?.includes("Request failed")) {
+      if (err?.message?.includes?.("Request failed")) {
         event.preventDefault();
         event.stopPropagation();
         return false;
@@ -30,7 +30,7 @@ export default function App({ Component, pageProps }: AppProps) {
     };
     const handleRejection = (event: PromiseRejectionEvent) => {
       const r = event.reason;
-      if (r?.response?.status || r?.message?.includes("Request failed")) {
+      if (r?.message?.includes?.("Request failed")) {
         event.preventDefault();
         event.stopPropagation();
         return false;

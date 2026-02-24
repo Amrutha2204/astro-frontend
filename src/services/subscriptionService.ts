@@ -1,4 +1,5 @@
 import { request, ASTRO_BASE } from "./fetcher";
+import { isValidJwtFormat } from "@/utils/auth";
 
 export interface SubscriptionPlan {
   id: string;
@@ -24,7 +25,7 @@ export const subscriptionApi = {
 
   async getMySubscription(token: string): Promise<UserSubscriptionResponse> {
     const t = token?.trim();
-    if (!t || t.split(".").length !== 3) throw new Error("Invalid token. Please login again.");
+    if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
     return request<UserSubscriptionResponse>(ASTRO_BASE, "/api/v1/subscription/me", {
       method: "GET",
       token: t,
@@ -33,7 +34,7 @@ export const subscriptionApi = {
 
   async subscribe(token: string, planSlug: string, durationMonths: number = 1) {
     const t = token?.trim();
-    if (!t || t.split(".").length !== 3) throw new Error("Invalid token. Please login again.");
+    if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
     return request(ASTRO_BASE, "/api/v1/subscription/subscribe", {
       method: "POST",
       token: t,

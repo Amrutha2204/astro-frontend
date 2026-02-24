@@ -1,4 +1,5 @@
 import { request, ASTRO_BASE } from "./fetcher";
+import { isValidJwtFormat } from "@/utils/auth";
 
 export interface DoshaResponse {
   manglik: { hasDosha: boolean; description: string; severity?: "High" | "Medium" | "Low" | "None" };
@@ -20,7 +21,7 @@ export const doshaApi = {
 
   checkDoshas(token: string): Promise<DoshaResponse> {
     const t = token?.trim();
-    if (!t || t.split(".").length !== 3) throw new Error("Invalid token format. Please login again.");
+    if (!isValidJwtFormat(t)) throw new Error("Invalid token format. Please login again.");
     return request<DoshaResponse>(ASTRO_BASE, "/api/v1/dosha/check", { method: "GET", token: t });
   },
 };

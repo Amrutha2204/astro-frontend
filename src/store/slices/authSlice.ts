@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { isValidJwtFormat } from "@/utils/auth";
 
 type AuthState = {
   token: string | null;
@@ -32,15 +33,12 @@ export default authSlice.reducer;
 
 export const selectToken = (s: { auth: AuthState }) => s.auth.token;
 export const selectIsRehydrated = (s: { auth: AuthState }) => s.auth._rehydrated;
-export const selectIsGuest = (s: { auth: AuthState }) => {
-  const t = s.auth.token?.trim();
-  return !(t && t.split(".").length === 3);
-};
+export const selectIsGuest = (s: { auth: AuthState }) => !isValidJwtFormat(s.auth.token);
 
 /** Decode JWT payload and return roleId (auth-service: Admin = 3). Used for UI only; backend validates. */
 export const selectRoleId = (s: { auth: AuthState }): number | undefined => {
   const token = s.auth.token?.trim();
-  if (!token || token.split(".").length !== 3) return undefined;
+  if (!isValidJwtFormat(token)) return undefined;
   try {
     const payload = token.split(".")[1];
     if (!payload) return undefined;

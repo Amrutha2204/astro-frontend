@@ -7,6 +7,7 @@ import ServiceCard from "@/components/common/ServiceCard";
 import styles from "@/styles/dashboard.module.css";
 import { store } from "@/store";
 import { selectIsRehydrated, selectIsGuest, selectToken, clearToken } from "@/store/slices/authSlice";
+import { isValidJwtFormat } from "@/utils/auth";
 import { getUserDetails } from "@/services/userService";
 
 export default function Dashboard() {
@@ -39,8 +40,8 @@ export default function Dashboard() {
 
   useEffect(() => {
     const handlePopState = () => {
-      const t = store.getState().auth.token?.trim();
-      if (!t || t.split(".").length !== 3) router.replace("/auth/login");
+      const t = store.getState().auth.token;
+      if (!isValidJwtFormat(t)) router.replace("/auth/login");
     };
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);

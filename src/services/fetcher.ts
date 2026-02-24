@@ -3,6 +3,8 @@
  * Use instead of scattered fetch/axios calls for cleaner code and better build performance.
  */
 
+import { isValidJwtFormat } from "@/utils/auth";
+
 export type FetcherOptions = {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   body?: object;
@@ -22,8 +24,8 @@ function buildUrl(base: string, path: string, params?: Record<string, string>): 
 function buildHeaders(token?: string | null, hasBody?: boolean): Record<string, string> {
   const headers: Record<string, string> = {};
   if (hasBody) headers["Content-Type"] = "application/json";
-  if (token?.trim() && token.trim().split(".").length === 3) {
-    headers["Authorization"] = `Bearer ${token.trim()}`;
+  if (isValidJwtFormat(token)) {
+    headers["Authorization"] = `Bearer ${token?.trim()}`;
   }
   return headers;
 }

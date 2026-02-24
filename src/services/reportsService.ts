@@ -1,4 +1,5 @@
 import { request, ASTRO_BASE } from "./fetcher";
+import { isValidJwtFormat } from "@/utils/auth";
 
 export interface ReportItem {
   id: string;
@@ -17,7 +18,7 @@ export interface GenerateReportResponse {
 export const reportsApi = {
   async generate(token: string, reportType: "kundli_summary" | "compatibility_summary"): Promise<GenerateReportResponse> {
     const t = token?.trim();
-    if (!t || t.split(".").length !== 3) throw new Error("Invalid token. Please login again.");
+    if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
     return request<GenerateReportResponse>(ASTRO_BASE, "/api/v1/reports/generate", {
       method: "POST",
       token: t,
@@ -27,7 +28,7 @@ export const reportsApi = {
 
   async listMy(token: string): Promise<ReportItem[]> {
     const t = token?.trim();
-    if (!t || t.split(".").length !== 3) throw new Error("Invalid token. Please login again.");
+    if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
     return request<ReportItem[]>(ASTRO_BASE, "/api/v1/reports/my", {
       method: "GET",
       token: t,
@@ -44,7 +45,7 @@ export const reportsApi = {
     },
   ): Promise<GenerateReportResponse> {
     const t = token?.trim();
-    if (!t || t.split(".").length !== 3) throw new Error("Invalid token. Please login again.");
+    if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
     const body: { reportType: string; compatibilityPartners?: typeof compatibilityPartners } = { reportType };
     if (reportType === "compatibility_summary" && compatibilityPartners) {
       body.compatibilityPartners = compatibilityPartners;

@@ -7,6 +7,7 @@ import { astroApi, KundliResponse } from "@/services/api";
 import { paymentApi } from "@/services/paymentService";
 import { reportsApi, GenerateReportResponse } from "@/services/reportsService";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
+import { isValidJwtFormat } from "@/utils/auth";
 import { showError, showSuccess } from "@/utils/toast";
 import styles from "@/styles/dashboard.module.css";
 import ErrorMessage from "@/components/ui/ErrorMessage";
@@ -28,7 +29,7 @@ export default function KundliPage() {
 
   const fetchKundli = useCallback(async () => {
     const t = token?.trim();
-    if (!t || t.split(".").length !== 3) {
+    if (!isValidJwtFormat(t)) {
       dispatch(clearToken());
       setTimeout(() => router.push("/auth/login"), REDIRECT_DELAY_MS);
       return;
@@ -52,7 +53,7 @@ export default function KundliPage() {
 
   useEffect(() => {
     if (!rehydrated) return;
-    if (!token?.trim() || token.trim().split(".").length !== 3) {
+    if (!isValidJwtFormat(token)) {
       dispatch(clearToken());
       setTimeout(() => router.push("/auth/login"), REDIRECT_DELAY_MS);
       return;
@@ -80,7 +81,7 @@ export default function KundliPage() {
 
   const handleGetPdfReport = async () => {
     const t = token?.trim();
-    if (!t || t.split(".").length !== 3) {
+    if (!isValidJwtFormat(t)) {
       showError("Please log in to get a PDF report.");
       return;
     }

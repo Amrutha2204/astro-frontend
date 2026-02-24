@@ -25,11 +25,16 @@ const ServiceCard = ({
       <p className={styles.cardDescription}>{description}</p>
       {buttonText && (
         <button
+          type="button"
           className={`${styles.cardButton} ${
             styles[
               `button${buttonColor.charAt(0).toUpperCase() + buttonColor.slice(1)}`
             ]
           }`}
+          onClick={(e) => {
+            e.stopPropagation();
+            onClick?.();
+          }}
         >
           {buttonText}
         </button>

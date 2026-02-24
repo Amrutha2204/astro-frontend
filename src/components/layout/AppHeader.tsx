@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import styles from "@/styles/dashboard.module.css";
 import { selectIsGuest, selectToken, selectIsRehydrated } from "@/store/slices/authSlice";
+import { isValidJwtFormat } from "@/utils/auth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { paymentApi } from "@/services/paymentService";
 
@@ -16,12 +17,12 @@ const AppHeader = () => {
   const { locale, setLocale, t } = useLanguage();
 
   useEffect(() => {
-    if (!rehydrated || isGuest || !token?.trim() || token.split(".").length !== 3) {
+    if (!rehydrated || isGuest || !isValidJwtFormat(token)) {
       setWalletBalance(null);
       return;
     }
     paymentApi
-      .getBalance(token)
+      .getBalance(token!)
       .then((r) => setWalletBalance(r.balanceRupees))
       .catch(() => setWalletBalance(null));
   }, [rehydrated, isGuest, token]);

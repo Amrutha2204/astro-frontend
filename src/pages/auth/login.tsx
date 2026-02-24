@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { loginUser } from "@/services/authService";
 import { showError, showSuccess } from "@/utils/toast";
 import { setToken } from "@/store/slices/authSlice";
+import { isValidJwtFormat } from "@/utils/auth";
 import styles from "@/styles/login.module.css";
 
 export default function LoginPage() {
@@ -35,7 +36,7 @@ export default function LoginPage() {
         }
 
         const token = res.data?.accessToken?.trim();
-        if (!token || token.split(".").length !== 3) {
+        if (!isValidJwtFormat(token)) {
           showError("Invalid token received from server");
           setLoading(false);
           return;
