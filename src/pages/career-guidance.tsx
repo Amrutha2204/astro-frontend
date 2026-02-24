@@ -1,4 +1,3 @@
-// pages/career-guidance.tsx
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import AppSidebar from "@/components/layout/AppSidebar";
@@ -41,7 +40,12 @@ export default function CareerGuidancePage() {
         <div className={styles.container}>
           <h2 className={styles.pageTitle}>Career Guidance</h2>
 
-          {loading && <p>Loading guidance...</p>}
+          {loading && (
+  <div className={styles.loaderContainer}>
+    <div className={styles.spinner}></div>
+    <p>Generating career guidance...</p>
+  </div>
+)}
           {error && <p className={styles.error}>{error}</p>}
 
           {guidance && (

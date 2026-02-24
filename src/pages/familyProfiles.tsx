@@ -14,7 +14,12 @@ import styles from "@/styles/familyProfiles.module.css";
 import dashboardStyles from "@/styles/dashboard.module.css";
 import AppSidebar from "@/components/layout/AppSidebar";
 import AppHeader from "@/components/layout/AppHeader";
-import { selectToken, selectIsRehydrated, selectIsGuest, clearToken } from "@/store/slices/authSlice";
+import {
+  selectToken,
+  selectIsRehydrated,
+  selectIsGuest,
+  clearToken,
+} from "@/store/slices/authSlice";
 import { isValidJwtFormat } from "@/utils/auth";
 
 export default function FamilyProfiles() {
@@ -23,14 +28,6 @@ export default function FamilyProfiles() {
   const rehydrated = useSelector(selectIsRehydrated);
   const isGuest = useSelector(selectIsGuest);
   const token = useSelector(selectToken) ?? "";
-
-  useEffect(() => {
-    if (!rehydrated) return;
-    if (isGuest || !isValidJwtFormat(token)) {
-      dispatch(clearToken());
-      router.replace("/auth/login");
-    }
-  }, [rehydrated, isGuest, token, dispatch, router]);
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [profiles, setProfiles] = useState<FamilyProfile[]>([]);
@@ -42,21 +39,36 @@ export default function FamilyProfiles() {
     relation: "",
   });
 
-  // Selected member astrology
+  const [formError, setFormError] = useState<string | null>(null);
+
   const [selectedMemberData, setSelectedMemberData] = useState<{
     kundli?: any;
     calendar?: any;
     dailyHoroscope?: DailyHoroscopeResponse;
     name?: string;
   } | null>(null);
+
   const [loadingMemberData, setLoadingMemberData] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  // Load profiles (only when we have a valid token on the client)
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!rehydrated) return;
+    if (isGuest || !isValidJwtFormat(token)) {
+      dispatch(clearToken());
+      router.replace("/auth/login");
+    }
+  }, [rehydrated, isGuest, token, dispatch, router]);
+
+  // Load profiles
   const loadProfiles = async () => {
     if (!isValidJwtFormat(token)) return;
-    const data = await fetchFamilyProfiles(token);
-    setProfiles(data);
+    try {
+      const data = await fetchFamilyProfiles(token);
+      setProfiles(data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
@@ -64,17 +76,47 @@ export default function FamilyProfiles() {
     loadProfiles();
   }, [rehydrated, isGuest, token]);
 
-  // Form submit
+  // Form validation
+  const validateForm = () => {
+    if (!form.name.trim()) return "Name is required";
+    if (!form.dob) return "Date of Birth is required";
+    if (!form.birthPlace.trim()) return "Birth Place is required";
+    return null;
+  };
+
+  // Submit handler
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (editingId) {
-      await updateFamilyProfile(editingId, form, token);
-      setEditingId(null);
-    } else {
-      await createFamilyProfile(form, token);
+
+    const errorMessage = validateForm();
+    if (errorMessage) {
+      setFormError(errorMessage);
+      return;
     }
-    setForm({ name: "", dob: "", birthPlace: "", birthTime: "", relation: "" });
-    loadProfiles();
+
+    setFormError(null);
+
+    try {
+      if (editingId) {
+        await updateFamilyProfile(editingId, form, token);
+        setEditingId(null);
+      } else {
+        await createFamilyProfile(form, token);
+      }
+
+      setForm({
+        name: "",
+        dob: "",
+        birthPlace: "",
+        birthTime: "",
+        relation: "",
+      });
+
+      loadProfiles();
+    } catch (error) {
+      console.error(error);
+      setFormError("Something went wrong while saving profile.");
+    }
   };
 
   const handleEdit = (profile: FamilyProfile) => {
@@ -90,17 +132,28 @@ export default function FamilyProfiles() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this profile?")) return;
-    await deleteFamilyProfile(id, token);
-    loadProfiles();
+    try {
+      await deleteFamilyProfile(id, token);
+      loadProfiles();
+    } catch (error) {
+      console.error(error);
+      alert("Failed to delete profile.");
+    }
   };
 
   const viewMemberData = async (profile: FamilyProfile) => {
+    if (!profile.dob || !profile.birthPlace) {
+      alert("DOB and Birth Place are required to view astrology.");
+      return;
+    }
+
     setLoadingMemberData(true);
     setShowModal(true);
+
     try {
       const kundli = await astroApi.getGuestKundli({
         dob: profile.dob,
-        birthTime: profile.birthTime,
+        birthTime: profile.birthTime || "00:00",
         placeOfBirth: profile.birthPlace,
         unknownTime: !profile.birthTime,
       });
@@ -113,9 +166,14 @@ export default function FamilyProfiles() {
         placeOfBirth: profile.birthPlace,
       });
 
-      setSelectedMemberData({ kundli, calendar, dailyHoroscope, name: profile.name });
-    } catch (err) {
-      console.error(err);
+      setSelectedMemberData({
+        kundli,
+        calendar,
+        dailyHoroscope,
+        name: profile.name,
+      });
+    } catch (error) {
+      console.error(error);
       alert("Failed to fetch astrology data.");
       setShowModal(false);
     } finally {
@@ -147,44 +205,65 @@ export default function FamilyProfiles() {
         <div className={styles.container}>
           <h2 className={styles.title}>Family Profiles</h2>
 
-          {/* Form Card */}
           <div className={styles.card}>
             <form onSubmit={handleSubmit} className={styles.formGrid}>
               <input
                 className={styles.input}
                 placeholder="Name"
                 value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, name: e.target.value })
+                }
               />
+
               <input
                 type="date"
                 className={styles.input}
                 value={form.dob}
-                onChange={(e) => setForm({ ...form, dob: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, dob: e.target.value })
+                }
               />
+
               <input
                 className={styles.input}
                 placeholder="Birth Place"
                 value={form.birthPlace}
-                onChange={(e) => setForm({ ...form, birthPlace: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, birthPlace: e.target.value })
+                }
               />
+
               <input
                 type="time"
                 className={styles.input}
                 value={form.birthTime}
-                onChange={(e) => setForm({ ...form, birthTime: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, birthTime: e.target.value })
+                }
               />
+
               <input
                 className={styles.input}
                 placeholder="Relation"
                 value={form.relation}
-                onChange={(e) => setForm({ ...form, relation: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, relation: e.target.value })
+                }
               />
-              <button className={styles.button}>{editingId ? "Update Profile" : "Add Profile"}</button>
+
+              <button className={styles.button}>
+                {editingId ? "Update Profile" : "Add Profile"}
+              </button>
+
+              {formError && (
+                <p style={{ color: "red", marginTop: "8px" }}>
+                  {formError}
+                </p>
+              )}
             </form>
           </div>
 
-          {/* Profile List */}
           <div className={styles.profileList}>
             {profiles.map((p) => (
               <div key={p.id} className={styles.profileCard}>
@@ -195,7 +274,9 @@ export default function FamilyProfiles() {
                 <div className={styles.actions}>
                   <button onClick={() => handleEdit(p)}>Edit</button>
                   <button onClick={() => handleDelete(p.id)}>Delete</button>
-                  <button onClick={() => viewMemberData(p)}>View Astrology</button>
+                  <button onClick={() => viewMemberData(p)}>
+                    View Astrology
+                  </button>
                 </div>
               </div>
             ))}
@@ -203,39 +284,38 @@ export default function FamilyProfiles() {
         </div>
       </div>
 
-      {/* Modal */}
       {showModal && selectedMemberData && (
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
-            <button className={styles.modalClose} onClick={closeModal}>×</button>
+            <button
+              className={styles.modalClose}
+              onClick={closeModal}
+            >
+              ×
+            </button>
+
             <h3>{selectedMemberData.name}'s Astrology</h3>
 
             {loadingMemberData ? (
               <p>Loading...</p>
             ) : (
               <div className={styles.memberData}>
-                {/* Kundli */}
                 <h4>Kundli</h4>
                 <ul>
-                  <li><strong>Lagna:</strong> {selectedMemberData.kundli.lagna}</li>
-                  <li><strong>Moon Sign:</strong> {selectedMemberData.kundli.moonSign}</li>
-                  <li><strong>Sun Sign:</strong> {selectedMemberData.kundli.sunSign || "—"}</li>
-                  <li><strong>Nakshatra:</strong> {selectedMemberData.kundli.nakshatra}</li>
-                  <li><strong>Pada:</strong> {selectedMemberData.kundli.pada}</li>
+                  <li><strong>Lagna:</strong> {selectedMemberData.kundli?.lagna}</li>
+                  <li><strong>Moon Sign:</strong> {selectedMemberData.kundli?.moonSign}</li>
+                  <li><strong>Sun Sign:</strong> {selectedMemberData.kundli?.sunSign || "—"}</li>
+                  <li><strong>Nakshatra:</strong> {selectedMemberData.kundli?.nakshatra}</li>
+                  <li><strong>Pada:</strong> {selectedMemberData.kundli?.pada}</li>
                 </ul>
 
-                {/* Calendar */}
                 <h4>Calendar</h4>
                 <ul>
-                  <li><strong>Date:</strong> {selectedMemberData.calendar.date}</li>
-                  <li><strong>Tithi:</strong> {selectedMemberData.calendar.tithi || "—"}</li>
-                  <li><strong>Nakshatra:</strong> {selectedMemberData.calendar.nakshatra || "—"}</li>
-                  {selectedMemberData.calendar.majorPlanetaryEvents?.length > 0 && (
-                    <li><strong>Major Events:</strong> {selectedMemberData.calendar.majorPlanetaryEvents.join(", ")}</li>
-                  )}
+                  <li><strong>Date:</strong> {selectedMemberData.calendar?.date}</li>
+                  <li><strong>Tithi:</strong> {selectedMemberData.calendar?.tithi || "—"}</li>
+                  <li><strong>Nakshatra:</strong> {selectedMemberData.calendar?.nakshatra || "—"}</li>
                 </ul>
 
-                {/* Daily Horoscope */}
                 <h4>Daily Horoscope</h4>
                 {selectedMemberData.dailyHoroscope ? (
                   <div className={styles.horoscopeCard}>
@@ -243,7 +323,9 @@ export default function FamilyProfiles() {
                     <p><strong>Advice:</strong> {selectedMemberData.dailyHoroscope.doAvoid || "—"}</p>
                     <p><strong>Reason:</strong> {selectedMemberData.dailyHoroscope.reason}</p>
                   </div>
-                ) : <p>No horoscope available</p>}
+                ) : (
+                  <p>No horoscope available</p>
+                )}
               </div>
             )}
           </div>
