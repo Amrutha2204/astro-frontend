@@ -1,29 +1,30 @@
-import axios from "axios";
+import { request, ASTRO_BASE } from "./fetcher";
+import { isValidJwtFormat } from "@/utils/auth";
 import {
   FamilyProfile,
   CreateFamilyProfilePayload,
 } from "@/data/family";
 
-const API = "http://localhost:8002/api/v1";
-
 export const fetchFamilyProfiles = async (
   token: string
 ): Promise<FamilyProfile[]> => {
-  const res = await axios.get(`${API}/family-profiles`, {
-    headers: { Authorization: `Bearer ${token}` },
+  if (!isValidJwtFormat(token)) throw new Error("Invalid token. Please login again.");
+  return request<FamilyProfile[]>(ASTRO_BASE, "/api/v1/family-profiles", {
+    method: "GET",
+    token,
   });
-
-  return res.data;
 };
 
 export const createFamilyProfile = async (
   data: CreateFamilyProfilePayload,
   token: string
 ): Promise<FamilyProfile> => {
-  const res = await axios.post(`${API}/family-profiles`, data, {
-    headers: { Authorization: `Bearer ${token}` },
+  if (!isValidJwtFormat(token)) throw new Error("Invalid token. Please login again.");
+  return request<FamilyProfile>(ASTRO_BASE, "/api/v1/family-profiles", {
+    method: "POST",
+    token,
+    body: data,
   });
-  return res.data;
 };
 
 export const updateFamilyProfile = async (
@@ -31,22 +32,21 @@ export const updateFamilyProfile = async (
   data: CreateFamilyProfilePayload,
   token: string
 ): Promise<FamilyProfile> => {
-  const res = await axios.put(
-    `${API}/family-profiles/${id}`,
-    data,
-    {
-      headers: { Authorization: `Bearer ${token}` },
-    }
-  );
-
-  return res.data;
+  if (!isValidJwtFormat(token)) throw new Error("Invalid token. Please login again.");
+  return request<FamilyProfile>(ASTRO_BASE, `/api/v1/family-profiles/${id}`, {
+    method: "PUT",
+    token,
+    body: data,
+  });
 };
 
 export const deleteFamilyProfile = async (
   id: string,
   token: string
 ): Promise<void> => {
-  await axios.delete(`${API}/family-profiles/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
+  if (!isValidJwtFormat(token)) throw new Error("Invalid token. Please login again.");
+  return request<void>(ASTRO_BASE, `/api/v1/family-profiles/${id}`, {
+    method: "DELETE",
+    token,
   });
 };

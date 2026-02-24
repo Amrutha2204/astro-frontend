@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { useDispatch, useSelector } from "react-redux";
 import {
   fetchFamilyProfiles,
   createFamilyProfile,
@@ -12,9 +14,23 @@ import styles from "@/styles/familyProfiles.module.css";
 import dashboardStyles from "@/styles/dashboard.module.css";
 import AppSidebar from "@/components/layout/AppSidebar";
 import AppHeader from "@/components/layout/AppHeader";
+import { selectToken, selectIsRehydrated, selectIsGuest, clearToken } from "@/store/slices/authSlice";
+import { isValidJwtFormat } from "@/utils/auth";
 
 export default function FamilyProfiles() {
-  const token = localStorage.getItem("token") || "";
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const rehydrated = useSelector(selectIsRehydrated);
+  const isGuest = useSelector(selectIsGuest);
+  const token = useSelector(selectToken) ?? "";
+
+  useEffect(() => {
+    if (!rehydrated) return;
+    if (isGuest || !isValidJwtFormat(token)) {
+      dispatch(clearToken());
+      router.replace("/auth/login");
+    }
+  }, [rehydrated, isGuest, token, dispatch, router]);
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [profiles, setProfiles] = useState<FamilyProfile[]>([]);
@@ -36,15 +52,17 @@ export default function FamilyProfiles() {
   const [loadingMemberData, setLoadingMemberData] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  // Load profiles
+  // Load profiles (only when we have a valid token on the client)
   const loadProfiles = async () => {
+    if (!isValidJwtFormat(token)) return;
     const data = await fetchFamilyProfiles(token);
     setProfiles(data);
   };
 
   useEffect(() => {
+    if (!rehydrated || isGuest || !isValidJwtFormat(token)) return;
     loadProfiles();
-  }, []);
+  }, [rehydrated, isGuest, token]);
 
   // Form submit
   const handleSubmit = async (e: React.FormEvent) => {
@@ -109,6 +127,16 @@ export default function FamilyProfiles() {
     setShowModal(false);
     setSelectedMemberData(null);
   };
+
+  if (!rehydrated || isGuest) {
+    return (
+      <div className={dashboardStyles.dashboardContainer}>
+        <div className="flex items-center justify-center h-screen text-base text-gray-500">
+          Loading...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={dashboardStyles.dashboardContainer}>
