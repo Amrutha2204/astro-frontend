@@ -1,5 +1,5 @@
 /* =========================
-   PAGE
+   PAGE TITLE
 ========================= */
 
 .pageTitle {
@@ -9,11 +9,12 @@
   color: #2c2c54;
 }
 
+
 /* =========================
    BIRTH PLACE CARD
 ========================= */
 
-.birthPlaceCard {
+.birthCard {
   background: #f7f7f7;
   border-left: 4px solid #6b4423;
   border-radius: 12px;
@@ -21,7 +22,7 @@
   margin-bottom: 24px;
 }
 
-.birthPlaceLabel {
+.birthLabel {
   font-size: 13px;
   letter-spacing: 1px;
   font-weight: 600;
@@ -29,11 +30,15 @@
   margin-bottom: 4px;
 }
 
-.birthPlaceValue {
+.birthValue {
   font-size: 18px;
   font-weight: 600;
   color: #2c2c54;
 }
+
+/* =========================
+   TABS — clean active underline
+========================= */
 
 .tabs {
   display: flex;
@@ -42,37 +47,45 @@
   border-bottom: 1px solid #e5e5e5;
 }
 
-.tab {
+/* ALL tabs — no underline */
+.tab,
+.activeTab {
   background: none;
   border: none;
-  padding: 0 0 10px 0;
+  padding: 0 0 12px 0;
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
   color: #6b5b52;
   position: relative;
-  transition: color 0.2s ease;
 }
 
+/* hover */
 .tab:hover {
   color: #6b4423;
 }
 
+/* active tab text */
 .activeTab {
   color: #6b4423;
   font-weight: 600;
 }
 
+/* underline ONLY active tab */
 .activeTab::after {
   content: "";
   position: absolute;
   left: 0;
-  bottom: -1px;
+  bottom: -2px;
   width: 100%;
   height: 3px;
   background: #6b4423;
   border-radius: 2px;
 }
+
+/* =========================
+   FILTER / INPUT CARD
+========================= */
 
 .filterCard {
   background: #f2f3f7;
@@ -96,6 +109,11 @@
 }
 
 
+/* =========================
+   DATE INPUT BOX
+========================= */
+
+.calendarInputBox,
 .dateBox {
   display: flex;
   align-items: center;
@@ -107,22 +125,30 @@
   min-width: 160px;
 }
 
+.calendarInputBox input,
 .dateBox input[type="date"] {
   border: none;
   background: transparent;
   font-size: 14px;
   outline: none;
   cursor: pointer;
+  width: 100%;
 }
+
+
+/* =========================
+   PRIMARY BUTTON
+========================= */
+
 .primaryButton {
   padding: 12px 26px;
   border-radius: 14px;
   font-size: 15px;
   font-weight: 600;
-
   background: linear-gradient(135deg, #6b4423);
   color: #fff;
-
+  border: none;
+  cursor: pointer;
   transition: all 0.15s ease;
 }
 
@@ -136,6 +162,36 @@
   cursor: not-allowed;
 }
 
+
+/* =========================
+   CALENDAR DATA CARD
+========================= */
+
+.infoCard {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 18px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.infoCard h3 {
+  margin-bottom: 6px;
+  font-size: 16px;
+  color: #2c2c54;
+}
+
+.infoCard p {
+  font-size: 14px;
+  color: #555;
+  margin: 4px 0;
+}
+
+
+/* =========================
+   MONTH HEADER
+========================= */
+
 .monthHeader {
   margin: 24px 0 12px;
   font-size: 20px;
@@ -143,6 +199,10 @@
   color: #3b3b6d;
 }
 
+
+/* =========================
+   CARD GRID (Festivals etc.)
+========================= */
 
 .cardGrid {
   display: grid;
@@ -161,6 +221,11 @@
 .card:hover {
   transform: translateY(-4px);
 }
+
+
+/* =========================
+   BADGE
+========================= */
 
 .badge {
   display: inline-block;

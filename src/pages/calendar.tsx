@@ -4,6 +4,8 @@ import AppSidebar from "@/components/layout/AppSidebar";
 import CalculationInfo from "@/components/common/CalculationInfo";
 import styles from "@/styles/dashboard.module.css";
 import formStyles from "@/styles/birthDetails.module.css";
+import cal from "@/styles/calendar.module.css";
+
 import {
   astroApi,
   GuestCalendarResponse,
@@ -172,11 +174,11 @@ const [place, setPlace] = useState<string>(
         <main className={styles.mainContent}>
           <div className={styles.kundliContainer}>
             <h1 className={styles.pageTitle}>Calendar</h1>
-            <div className={styles.infoItem} style={{ marginBottom: 16 }}>
-  <span className={styles.infoLabel}>Birth Place</span>
+            <div className={cal.birthCard}>
+  <div className={cal.birthLabel}>BIRTH PLACE</div>
 
   {storedUser?.birthPlace ? (
-    <span className={styles.infoValue}>{place}</span>
+    <div className={cal.birthValue}>{place}</div>
   ) : (
     <input
       type="text"
@@ -189,17 +191,17 @@ const [place, setPlace] = useState<string>(
 </div>
 
             {/* Tabs */}
-            <div className={styles.formTabs}>
-              {tabs.map((t) => (
-                <button
-                  key={t.id}
-                  onClick={() => setActiveTab(t.id)}
-                  className={activeTab === t.id ? styles.activeTab : styles.tab}
-                >
-                  {t.label}
-                </button>
-              ))}
-            </div>
+            <div className={cal.tabs}>
+  {tabs.map((t) => (
+    <button
+      key={t.id}
+      onClick={() => setActiveTab(t.id)}
+      className={activeTab === t.id ? cal.activeTab : cal.tab}
+    >
+      {t.label}
+    </button>
+  ))}
+</div>
 
             {/* TODAY */}
             {activeTab === "today" && (
@@ -209,7 +211,7 @@ const [place, setPlace] = useState<string>(
     {todayError && <p className={styles.noDataMessage}>{todayError}</p>}
 
     {!todayLoading && todayData && (
-      <div className={styles.infoCard}>
+      <div className={cal.infoCard}>
         <h3>{todayData.date}</h3>
         <p>
           {todayData.moonPhase} · {todayData.tithi} · {todayData.nakshatra}
@@ -288,12 +290,13 @@ const [place, setPlace] = useState<string>(
             {/* MUHURAT */}
             {activeTab === "muhurat" && (
               <>
+              <div className={styles.calendarInputBox}>
                 <input
                   type="date"
                   value={muhuratDate}
                   onChange={(e) => setMuhuratDate(e.target.value)}
-                  className={formStyles.input}
                 />
+                </div>
                 <button onClick={fetchMuhurat} className={styles.retryButton}>
                   Get Muhurat
                 </button>
@@ -312,12 +315,14 @@ const [place, setPlace] = useState<string>(
             {/* AUSPICIOUS */}
             {activeTab === "auspicious" && (
               <>
+              <div className={styles.calendarInputBox}>
                 <input
                   type="date"
                   value={auspiciousDate}
                   onChange={(e) => setAuspiciousDate(e.target.value)}
                   className={formStyles.input}
                 />
+                </div>
                 <button onClick={fetchAuspicious} className={styles.retryButton}>
                   Check
                 </button>

@@ -177,6 +177,12 @@ export interface Eclipse {
   sarosMember?: number;
 }
 
+export interface CareerGuidanceResponse {
+  guidance: string;
+  profileIdUsed: string | null;
+  timestamp: string;
+}
+
 // -------------------- Astro API --------------------
 export const astroApi = {
   // -------------------- Kundli & Natal --------------------
@@ -426,5 +432,25 @@ export const adminApi = {
       token: t,
       body: { enabled },
     });
+  },
+};
+
+export const careerApi = {
+  /**
+   * Fetch career guidance for the logged-in user
+   */
+  async getCareerGuidance(token: string): Promise<CareerGuidanceResponse> {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) throw new Error("Invalid token format. Please login again.");
+
+    return request<CareerGuidanceResponse>(
+      "http://localhost:8002", // replace if API is deployed elsewhere
+      "/api/v1/career/guidance",
+      {
+        method: "POST",
+        token: t,
+        body: {},
+      }
+    );
   },
 };

@@ -7,6 +7,7 @@ import { selectIsGuest, selectToken, selectIsRehydrated } from "@/store/slices/a
 import { isValidJwtFormat } from "@/utils/auth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { paymentApi } from "@/services/paymentService";
+import ThemeToggle from "@/components/common/ThemeToggle";
 
 const AppHeader = () => {
   const router = useRouter();
@@ -50,6 +51,7 @@ const AppHeader = () => {
       </div>
 
       <div className={styles.headerRight}>
+        <ThemeToggle />
         <div className={styles.langToggle}>
           <button
             type="button"

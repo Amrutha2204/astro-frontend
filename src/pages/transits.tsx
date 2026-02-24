@@ -150,20 +150,21 @@ useEffect(() => {
         <main className={dashboardStyles.mainContent}>
           <h1 className={styles.pageTitle}>Planetary Transits</h1>
           {loading && <div>Loading...</div>}
-          <div className={styles.filterCard}>
-          <h3>📍 Birth Place</h3>
+          <div className={styles.birthPlaceCard}>
+  <p className={styles.birthPlaceLabel}>BIRTH PLACE</p>
 
-          {storedUser?.birthPlace ? (
-          <p><strong>{place}</strong></p>
-        ) : (
-        <input
-            type="text"
-              placeholder="Enter birth place"
-              value={place}
-              onChange={(e) => setPlace(e.target.value)}
-          />
-        )}
-      </div>
+  {storedUser?.birthPlace ? (
+    <h3 className={styles.birthPlaceValue}>{place}</h3>
+  ) : (
+    <input
+      className={styles.birthPlaceInput}
+      type="text"
+      placeholder="Enter birth place"
+      value={place}
+      onChange={(e) => setPlace(e.target.value)}
+    />
+  )}
+</div>
           {error && <ErrorMessage message={error} />}
           <div className={styles.tabs}>
             {[
@@ -175,7 +176,7 @@ useEffect(() => {
               <button
                 key={t.id}
                 onClick={() => setActiveTab(t.id as TabId)}
-                className={activeTab === t.id ? styles.activeTab : styles.tab}
+                className={`${styles.tab} ${activeTab === t.id ? styles.activeTab : ""}`}
               >
                 {t.label}
               </button>
@@ -207,7 +208,7 @@ useEffect(() => {
                   <div className={styles.dateBox}>
                     <input type="date" value={retroTo} onChange={(e) => setRetroTo(e.target.value)} />
                   </div>
-                  <button onClick={loadRetrogrades}>Get Retrogrades</button>
+                  <button className={styles.primaryButton} onClick={loadRetrogrades}>Get Retrogrades</button>
                 </div>
               </div>
 
@@ -241,7 +242,7 @@ useEffect(() => {
                   <div className={styles.dateBox}>
                     <input type="date" value={majorTo} onChange={(e) => setMajorTo(e.target.value)} />
                   </div>
-                  <button onClick={loadMajor} disabled={majorLoading}>
+                  <button className={styles.primaryButton} onClick={loadMajor} disabled={majorLoading}>
                     {majorLoading ? "Loading…" : "Get Transits"}
                   </button>
                 </div>
@@ -286,7 +287,7 @@ useEffect(() => {
                   <div className={styles.dateBox}>
                     <input type="date" value={eclipseFrom} onChange={(e) => setEclipseFrom(e.target.value)} />
                   </div>
-                  <button onClick={loadEclipses}>Get Eclipses</button>
+                  <button className={styles.primaryButton} onClick={loadEclipses}>Get Eclipses</button>
                 </div>
               </div>
 
