@@ -1,24 +1,62 @@
-import axios from "axios";
+import { request, ASTRO_BASE } from "./fetcher";
 
-const API_BASE = "http://localhost:8001/api/v1/horoscope";
+export interface DailyHoroscopeResponse {
+  dayType: string;
+  mainTheme: string;
+  reason: string;
+  date: string;
+  source: string;
+}
 
-/* DAILY HOROSCOPE */
-export const getDailyHoroscope = (zodiac: string) => {
-  return axios.get(`${API_BASE}/daily`, {
-    params: { zodiac }
-  });
-};
+export interface WeeklyHoroscopeResponse {
+  weekType: string;
+  mainTheme: string;
+  predictions: Array<{ date: string; theme: string; advice: string }>;
+  source: string;
+}
 
-/* WEEKLY HOROSCOPE */
-export const getWeeklyHoroscope = (zodiac: string) => {
-  return axios.get(`${API_BASE}/weekly`, {
-    params: { zodiac }
-  });
-};
+export interface MonthlyHoroscopeResponse {
+  monthType: string;
+  mainTheme: string;
+  predictions: Array<{ date: string; theme: string; advice: string }>;
+  source: string;
+}
 
-/* MONTHLY HOROSCOPE */
-export const getMonthlyHoroscope = (zodiac: string) => {
-  return axios.get(`${API_BASE}/monthly`, {
-    params: { zodiac }
-  });
+export type GuestHoroscopeRequest = { dob: string; birthTime: string; placeOfBirth: string };
+
+export const horoscopeApi = {
+  getDailyHoroscopeGuest(dto: GuestHoroscopeRequest): Promise<DailyHoroscopeResponse> {
+    return request<DailyHoroscopeResponse>(ASTRO_BASE, "/api/v1/astrology/horoscope/today/guest", {
+      method: "POST",
+      body: { dob: dto.dob, birthTime: dto.birthTime, placeOfBirth: dto.placeOfBirth.trim() },
+    });
+  },
+
+  getDailyHoroscope(token: string, chartType?: string): Promise<DailyHoroscopeResponse> {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) throw new Error("Invalid token format. Please login again.");
+    return request<DailyHoroscopeResponse>(ASTRO_BASE, "/api/v1/astrology/horoscope/today", {
+      method: "GET",
+      token: t,
+      params: chartType ? { chartType } : undefined,
+    });
+  },
+
+  getWeeklyHoroscope(token: string): Promise<WeeklyHoroscopeResponse> {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) throw new Error("Invalid token format. Please login again.");
+    return request<WeeklyHoroscopeResponse>(ASTRO_BASE, "/api/v1/horoscope/weekly", {
+      method: "GET",
+      token: t,
+    });
+  },
+
+  getMonthlyHoroscope(token: string): Promise<MonthlyHoroscopeResponse> {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3) throw new Error("Invalid token format. Please login again.");
+    return request<MonthlyHoroscopeResponse>(ASTRO_BASE, "/api/v1/horoscope/monthly", {
+      method: "GET",
+      token: t,
+    });
+  },
 };

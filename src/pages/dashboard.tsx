@@ -1,11 +1,35 @@
+import { useEffect } from "react";
 import { useRouter } from "next/router";
-import AstrosageHeader from "@/components/layout/AstrosageHeader";
-import AstrosageSidebar from "@/components/layout/AstrosageSidebar";
+import { useDispatch, useSelector } from "react-redux";
+import AppHeader from "@/components/layout/AppHeader";
+import AppSidebar from "@/components/layout/AppSidebar";
 import ServiceCard from "@/components/common/ServiceCard";
-import styles from "@/styles/astrosage.module.css";
+import styles from "@/styles/dashboard.module.css";
+import { store } from "@/store";
+import { selectIsRehydrated, selectIsGuest, clearToken } from "@/store/slices/authSlice";
 
 export default function Dashboard() {
   const router = useRouter();
+  const dispatch = useDispatch();
+  const rehydrated = useSelector(selectIsRehydrated);
+  const isGuest = useSelector(selectIsGuest);
+
+  useEffect(() => {
+    if (!rehydrated) return;
+    if (isGuest) {
+      dispatch(clearToken());
+      router.replace("/auth/login");
+    }
+  }, [rehydrated, isGuest, dispatch, router]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const t = store.getState().auth.token?.trim();
+      if (!t || t.split(".").length !== 3) router.replace("/auth/login");
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [router]);
 
   const services = [
     {
@@ -108,11 +132,21 @@ export default function Dashboard() {
     },
   ];
 
+  if (!rehydrated || isGuest) {
+    return (
+      <div className={styles.dashboardContainer}>
+        <div className="flex items-center justify-center h-screen text-base text-gray-500">
+          Loading...
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.dashboardContainer}>
-      <AstrosageHeader />
+      <AppHeader />
       <div className={styles.dashboardContent}>
-        <AstrosageSidebar />
+        <AppSidebar />
         <main className={styles.mainContent}>
           <div className={styles.banner}>
             <div className={styles.bannerContent}>
@@ -142,8 +176,6 @@ export default function Dashboard() {
                 icon={service.icon}
                 description={service.description}
                 onClick={service.onClick}
-                buttonText={service.buttonText}
-                buttonColor={service.buttonColor}
               />
             ))}
           </div>

@@ -1,91 +1,312 @@
-.container {
+.pageContainer {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #faf8f5;
+  position: relative;
+}
+
+.pageContainer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 180px;
+  background: linear-gradient(180deg, #5c3a1f 0%, #6b4423 45%, #c4a77d 100%);
+  z-index: 0;
+}
+
+.authHeader {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 48px 24px 28px;
+}
+
+.authLogo {
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 6px 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fdf6ec;
+  gap: 10px;
+  letter-spacing: -0.02em;
 }
 
-.card {
-  background: #fff8ee;
-  padding: 40px;
-  width: 360px;
-  border-radius: 16px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+.authLogoIcon {
+  font-size: 32px;
+  opacity: 0.95;
+}
+
+.authTagline {
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 13px;
+  margin: 0;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.loginWrapper {
+  flex: 1;
   display: flex;
-  flex-direction: column;
-  gap: 14px;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 20px 32px;
+  position: relative;
+  z-index: 1;
+}
+
+.loginCard {
+  background: #fff;
+  padding: 36px 32px;
+  width: 100%;
+  max-width: 440px;
+  max-height: 85vh;
+  overflow-y: auto;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(92, 64, 51, 0.1), 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e8ddd0;
+  border-top: 3px solid #6b4423;
+}
+
+.registerCard {
+  background: #fff;
+  padding: 36px 32px;
+  width: 100%;
+  max-width: 560px;
+  max-height: 85vh;
+  overflow-y: auto;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(92, 64, 51, 0.1), 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e8ddd0;
+  border-top: 3px solid #6b4423;
+}
+
+.loginHeader {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.registerHeader {
+  text-align: center;
+  margin-bottom: 24px;
 }
 
 .title {
-  text-align: center;
-  color: #8b4513;
+  color: #5c4033;
   font-size: 26px;
-  margin-bottom: 20px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
-/* 👇 SCOPED selectors */
-.card label {
+.subtitle {
+  color: #5c5047;
   font-size: 14px;
-  color: #5a3e2b;
+  margin: 0;
+  line-height: 1.5;
 }
 
-.card input {
-  padding: 10px 12px;
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.registerForm {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 640px) {
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 14px;
   border-radius: 8px;
-  border: 1px solid #d8c4a1;
-  font-size: 14px;
+  border: 1px solid #e8ddd0;
+  font-size: 15px;
   outline: none;
+  background: #faf8f5;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  border-color: #6b4423;
   background: #fff;
+  box-shadow: 0 0 0 3px rgba(107, 68, 35, 0.12);
 }
 
-.card input:focus {
-  border-color: #c0893d;
+.input:disabled {
+  background: #f9fafb;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
-.card button {
-  margin-top: 10px;
-  padding: 12px;
-  background: #c0893d;
+.input::placeholder {
+  color: #9ca3af;
+}
+
+.required {
+  color: #6b4423;
+  font-weight: bold;
+}
+
+.forgotPassword {
+  text-align: right;
+  margin-top: -4px;
+}
+
+.forgotLink {
+  color: #6b4423;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.forgotLink:hover {
+  color: #5c3a1f;
+  text-decoration: underline;
+}
+
+.loginButton {
+  width: 100%;
+  padding: 14px 24px;
+  background: #6b4423;
   color: white;
   border: none;
-  border-radius: 10px;
-  font-size: 15px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
 }
 
-.card button:hover {
-  background: #a9742e;
+.loginButton:hover:not(:disabled) {
+  background: #5c3a1f;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(107, 68, 35, 0.25);
 }
 
-.card button:disabled {
+.loginButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.loginButton:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 
-.buttonGroup {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
+.footer {
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid #e8ddd0;
+  text-align: center;
 }
 
-.primaryButton {
-  flex: 1;
-}
-
-.secondaryButton {
-  background: #8b7355;
-}
-
-.secondaryButton:hover {
-  background: #6b5a45;
-}
-
-.errorMessage {
-  padding: 10px;
-  background: #fee2e2;
-  color: #dc2626;
-  border-radius: 6px;
+.registerText {
+  margin: 0;
   font-size: 14px;
-  margin-top: 10px;
+  color: #5c5047;
+  line-height: 1.5;
+}
+
+.registerLink {
+  color: #6b4423;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.registerLink:hover {
+  color: #5c3a1f;
+  text-decoration: underline;
+}
+
+.labelOptional {
+  color: #8a7f6e;
+  font-weight: 400;
+  font-size: 12px;
+}
+
+.backToHome {
+  margin-top: 14px;
+  text-align: center;
+  padding-top: 14px;
+  border-top: 1px solid #e8ddd0;
+}
+
+.backToHomeLink {
+  color: #6b5b52;
+  font-size: 14px;
+  text-decoration: none;
+  transition: color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.backToHomeLink:hover {
+  color: #6b4423;
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .authHeader {
+    padding: 36px 16px 20px;
+  }
+
+  .authLogo {
+    font-size: 24px;
+  }
+
+  .loginWrapper {
+    padding: 20px 16px 24px;
+  }
+
+  .loginCard,
+  .registerCard {
+    padding: 28px 20px;
+  }
+
+  .title {
+    font-size: 22px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+  }
 }

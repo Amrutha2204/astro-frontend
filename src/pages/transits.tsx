@@ -1,105 +1,234 @@
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import AppHeader from "@/components/layout/AstrosageHeader";
-import AppSidebar from "@/components/layout/AstrosageSidebar";
-import styles from "@/styles/dashboard.module.css";
-import { astroApi, TransitResponse } from "@/services/api";
+import AppHeader from "@/components/layout/AppHeader";
+import AppSidebar from "@/components/layout/AppSidebar";
+import CalculationInfo from "@/components/common/CalculationInfo";
+import dashboardStyles from "@/styles/dashboard.module.css";
+import styles from "@/styles/transits.module.css";
+import {
+  astroApi,
+  TransitsTodayResponse,
+  RetrogradesResponse,
+  MajorTransitsResponse,
+  Eclipse,
+} from "@/services/api";
+
+type TabId = "today" | "retrogrades" | "major" | "eclipses";
+
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+    d.getDate()
+  ).padStart(2, "0")}`;
+}
+
+function groupByMonth<T extends { date?: string; startDate?: string }>(items: T[]) {
+  const map: Record<string, T[]> = {};
+  items.forEach((item) => {
+    const raw = item.date || item.startDate;
+    if (!raw) return;
+    const d = new Date(raw);
+    if (isNaN(d.getTime())) return;
+    const key = d.toLocaleString("default", { month: "long", year: "numeric" });
+    if (!map[key]) map[key] = [];
+    map[key].push(item);
+  });
+  return map;
+}
+
+function formatDate(dateStr: string | undefined) {
+  if (!dateStr) return "-";
+  const d = new Date(dateStr);
+  return isNaN(d.getTime()) ? dateStr : d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
+}
 
 export default function TransitsPage() {
-  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<TabId>("today");
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [transits, setTransits] = useState<TransitResponse | null>(null);
+  /* TODAY */
+  const [todayData, setTodayData] = useState<TransitsTodayResponse | null>(null);
+
+  /* RETROGRADES */
+  const [retroFrom, setRetroFrom] = useState(todayStr());
+  const [retroTo, setRetroTo] = useState(todayStr());
+  const [retroData, setRetroData] = useState<RetrogradesResponse["retrogrades"]>([]);
+
+  /* MAJOR */
+  const [majorFrom, setMajorFrom] = useState(todayStr());
+  const [majorTo, setMajorTo] = useState(todayStr());
+  const [majorData, setMajorData] = useState<MajorTransitsResponse["transits"]>([]);
+
+  /* ECLIPSES */
+  const [eclipseFrom, setEclipseFrom] = useState(todayStr());
+  const [solarEclipses, setSolarEclipses] = useState<Eclipse[]>([]);
+  const [lunarEclipses, setLunarEclipses] = useState<Eclipse[]>([]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token")?.trim();
+    astroApi.getTransitsToday().then(setTodayData);
+  }, []);
 
-    // 🔐 Auth check
-    if (!token || token.split(".").length !== 3) {
-      router.replace("/auth/login");
-      return;
-    }
+  const loadRetrogrades = async () => {
+    const data = await astroApi.getRetrogrades(retroFrom, retroTo);
+    setRetroData(data.retrogrades);
+  };
 
-    const fetchTransits = async () => {
-      try {
-        setLoading(true);
-        const data = await astroApi.getTodayTransit(token);
-        setTransits(data);
-        setError(null);
-      } catch (err: any) {
-        setError(err.message || "Failed to load transit data");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const loadMajor = async () => {
+    const data = await astroApi.getMajorTransits(majorFrom, majorTo);
+    setMajorData(data.transits);
+  };
 
-    fetchTransits();
-  }, [router]);
+  const loadEclipses = async () => {
+    const data = await astroApi.getEclipses(eclipseFrom);
+    setSolarEclipses(data.solar);
+    setLunarEclipses(data.lunar);
+  };
 
   return (
-    <div className={styles.dashboardContainer}>
+    <div className={dashboardStyles.dashboardContainer}>
       <AppHeader />
-
-      <div className={styles.dashboardContent}>
+      <div className={dashboardStyles.dashboardContent}>
         <AppSidebar />
+        <main className={dashboardStyles.mainContent}>
+          <h1 className={styles.pageTitle}>Planetary Transits</h1>
+          <div className={styles.tabs}>
+            {[
+              { id: "today", label: "Today" },
+              { id: "retrogrades", label: "Retrogrades" },
+              { id: "major", label: "Major Transits" },
+              { id: "eclipses", label: "Eclipses" },
+            ].map((t) => (
+              <button
+                key={t.id}
+                onClick={() => setActiveTab(t.id as TabId)}
+                className={activeTab === t.id ? styles.activeTab : styles.tab}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
 
-        <main className={styles.mainContent}>
-          <h2>🌌 Today’s Planetary Transits</h2>
-
-          {/* 🔄 Loading */}
-          {loading && <p>Loading today’s transits...</p>}
-
-          {/* ❌ Error */}
-          {!loading && error && (
-            <div className={styles.noDataContainer}>
-              <div className={styles.noDataIcon}>⚠️</div>
-              <h3 className={styles.noDataTitle}>Error</h3>
-              <p className={styles.noDataMessage}>{error}</p>
+          {/* TODAY */}
+          {activeTab === "today" && todayData && (
+            <div className={styles.cardGrid}>
+              {Object.values(todayData.currentPlanetPositions || {}).map((p) => (
+                <div key={p.name} className={styles.card}>
+                  <span className={styles.badge}>Planet</span>
+                  <h4>{p.name}</h4>
+                  <p>{p.sign.name}</p>
+                </div>
+              ))}
             </div>
           )}
 
-          {/* 🌠 Transit Data */}
-          {!loading && transits && (
+          {/* RETROGRADES */}
+          {activeTab === "retrogrades" && (
             <>
-              <p>
-                <strong>Date:</strong> {transits.date}
-              </p>
+              <div className={styles.filterCard}>
+                <h3>🔁 Retrogrades</h3>
+                <div className={styles.filters}>
+                  <div className={styles.dateBox}>
+                    <input type="date" value={retroFrom} onChange={(e) => setRetroFrom(e.target.value)} />
+                  </div>
+                  <div className={styles.dateBox}>
+                    <input type="date" value={retroTo} onChange={(e) => setRetroTo(e.target.value)} />
+                  </div>
+                  <button onClick={loadRetrogrades}>Get Retrogrades</button>
+                </div>
+              </div>
 
-              <ul style={{ marginTop: "1rem" }}>
-                {transits.planetTransits.map((t, index) => (
-                  <li
-                    key={index}
-                    style={{
-                      background: "#f5f5f5",
-                      padding: "12px",
-                      borderRadius: "8px",
-                      marginBottom: "10px",
-                    }}
-                  >
-                    <strong>{t.planet}</strong> moved from{" "}
-                    <strong>{t.fromSign}</strong> →{" "}
-                    <strong>{t.toSign}</strong> ({t.degree}°)
-                  </li>
-                ))}
-              </ul>
-
-              <p style={{ marginTop: "1rem", fontSize: "12px", color: "#777" }}>
-                Source: {transits.source}
-              </p>
+              {Object.entries(groupByMonth(retroData)).map(([month, list]) => (
+                <div key={month}>
+                  <h3 className={styles.monthHeader}>📅 {month}</h3>
+                  <div className={styles.cardGrid}>
+                    {list.map((r) => (
+                      <div key={r.planet + r.startDate} className={styles.card}>
+                        <span className={styles.badge}>Retrograde</span>
+                        <h4>{r.planet}</h4>
+                        <p>{r.description}</p>
+                        <p><strong>From:</strong> {formatDate(r.startDate)} | <strong>To:</strong> {formatDate(r.endDate)}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </>
           )}
 
-          {/* 🚫 No Data */}
-          {!loading && !error && !transits && (
-            <div className={styles.noDataContainer}>
-              <div className={styles.noDataIcon}>🪐</div>
-              <h3 className={styles.noDataTitle}>No Data Found</h3>
-              <p className={styles.noDataMessage}>
-                Transit data is currently unavailable.
-              </p>
-            </div>
+          {/* MAJOR TRANSITS */}
+          {activeTab === "major" && (
+            <>
+              <div className={styles.filterCard}>
+                <h3>🔱 Major Transits</h3>
+                <div className={styles.filters}>
+                  <div className={styles.dateBox}>
+                    <input type="date" value={majorFrom} onChange={(e) => setMajorFrom(e.target.value)} />
+                  </div>
+                  <div className={styles.dateBox}>
+                    <input type="date" value={majorTo} onChange={(e) => setMajorTo(e.target.value)} />
+                  </div>
+                  <button onClick={loadMajor}>Get Transits</button>
+                </div>
+              </div>
+
+              {Object.entries(groupByMonth(majorData)).map(([month, list]) => (
+                <div key={month}>
+                  <h3 className={styles.monthHeader}>📅 {month}</h3>
+                  <div className={styles.cardGrid}>
+                    {list.map((m) => (
+                      <div key={m.planet + m.date} className={styles.card}>
+                        <span className={styles.badge}>Major</span>
+                        <h4>{m.planet}</h4>
+                        <p>{m.description}</p>
+                        <p><strong>Date:</strong> {formatDate(m.date)}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </>
           )}
+
+          {/* ECLIPSES */}
+          {activeTab === "eclipses" && (
+            <>
+              <div className={styles.filterCard}>
+                <h3>🌘 Eclipses</h3>
+                <div className={styles.filters}>
+                  <div className={styles.dateBox}>
+                    <input type="date" value={eclipseFrom} onChange={(e) => setEclipseFrom(e.target.value)} />
+                  </div>
+                  <button onClick={loadEclipses}>Get Eclipses</button>
+                </div>
+              </div>
+
+              <h3 className={styles.monthHeader}>🌞 Solar Eclipses</h3>
+              <div className={styles.cardGrid}>
+                {solarEclipses.map((e) => (
+                  <div key={e.date} className={styles.card}>
+                    <span className={styles.badge}>Solar</span>
+                    <h4>{formatDate(e.date)}</h4>
+                    <p>{e.type}</p>
+                  </div>
+                ))}
+              </div>
+
+              <h3 className={styles.monthHeader}>🌕 Lunar Eclipses</h3>
+              <div className={styles.cardGrid}>
+                {lunarEclipses.map((e) => (
+                  <div key={e.date} className={styles.card}>
+                    <span className={styles.badge}>Lunar</span>
+                    <h4>{formatDate(e.date)}</h4>
+                    <p><strong>Type:</strong> {e.type}</p>
+                    <p><strong>Maximum:</strong> {e.maximum ? new Date(e.maximum).toLocaleString() : "-"}</p>
+                    {e.umbralMagnitude !== undefined && <p><strong>Umbral Mag:</strong> {e.umbralMagnitude}</p>}
+                    {e.penumbralMagnitude !== undefined && <p><strong>Penumbral Mag:</strong> {e.penumbralMagnitude.toFixed(3)}</p>}
+                    {e.sarosNumber && <p><strong>Saros:</strong> {e.sarosNumber} / {e.sarosMember}</p>}
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          <CalculationInfo showDasha={false} showAyanamsa />
         </main>
       </div>
     </div>

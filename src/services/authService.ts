@@ -1,27 +1,39 @@
-import axios, { AxiosError } from "axios";
+import { request, AUTH_BASE } from "./fetcher";
 
-const API = "http://localhost:8001/api/v1/auth";
+/** Onboard a guest (creates user_details). Returns guestId to pass to signup for convert-guest-to-user. */
+export const onboardGuest = (data: {
+  name: string;
+  dob: string;
+  birthPlace: string;
+  birthTime?: string;
+}) =>
+  request<{ message: string; guestId: string }>(AUTH_BASE, "/api/v1/guests", {
+    method: "POST",
+    body: data,
+  });
 
-/* REGISTER */
+/** Register: use guestId to convert a guest, or dob+birthPlace+birthTime for new. */
 export const registerUser = (data: {
   name: string;
   email: string;
   password: string;
-  phoneNumber: string;
-  timezone: string;
+  phoneNumber?: string;
+  timezone?: string;
   roleId: number;
-  guestId: string | null;
-  dob: string;
-  birthPlace: string;
-  birthTime: string;
-}) => {
-  return axios.post(`${API}/signup`, data);
-};
+  guestId?: string | null;
+  dob?: string;
+  birthPlace?: string;
+  birthTime?: string;
+}) =>
+  request<{ message?: string; userId?: string }>(AUTH_BASE, "/api/v1/auth/signup", {
+    method: "POST",
+    body: data,
+  });
 
-/* LOGIN */
-export const loginUser = (data: {
-  email: string;
-  password: string;
-}) => {
-  return axios.post(`${API}/login`, data);
-};
+/** Login. Returns { status, data }. Check status (e.g. 401) before using data. */
+export const loginUser = (data: { email: string; password: string }) =>
+  request<{ accessToken?: string; user?: { id: string; name: string; roleId: number } }>(
+    AUTH_BASE,
+    "/api/v1/auth/login",
+    { method: "POST", body: data, noThrow: true }
+  ) as Promise<{ status: number; data: { accessToken?: string; user?: { id: string; name: string; roleId: number } } }>;
