@@ -9,7 +9,10 @@ import {
 } from "@/services/familyService";
 import { FamilyProfile, CreateFamilyProfilePayload } from "@/data/family";
 import { astroApi } from "@/services/api";
-import { horoscopeApi, DailyHoroscopeResponse } from "@/services/horoscopeService";
+import {
+  horoscopeApi,
+  DailyHoroscopeResponse,
+} from "@/services/horoscopeService";
 import styles from "@/styles/familyProfiles.module.css";
 import dashboardStyles from "@/styles/dashboard.module.css";
 import AppSidebar from "@/components/layout/AppSidebar";
@@ -29,8 +32,10 @@ export default function FamilyProfiles() {
   const isGuest = useSelector(selectIsGuest);
   const token = useSelector(selectToken) ?? "";
 
-  const [editingId, setEditingId] = useState<string | null>(null);
   const [profiles, setProfiles] = useState<FamilyProfile[]>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [form, setForm] = useState<CreateFamilyProfilePayload>({
     name: "",
     dob: "",
@@ -40,6 +45,15 @@ export default function FamilyProfiles() {
   });
 
   const [formError, setFormError] = useState<string | null>(null);
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   const [selectedMemberData, setSelectedMemberData] = useState<{
     kundli?: any;
@@ -51,7 +65,7 @@ export default function FamilyProfiles() {
   const [loadingMemberData, setLoadingMemberData] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  // Redirect if not authenticated
+  // Auth redirect
   useEffect(() => {
     if (!rehydrated) return;
     if (isGuest || !isValidJwtFormat(token)) {
@@ -76,7 +90,14 @@ export default function FamilyProfiles() {
     loadProfiles();
   }, [rehydrated, isGuest, token]);
 
-  // Form validation
+  // Toast
+  const showSuccessToast = (message: string) => {
+    setToastMessage(message);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
+
+  // Validation
   const validateForm = () => {
     if (!form.name.trim()) return "Name is required";
     if (!form.dob) return "Date of Birth is required";
@@ -84,24 +105,27 @@ export default function FamilyProfiles() {
     return null;
   };
 
-  // Submit handler
+  // Submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const errorMessage = validateForm();
-    if (errorMessage) {
-      setFormError(errorMessage);
+    const error = validateForm();
+    if (error) {
+      setFormError(error);
       return;
     }
 
     setFormError(null);
+    setIsSubmitting(true);
 
     try {
       if (editingId) {
         await updateFamilyProfile(editingId, form, token);
+        showSuccessToast("Profile updated successfully!");
         setEditingId(null);
       } else {
         await createFamilyProfile(form, token);
+        showSuccessToast("Profile added successfully!");
       }
 
       setForm({
@@ -115,7 +139,9 @@ export default function FamilyProfiles() {
       loadProfiles();
     } catch (error) {
       console.error(error);
-      setFormError("Something went wrong while saving profile.");
+      setFormError("Unable to save profile. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -130,20 +156,30 @@ export default function FamilyProfiles() {
     });
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Delete this profile?")) return;
+  const handleDeleteClick = (id: string) => {
+    setDeleteId(id);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteId) return;
     try {
-      await deleteFamilyProfile(id, token);
+      await deleteFamilyProfile(deleteId, token);
+      showSuccessToast("Profile deleted successfully!");
       loadProfiles();
-    } catch (error) {
-      console.error(error);
-      alert("Failed to delete profile.");
+    } catch {
+      setErrorMessage("Failed to delete profile.");
+      setShowErrorModal(true);
+    } finally {
+      setShowDeleteModal(false);
+      setDeleteId(null);
     }
   };
 
   const viewMemberData = async (profile: FamilyProfile) => {
     if (!profile.dob || !profile.birthPlace) {
-      alert("DOB and Birth Place are required to view astrology.");
+      setErrorMessage("DOB and Birth Place are required.");
+      setShowErrorModal(true);
       return;
     }
 
@@ -160,11 +196,12 @@ export default function FamilyProfiles() {
 
       const calendar = await astroApi.getGuestCalendar(profile.birthPlace);
 
-      const dailyHoroscope = await horoscopeApi.getDailyHoroscopeGuest({
-        dob: profile.dob,
-        birthTime: profile.birthTime || "00:00",
-        placeOfBirth: profile.birthPlace,
-      });
+      const dailyHoroscope =
+        await horoscopeApi.getDailyHoroscopeGuest({
+          dob: profile.dob,
+          birthTime: profile.birthTime || "00:00",
+          placeOfBirth: profile.birthPlace,
+        });
 
       setSelectedMemberData({
         kundli,
@@ -172,29 +209,16 @@ export default function FamilyProfiles() {
         dailyHoroscope,
         name: profile.name,
       });
-    } catch (error) {
-      console.error(error);
-      alert("Failed to fetch astrology data.");
+    } catch {
+      setErrorMessage("Failed to fetch astrology data.");
+      setShowErrorModal(true);
       setShowModal(false);
     } finally {
       setLoadingMemberData(false);
     }
   };
 
-  const closeModal = () => {
-    setShowModal(false);
-    setSelectedMemberData(null);
-  };
-
-  if (!rehydrated || isGuest) {
-    return (
-      <div className={dashboardStyles.dashboardContainer}>
-        <div className="flex items-center justify-center h-screen text-base text-gray-500">
-          Loading...
-        </div>
-      </div>
-    );
-  }
+  if (!rehydrated) return null;
 
   return (
     <div className={dashboardStyles.dashboardContainer}>
@@ -252,14 +276,19 @@ export default function FamilyProfiles() {
                 }
               />
 
-              <button className={styles.button}>
-                {editingId ? "Update Profile" : "Add Profile"}
+              <button
+                className={styles.button}
+                disabled={isSubmitting}
+              >
+                {isSubmitting
+                  ? "Saving..."
+                  : editingId
+                  ? "Update Profile"
+                  : "Add Profile"}
               </button>
 
               {formError && (
-                <p style={{ color: "red", marginTop: "8px" }}>
-                  {formError}
-                </p>
+                <p className={styles.errorText}>{formError}</p>
               )}
             </form>
           </div>
@@ -271,9 +300,10 @@ export default function FamilyProfiles() {
                 <div><strong>Relation:</strong> {p.relation}</div>
                 <div><strong>Place:</strong> {p.birthPlace}</div>
                 <div><strong>DOB:</strong> {p.dob}</div>
+
                 <div className={styles.actions}>
                   <button onClick={() => handleEdit(p)}>Edit</button>
-                  <button onClick={() => handleDelete(p.id)}>Delete</button>
+                  <button onClick={() => handleDeleteClick(p.id)}>Delete</button>
                   <button onClick={() => viewMemberData(p)}>
                     View Astrology
                   </button>
@@ -284,52 +314,82 @@ export default function FamilyProfiles() {
         </div>
       </div>
 
-      {showModal && selectedMemberData && (
+      {showDeleteModal && (
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
-            <button
-              className={styles.modalClose}
-              onClick={closeModal}
-            >
-              ×
-            </button>
-
-            <h3>{selectedMemberData.name}'s Astrology</h3>
-
-            {loadingMemberData ? (
-              <p>Loading...</p>
-            ) : (
-              <div className={styles.memberData}>
-                <h4>Kundli</h4>
-                <ul>
-                  <li><strong>Lagna:</strong> {selectedMemberData.kundli?.lagna}</li>
-                  <li><strong>Moon Sign:</strong> {selectedMemberData.kundli?.moonSign}</li>
-                  <li><strong>Sun Sign:</strong> {selectedMemberData.kundli?.sunSign || "—"}</li>
-                  <li><strong>Nakshatra:</strong> {selectedMemberData.kundli?.nakshatra}</li>
-                  <li><strong>Pada:</strong> {selectedMemberData.kundli?.pada}</li>
-                </ul>
-
-                <h4>Calendar</h4>
-                <ul>
-                  <li><strong>Date:</strong> {selectedMemberData.calendar?.date}</li>
-                  <li><strong>Tithi:</strong> {selectedMemberData.calendar?.tithi || "—"}</li>
-                  <li><strong>Nakshatra:</strong> {selectedMemberData.calendar?.nakshatra || "—"}</li>
-                </ul>
-
-                <h4>Daily Horoscope</h4>
-                {selectedMemberData.dailyHoroscope ? (
-                  <div className={styles.horoscopeCard}>
-                    <p><strong>Theme:</strong> {selectedMemberData.dailyHoroscope.mainTheme}</p>
-                    <p><strong>Advice:</strong> {selectedMemberData.dailyHoroscope.doAvoid || "—"}</p>
-                    <p><strong>Reason:</strong> {selectedMemberData.dailyHoroscope.reason}</p>
-                  </div>
-                ) : (
-                  <p>No horoscope available</p>
-                )}
-              </div>
-            )}
+            <h3>Delete Profile?</h3>
+            <p>Are you sure?</p>
+            <div className={styles.modalActions}>
+              <button onClick={() => setShowDeleteModal(false)}>Cancel</button>
+              <button onClick={confirmDelete}>Delete</button>
+            </div>
           </div>
         </div>
+      )}
+
+      {showErrorModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <h3>Error</h3>
+            <p>{errorMessage}</p>
+            <button onClick={() => setShowErrorModal(false)}>OK</button>
+          </div>
+        </div>
+      )}
+
+{/* ASTROLOGY MODAL */}
+{showModal && selectedMemberData && (
+  <div className={styles.modalOverlay}>
+    <div className={styles.modal}>
+      <button
+        className={styles.modalClose}
+        onClick={() => {
+          setShowModal(false);
+          setSelectedMemberData(null);
+        }}
+      >
+        ×
+      </button>
+
+      <h3>{selectedMemberData.name}'s Astrology</h3>
+
+      {loadingMemberData ? (
+        <p>Loading...</p>
+      ) : (
+        <div className={styles.memberData}>
+          <h4>Kundli</h4>
+          <ul>
+            <li><strong>Lagna:</strong> {selectedMemberData.kundli?.lagna}</li>
+            <li><strong>Moon Sign:</strong> {selectedMemberData.kundli?.moonSign}</li>
+            <li><strong>Sun Sign:</strong> {selectedMemberData.kundli?.sunSign || "—"}</li>
+            <li><strong>Nakshatra:</strong> {selectedMemberData.kundli?.nakshatra}</li>
+            <li><strong>Pada:</strong> {selectedMemberData.kundli?.pada}</li>
+          </ul>
+
+          <h4>Calendar</h4>
+          <ul>
+            <li><strong>Date:</strong> {selectedMemberData.calendar?.date}</li>
+            <li><strong>Tithi:</strong> {selectedMemberData.calendar?.tithi || "—"}</li>
+            <li><strong>Nakshatra:</strong> {selectedMemberData.calendar?.nakshatra || "—"}</li>
+          </ul>
+
+          <h4>Daily Horoscope</h4>
+          {selectedMemberData.dailyHoroscope ? (
+            <div className={styles.horoscopeCard}>
+              <p><strong>Theme:</strong> {selectedMemberData.dailyHoroscope.mainTheme}</p>
+              <p><strong>Advice:</strong> {selectedMemberData.dailyHoroscope.doAvoid || "—"}</p>
+              <p><strong>Reason:</strong> {selectedMemberData.dailyHoroscope.reason}</p>
+            </div>
+          ) : (
+            <p>No horoscope available</p>
+          )}
+        </div>
+      )}
+    </div>
+  </div>
+)}
+      {showToast && (
+        <div className={styles.toast}>{toastMessage}</div>
       )}
     </div>
   );
