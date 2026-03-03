@@ -7,6 +7,7 @@ import { astroApi, KundliResponse } from "@/services/api";
 import { paymentApi } from "@/services/paymentService";
 import { reportsApi, GenerateReportResponse } from "@/services/reportsService";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
+import houseMeanings from "@/services/houseMeanings";
 import { isValidJwtFormat } from "@/utils/auth";
 import { showError, showSuccess } from "@/utils/toast";
 import styles from "@/styles/dashboard.module.css";
@@ -27,11 +28,28 @@ export default function KundliPage() {
   const [reportPaying, setReportPaying] = useState(false);
   const [reportDownload, setReportDownload] = useState<GenerateReportResponse | null>(null);
 
+  const zodiacSigns = [
+    "Aries", "Taurus", "Gemini", "Cancer",
+    "Leo", "Virgo", "Libra", "Scorpio",
+    "Sagittarius", "Capricorn", "Aquarius", "Pisces"
+  ];
+
+  const getHouseFromSign = (sign: string, lagna: string): number | null => {
+    const lagnaIndex = zodiacSigns.indexOf(lagna);
+    const signIndex = zodiacSigns.indexOf(sign);
+
+    if (lagnaIndex === -1 || signIndex === -1) return null;
+
+    return ((signIndex - lagnaIndex + 12) % 12) + 1;
+  };
   const fetchKundli = useCallback(async () => {
     const t = token?.trim();
     if (!isValidJwtFormat(t)) {
       dispatch(clearToken());
       setTimeout(() => router.push("/auth/login"), REDIRECT_DELAY_MS);
+
+      // 🔥 Add this inside KundliPage component (above return)
+
       return;
     }
     try {
@@ -144,6 +162,29 @@ export default function KundliPage() {
     );
   }
 
+  const renderHouseBox = (houseNumber: number) => {
+    if (!kundli?.planetaryPositions) return null;
+
+    const planetsInHouse = kundli.planetaryPositions.filter((p: any) => {
+      const house = getHouseFromSign(p.sign, kundli.lagna);
+      return house === houseNumber;
+    });
+
+    return (
+      <div className={styles.house}>
+        <div className={styles.houseNumber}>{houseNumber}</div>
+
+        <div className={styles.houseContent}>
+          {planetsInHouse.map((p: any, i: number) => (
+            <div key={i} className={styles.planetText}>
+              {p.planet.slice(0, 2)} {p.degree?.toFixed(0)}°
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className={styles.dashboardContainer}>
       <AppHeader />
@@ -206,45 +247,57 @@ export default function KundliPage() {
                   </div>
                 </div>
 
-                {kundli.planetaryPositions && Array.isArray(kundli.planetaryPositions) && kundli.planetaryPositions.length > 0 && (
-                  <div className={styles.kundliSection}>
-                    <h2 className={styles.sectionTitle}>Planetary Positions</h2>
-                    <div className={styles.planetsGrid}>
-                      {kundli.planetaryPositions.map((planetData) => (
-                        <div key={planetData.planet} className={styles.planetCard}>
-                          <div className={styles.planetName}>{planetData.planet}</div>
-                          <div className={styles.planetSign}>{planetData.sign}</div>
-                          {typeof planetData.degree === 'number' && (
-                            <div className={styles.planetDegree}>
-                              {planetData.degree.toFixed(2)}°
-                            </div>
-                          )}
-                          {planetData.nakshatra && (
-                            <div className={styles.planetNakshatra}>
-                              {planetData.nakshatra} {planetData.pada ? `- Pada ${planetData.pada}` : ""}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                {kundli.planetaryPositions && Array.isArray(kundli.planetaryPositions) && (
+                <div className={styles.kundliSection}>
+                 <h2 className={styles.sectionTitle}>Kundli Chart</h2>
+   
+                <div className={styles.chartWrapper}>
+                 <div className={styles.kundaliChart}>
+                     <div className={styles.centerWatermark}>ॐ</div>
+                        {renderHouseBox(12)}
+                        {renderHouseBox(1)}
+                        {renderHouseBox(2)}
+                        {renderHouseBox(3)}
+
+                        {renderHouseBox(11)}
+                    <div></div>
+                    <div></div>
+                        {renderHouseBox(4)}
+
+                        {renderHouseBox(10)}
+                    <div></div>
+                    <div></div>
+                        {renderHouseBox(5)}
+                        {renderHouseBox(9)}
+                        {renderHouseBox(8)}
+                        {renderHouseBox(7)}
+                        {renderHouseBox(6)}
+      </div>
+    </div>
+  </div>
+)}
 
                 {kundli.houses && Array.isArray(kundli.houses) && kundli.houses.length > 0 && (
                   <div className={styles.kundliSection}>
                     <h2 className={styles.sectionTitle}>Houses</h2>
                     <div className={styles.housesGrid}>
                       {kundli.houses.map((houseData) => (
-                        <div key={houseData.house} className={styles.houseCard}>
-                          <div className={styles.houseNumber}>House {houseData.house}</div>
-                          <div className={styles.houseSign}>{houseData.sign}</div>
-                          <div className={styles.houseCusp}>
-                            {typeof houseData.degree === 'number' 
-                              ? `${houseData.degree.toFixed(2)}°` 
-                              : 'N/A'}
-                          </div>
-                        </div>
-                      ))}
+                      <div key={houseData.house} className={styles.houseCard}>
+                      <div className={styles.houseTitle}>
+      House {houseData.house} – {houseMeanings[Number(houseData.house)]}
+    </div>
+                    <div className={styles.houseSign}>
+                    Sign: {houseData.sign}
+                    </div>
+
+                    <div className={styles.houseCusp}>
+                      Degree: {typeof houseData.degree === "number"
+                      ? `${houseData.degree.toFixed(2)}°`
+                      : "N/A"}
+                   </div>
+
+              </div>
+            ))}
                     </div>
                   </div>
                 )}

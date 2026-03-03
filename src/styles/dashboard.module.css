@@ -606,52 +606,95 @@ border-color: var(--border);
   color: #1f2937;
 }
 
-.planetsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 15px;
-}
+/* ===== PAGE BACKGROUND ===== */
 
-.planetCard {
-  background: linear-gradient(135deg, #f5ebe0 0%, #ede4d8 100%);
-  border-radius: 8px;
+/* ===== PAGE ===== */
+
+.pageContainer {
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #fbf6ef, #f3e9db);
   padding: 20px;
-  text-align: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e8ddd0;
-  transition: transform 0.2s;
 }
 
-.planetCard:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+/* ===== WRAPPER ===== */
+
+/* ===== WRAPPER ===== */
+
+.chartWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
 }
 
-.planetName {
-  font-size: 18px;
-  font-weight: bold;
-  color: #6b4423;
-  margin-bottom: 8px;
+/* ===== DIAMOND ===== */
+
+.kundaliChart {
+  position: relative;
+  width: 380px;
+  height: 380px;
+
+  background: #f6efe6;
+  border: 2px solid #d6b98c;
+
+  transform: rotate(45deg);
+
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+
+  box-shadow: 0 10px 25px rgba(166, 124, 82, 0.15);
 }
 
-.planetSign {
-  font-size: 16px;
+/* ===== HOUSE ===== */
+
+.house {
+  border: 1px solid #e2caa6;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ===== HOUSE NUMBER ===== */
+
+.houseNumber {
+  position: absolute;
+  top: 6px;
+  left: 8px;
+
+  font-size: 11px;
   font-weight: 600;
-  color: #5c4033;
-  margin-bottom: 4px;
+  color: #b08a55;
+
+  transform: rotate(-45deg);
 }
 
-.planetDegree {
-  font-size: 14px;
-  color: #5c4033;
-  margin-top: 4px;
+/* ===== PLANET TEXT ===== */
+
+.houseContent {
+  transform: rotate(-45deg);
+  font-size: 12px;
+  text-align: center;
+  color: #6b4423;
+  line-height: 1.4;
+}
+
+.planetText {
   font-weight: 500;
 }
 
-.planetNakshatra {
-  font-size: 13px;
-  color: #6b4423;
-  margin-top: 4px;
+/* ===== WATERMARK ===== */
+
+.centerWatermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+
+  font-size: 120px;
+  color: #130c01;
+  opacity: 0.05;
+  pointer-events: none;
 }
 
 .housesGrid {
@@ -674,25 +717,24 @@ border-color: var(--border);
   background: #f5ebe0;
 }
 
-.houseNumber {
-  font-size: 14px;
-  font-weight: 600;
-  color: #6b7280;
-  margin-bottom: 4px;
-  text-transform: uppercase;
+.houseTitle {
+  font-size: 15px;
+  color: #833131;
+  margin-bottom: 6px;
+  line-height: 1.4;
 }
 
 .houseSign {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
-  color: #5c4033;
+  color: #71381e;
   margin-bottom: 4px;
+  font-weight: bold;
 }
 
 .houseCusp {
   font-size: 16px;
-  font-weight: bold;
-  color: #6b4423;
+  color: #6b3407;
 }
 
 .sourceInfo {

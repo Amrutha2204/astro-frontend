@@ -51,35 +51,40 @@ export default function Dashboard() {
     {
       id: "kundli",
       title: "My Kundli",
-      icon: "🪐",
+      color: "#FFF5E6", 
+      image: "/images/kundli.jpg",
       description: "View your complete birth chart with planetary positions",
       onClick: () => router.push("/kundli"),
     },
     {
       id: "natal-chart",
       title: "Natal Chart",
-      icon: "⭐",
+      color: "#FFF5E6", 
+      image: "/images/natalchart.jpg",
       description: "Get your birth chart with Sun, Moon, and Ascendant",
       onClick: () => router.push("/natal-chart"),
     },
     {
       id: "horoscope-today",
       title: "Daily Horoscope",
-      icon: "🌙",
+      color: "#FFF5E6", 
+      image: "/images/horoscope1.jpg",
       description: "Personalized daily horoscope based on your birth chart",
       onClick: () => router.push("/horoscope/today"),
     },
     {
       id: "horoscope-weekly",
       title: "Weekly Horoscope",
-      icon: "📅",
+      color: "#FFF5E6", 
+      image: "/images/week.jpg",
       description: "Your personalized weekly predictions",
       onClick: () => router.push("/horoscope/weekly"),
     },
     {
       id: "horoscope-monthly",
       title: "Monthly Horoscope",
-      icon: "📆",
+      color: "#FFF5E6", 
+      image: "/images/month1.jpg",
       description: "Monthly insights and predictions",
       onClick: () => router.push("/horoscope/monthly"),
     },
@@ -93,42 +98,48 @@ export default function Dashboard() {
     {
       id: "transits",
       title: "Today's Transits",
-      icon: "⚛️",
+      color: "#FFF5E6", 
+      image: "/images/transits.jpg",
       description: "Current planetary positions and transits",
       onClick: () => router.push("/transits"),
     },
     {
       id: "dasha",
       title: "Dasha Analysis",
-      icon: "🔄",
+      color: "#FFF5E6", 
+      image: "/images/dasha.jpg",
       description: "Current Mahadasha and Antardasha periods",
       onClick: () => router.push("/dasha"),
     },
     {
       id: "dosha",
       title: "Dosha Check",
-      icon: "⚠️",
+      color: "#FFF5E6", 
+      image: "/images/dosha.jpg",
       description: "Check Manglik, Nadi, and Bhakoot doshas",
       onClick: () => router.push("/dosha"),
     },
     {
       id: "compatibility",
       title: "Match Horoscope",
-      icon: "💕",
+      color: "#FFF5E6", 
+      image: "/images/match.jpg",
       description: "Guna Milan and marriage compatibility",
       onClick: () => router.push("/compatibility"),
     },
     {
       id: "remedies",
       title: "Remedies",
-      icon: "🔮",
+      color: "#FFF5E6", 
+      image: "/images/remedy.jpg",
       description: "Astrological remedies and recommendations",
       onClick: () => router.push("/remedies"),
     },
     {
       id: "ai-chat",
       title: "AI Astrology Assistant",
-      icon: "🤖",
+      color: "#FFF5E6", 
+      image: "/images/ai.png",
       description: "Ask questions and get AI-powered astrology insights",
       onClick: () => router.push("/ai-assistant/chat"),
     },
@@ -149,7 +160,8 @@ export default function Dashboard() {
     {
       id: "subscription",
       title: "Subscription Plans",
-      icon: "📋",
+      color: "#FFF5E6", 
+      image: "/images/subscription.jpg",
       description: "View and manage your subscription",
       onClick: () => router.push("/subscription/plans"),
     },
@@ -170,7 +182,8 @@ export default function Dashboard() {
     {
       id: "notifications",
       title: "Notifications",
-      icon: "🔔",
+      color: "#FFF5E6", 
+      image: "/images/notification.png",
       description: "Daily horoscope push notification settings",
       onClick: () => router.push("/settings/notifications"),
     },
@@ -213,16 +226,29 @@ export default function Dashboard() {
           </div>
 
           <div className={styles.servicesGrid}>
-            {services.map((service) => (
-              <ServiceCard
-                key={service.id}
-                title={service.title}
-                icon={service.icon}
-                description={service.description}
-                onClick={service.onClick}
-              />
-            ))}
-          </div>
+  {services.map((service) => (
+    <div
+      key={service.id}
+      className={`${styles.serviceCard} ${
+        service.size === "large" ? styles.cardLarge : styles.cardSmall
+      }`}
+      style={{ backgroundColor: service.color }}
+      onClick={service.onClick}
+    >
+      <h3 className={styles.cardTitle}>{service.title}</h3>
+       {service.description}
+      
+      {/* Render your local images here */}
+      {service.image && (
+        <img 
+          src={service.image} 
+          alt={service.title} 
+          className={styles.cardImage} 
+        />
+      )}
+    </div>
+  ))}
+</div>
         </main>
       </div>
     </div>
