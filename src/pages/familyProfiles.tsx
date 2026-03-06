@@ -24,8 +24,12 @@ import {
   clearToken,
 } from "@/store/slices/authSlice";
 import { isValidJwtFormat } from "@/utils/auth";
+const MAX_FREE_MEMBERS = 4;
 
 export default function FamilyProfiles() {
+
+const [showSubscribeModal, setShowSubscribeModal] = useState(false);
+
   const router = useRouter();
   const dispatch = useDispatch();
   const rehydrated = useSelector(selectIsRehydrated);
@@ -108,6 +112,11 @@ export default function FamilyProfiles() {
   // Submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+     if (!editingId && profiles.length >= MAX_FREE_MEMBERS) {
+    setShowSubscribeModal(true);
+    return;
+  }
 
     const error = validateForm();
     if (error) {
@@ -277,9 +286,11 @@ export default function FamilyProfiles() {
               />
 
               <button
-                className={styles.button}
-                disabled={isSubmitting}
-              >
+              type="submit"
+  className={styles.button}
+  disabled={isSubmitting}
+>
+
                 {isSubmitting
                   ? "Saving..."
                   : editingId
@@ -291,6 +302,27 @@ export default function FamilyProfiles() {
                 <p className={styles.errorText}>{formError}</p>
               )}
             </form>
+
+            {profiles.length >= MAX_FREE_MEMBERS && (
+  <div className={styles.upgradeBox}>
+    <p className={styles.upgradeText}>
+      Upgrade to add more members.
+    </p>
+
+    <button
+  type="button"
+  className={styles.subscribeButton}
+  onClick={() => setShowSubscribeModal(true)}
+>
+      ⭐ Subscribe Now
+    </button>
+  </div>
+)}
+            {profiles.length >= MAX_FREE_MEMBERS && (
+  <p className={styles.limitWarning}>
+    Free plan allows only 4 members. Subscribe to add more family profiles.
+  </p>
+)}
           </div>
 
           <div className={styles.profileList}>
@@ -388,6 +420,36 @@ export default function FamilyProfiles() {
     </div>
   </div>
 )}
+
+{showSubscribeModal && (
+  <div className={styles.modalOverlay}>
+    <div className={`${styles.modal} ${styles.sybscribeModal}`}>
+      <h3>Unlock Premium Astrology</h3>
+
+      <p className={styles.subscribeModalText}>
+        Free plan allows only <strong>4 family members</strong>.
+      </p>
+
+      <div className={styles.subscribeActions}>
+        <button
+          onClick={() => setShowSubscribeModal(false)}
+          className={styles.cancelButton}
+        >
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          onClick={() => router.push("/payment")}
+          className={styles.confirmSubscribeButton}
+        >
+          ⭐ Subscribe
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
       {showToast && (
         <div className={styles.toast}>{toastMessage}</div>
       )}

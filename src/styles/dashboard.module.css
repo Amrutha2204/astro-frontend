@@ -2522,3 +2522,25 @@ border-color: var(--border);
   background: #7c3f00;
   border-radius: 2px;
 }
+
+.planetsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+  margin-top: 15px;
+}
+
+.planetCard {
+  background: #f6efe6;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  border: 1px solid #e5d7c7;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+  transition: all 0.2s ease;
+}
+
+.planetCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+}

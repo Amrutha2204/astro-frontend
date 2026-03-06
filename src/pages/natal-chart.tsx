@@ -149,8 +149,8 @@ export default function NatalChartPage() {
                     <div className={styles.planetsGrid}>
                       {natalChart.planetSignList.map((planet: any, index: number) => (
                         <div key={index} className={styles.planetCard}>
-                          <h4>{planet.planet}</h4>
-                          <p>{planet.sign}</p>
+                          <div className={styles.planetName}>{planet.planet}</div>
+                          <div className={styles.planetSign}>{planet.sign}</div>
                         </div>
                       ))}
                     </div>
