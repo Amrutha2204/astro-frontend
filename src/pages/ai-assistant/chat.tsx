@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
+import PageHeader from "@/components/layout/PageHeader";
 import { aiAssistantApi, ChatResponse } from "@/services/aiAssistantService";
 import { showError, showSuccess, showWarning } from "@/utils/toast";
 import { selectToken, selectIsRehydrated } from "@/store/slices/authSlice";
@@ -93,11 +94,10 @@ export default function AIChatPage() {
       <div className={styles.dashboardContent}>
         <AppSidebar />
         <main className={styles.mainContent}>
-          <div className={styles.pageHeader}>
-            <button onClick={() => router.back()} className={styles.backButton}>
-              ← Back
-            </button>
-          </div>
+          <PageHeader
+            title="AI Astrology Assistant"
+            onBack={() => router.back()}
+          />
 
           <div className={styles.kundliContainer}>
             <h1 className={styles.sectionTitle}>AI Astrology Assistant</h1>

@@ -44,7 +44,7 @@ export interface KundliResponse {
   chandraRasi?: string;
   sooryaRasi?: string;
   planetaryPositions: Array<{ planet: string; sign: string; degree: number; nakshatra?: string; pada?: number }>;
-  houses: Array<{ house: number; sign: string; degree: number }>;
+  houses: Array<{ house: number; sign: string; degree: number; meaning?: string }>;
   source: string;
 }
 
@@ -77,7 +77,14 @@ export interface CalendarResponse {
 export interface GuestCalendarResponse {
   moonPhase: string;
   tithi: string;
+  paksha?: string;
   nakshatra: string;
+  ritu?: string;
+  hinduMonth?: string;
+  sunrise?: string;
+  sunset?: string;
+  moonRise?: string;
+  moonSet?: string;
   majorPlanetaryEvents: string[];
   date: string;
   source: string;
@@ -179,6 +186,13 @@ export interface Eclipse {
 
 export interface CareerGuidanceResponse {
   guidance: string;
+  sections?: {
+    strengths?: string;
+    suitableFields?: string;
+    timing?: string;
+    tips?: string;
+    disclaimer?: string;
+  };
   profileIdUsed: string | null;
   timestamp: string;
 }

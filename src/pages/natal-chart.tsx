@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
+import PageHeader from "@/components/layout/PageHeader";
 import { astroApi } from "@/services/api";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
 import styles from "@/styles/dashboard.module.css";
@@ -94,25 +95,13 @@ export default function NatalChartPage() {
         <AppSidebar />
         <main className={styles.mainContent}>
           <div className={styles.kundliContainer}>
-            <div className={styles.pageHeader}>
-              <button 
-                onClick={() => router.push("/dashboard")} 
-                className={styles.backButton}
-                aria-label="Go back to dashboard"
-              >
-                ← Back
-              </button>
-              <div className={styles.headerActions}>
-                <button 
-                  onClick={fetchNatalChart} 
-                  className={styles.refreshButton}
-                  aria-label="Refresh natal chart"
-                  disabled={loading}
-                >
-                  🔄 Refresh
-                </button>
-              </div>
-            </div>
+            <PageHeader
+              onBack={() => router.push("/dashboard")}
+              backAriaLabel="Go back to dashboard"
+              onRefresh={fetchNatalChart}
+              refreshAriaLabel="Refresh natal chart"
+              disableRefresh={loading}
+            />
 
             <h1 className={styles.sectionTitle}>⭐ Natal Chart</h1>
             {error && <ErrorMessage message={error} />}

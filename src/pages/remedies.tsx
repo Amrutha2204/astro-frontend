@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
+import PageHeader from "@/components/layout/PageHeader";
 import { remediesApi, RemedyRecommendations } from "@/services/remediesService";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
 import styles from "@/styles/dashboard.module.css";
@@ -125,16 +126,13 @@ export default function RemediesPage() {
       <div className={styles.dashboardContent}>
         <AppSidebar />
         <main className={styles.mainContent}>
-          <div className={styles.pageHeader}>
-            <button onClick={() => router.back()} className={styles.backButton}>
-              ← Back
-            </button>
-            <button onClick={fetchRemedies} className={styles.refreshButton}>
-              🔄 Refresh
-            </button>
-          </div>
-
           <div className={styles.kundliContainer}>
+            <PageHeader
+              onBack={() => router.back()}
+              onRefresh={fetchRemedies}
+              refreshAriaLabel="Refresh remedies"
+              disableRefresh={loading}
+            />
             <h1 className={styles.sectionTitle}>Astrological Remedies</h1>
             {error && <ErrorMessage message={error} />}
             <p style={{ color: '#6b7280', marginBottom: '30px' }}>

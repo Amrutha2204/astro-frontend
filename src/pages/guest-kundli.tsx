@@ -227,7 +227,7 @@ export default function GuestKundliPage() {
                     <div className={dStyles.housesGrid}>
                       {k.houses.map((houseData) => (
                         <div key={houseData.house} className={dStyles.houseCard}>
-                          <div className={dStyles.houseNumber}>House {houseData.house}</div>
+                          <div className={dStyles.houseNumber}>House {houseData.house}{houseData.meaning ? ` – ${houseData.meaning}` : ''}</div>
                           <div className={dStyles.houseSign}>{houseData.sign}</div>
                           <div className={dStyles.houseCusp}>
                             {typeof houseData.degree === "number"

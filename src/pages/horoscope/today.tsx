@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
+import PageHeader from "@/components/layout/PageHeader";
 import CalculationInfo from "@/components/common/CalculationInfo";
 import TrustNote from "@/components/common/TrustNote";
 import { horoscopeApi } from "@/services/horoscopeService";
@@ -117,25 +118,15 @@ setHoroscope(data);
         <AppSidebar />
         <main className={styles.mainContent}>
           <div className={styles.kundliContainer}>
-            <div className={styles.pageHeader}>
-              <button 
-                onClick={() => router.push("/dashboard")} 
-                className={styles.backButton}
-                aria-label="Go back to dashboard"
-              >
-                ← Back
-              </button>
-              <div className={styles.headerActions}>
-                <button 
-                  onClick={fetchHoroscope} 
-                  className={styles.refreshButton}
-                  aria-label="Refresh horoscope"
-                  disabled={loading}
-                >
-                  🔄 Refresh
-                </button>
-              </div>
-            </div>
+            <PageHeader
+              title="Daily Horoscope"
+              onTitleClick={fetchHoroscope}
+              onBack={() => router.push("/dashboard")}
+              backAriaLabel="Go back to dashboard"
+              onRefresh={fetchHoroscope}
+              refreshAriaLabel="Refresh horoscope"
+              disableRefresh={loading}
+            />
 
             <h1 className={styles.sectionTitle}>🌙 Horoscope</h1>
             <div className={styles.horoscopeNav}>

@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
+import PageHeader from "@/components/layout/PageHeader";
 import { aiAssistantApi, SuggestionsResponse } from "@/services/aiAssistantService";
 import { showError, showSuccess } from "@/utils/toast";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
@@ -128,14 +129,12 @@ export default function SuggestionsPage() {
       <div className={styles.dashboardContent}>
         <AppSidebar />
         <main className={styles.mainContent}>
-          <div className={styles.pageHeader}>
-            <button onClick={() => router.back()} className={styles.backButton}>
-              ← Back
-            </button>
-            <button onClick={fetchSuggestions} className={styles.refreshButton}>
-              🔄 Refresh
-            </button>
-          </div>
+          <PageHeader
+            onBack={() => router.back()}
+            onRefresh={fetchSuggestions}
+            refreshAriaLabel="Refresh suggestions"
+            disableRefresh={loading}
+          />
 
           <div className={styles.kundliContainer}>
             <h1 className={styles.sectionTitle}>Daily AI Suggestions</h1>

@@ -22,7 +22,7 @@ export interface GunaMilanResponse {
   maxScore: number;
   percentage: number;
   verdict: "Excellent" | "Good" | "Average" | "Below Average";
-  gunas: Array<{ name: string; score: number; maxScore: number; description: string }>;
+  gunas: Array<{ name: string; score: number; maxScore: number; description: string; parameterMeaning?: string }>;
   source: string;
 }
 

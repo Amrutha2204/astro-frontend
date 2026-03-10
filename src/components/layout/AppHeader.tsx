@@ -28,7 +28,7 @@ const AppHeader = () => {
       .catch(() => setWalletBalance(null));
   }, [rehydrated, isGuest, token]);
 
-  const handleClose = () => {
+  const handleBack = () => {
     if (typeof window !== "undefined" && window.history.length > 1) {
       router.back();
     } else {
@@ -36,18 +36,29 @@ const AppHeader = () => {
     }
   };
 
+  const handleHomeClick = () => {
+    router.push(isGuest ? "/" : "/dashboard");
+  };
+
   return (
     <header className={styles.header}>
       <div className={styles.headerLeft}>
         <button
           className={styles.closeButton}
-          onClick={handleClose}
+          onClick={handleBack}
           aria-label="Go back"
           title="Go back"
         >
-          ×
+          ←
         </button>
-        <div className={styles.logo}>{t("appName")}</div>
+        <button
+          type="button"
+          className={styles.logo}
+          onClick={handleHomeClick}
+          aria-label={isGuest ? "Go to home" : "Go to dashboard"}
+        >
+          {t("appName")}
+        </button>
       </div>
 
       <div className={styles.headerRight}>

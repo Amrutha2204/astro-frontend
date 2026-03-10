@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
+import PageHeader from "@/components/layout/PageHeader";
 import CalculationInfo from "@/components/common/CalculationInfo";
 import TrustNote from "@/components/common/TrustNote";
 import { doshaApi, DoshaResponse } from "@/services/doshaService";
@@ -117,16 +118,13 @@ export default function DoshaPage() {
       <div className={styles.dashboardContent}>
         <AppSidebar />
         <main className={styles.mainContent}>
-          <div className={styles.pageHeader}>
-            <button onClick={() => router.back()} className={styles.backButton}>
-              ← Back
-            </button>
-            <button onClick={fetchDosha} className={styles.refreshButton}>
-              🔄 Refresh
-            </button>
-          </div>
-
           <div className={styles.kundliContainer}>
+            <PageHeader
+              onBack={() => router.back()}
+              onRefresh={fetchDosha}
+              refreshAriaLabel="Refresh dosha"
+              disableRefresh={loading}
+            />
             <h1 className={styles.sectionTitle}>Your dosha check</h1>
 
             {dosha && (
@@ -144,64 +142,75 @@ export default function DoshaPage() {
                   </div>
                 </div>
 
-                <div className={styles.infoGrid}>
-                  <div className={styles.doshaCard} style={{ borderLeft: `4px solid ${dosha.manglik.hasDosha ? getSeverityColor(dosha.manglik.severity) : '#b8cfb0'}` }}>
-                    <div className={styles.doshaHeader}>
-                      <h3 className={styles.cardTitle}>Manglik Dosha</h3>
-                      <span
-                        className={styles.doshaBadge}
-                        style={{
-                          ...(dosha.manglik.hasDosha ? { background: getSeverityColor(dosha.manglik.severity), color: 'white' } : notPresentStyle),
-                          padding: '4px 12px',
-                          borderRadius: '12px',
-                          fontSize: '0.875rem',
-                          fontWeight: '600'
-                        }}
-                      >
-                        {dosha.manglik.hasDosha ? (dosha.manglik.severity || 'Present') : 'Not Present'}
-                      </span>
-                    </div>
-                    <p className={styles.cardDescription}>{dosha.manglik.description}</p>
+                {dosha.totalDoshas > 0 ? (
+                  <div className={styles.infoGrid}>
+                    {dosha.manglik.hasDosha && (
+                      <div className={styles.doshaCard} style={{ borderLeft: `4px solid ${getSeverityColor(dosha.manglik.severity)}` }}>
+                        <div className={styles.doshaHeader}>
+                          <h3 className={styles.cardTitle}>Manglik Dosha</h3>
+                          <span
+                            className={styles.doshaBadge}
+                            style={{
+                              background: getSeverityColor(dosha.manglik.severity),
+                              color: 'white',
+                              padding: '4px 12px',
+                              borderRadius: '12px',
+                              fontSize: '0.875rem',
+                              fontWeight: '600'
+                            }}
+                          >
+                            {dosha.manglik.severity || 'Present'}
+                          </span>
+                        </div>
+                        <p className={styles.cardDescription}>{dosha.manglik.description}</p>
+                      </div>
+                    )}
+                    {dosha.nadi.hasDosha && (
+                      <div className={styles.doshaCard} style={{ borderLeft: `4px solid ${presentColor}` }}>
+                        <div className={styles.doshaHeader}>
+                          <h3 className={styles.cardTitle}>Nadi Dosha</h3>
+                          <span
+                            className={styles.doshaBadge}
+                            style={{
+                              background: presentColor,
+                              color: 'white',
+                              padding: '4px 12px',
+                              borderRadius: '12px',
+                              fontSize: '0.875rem',
+                              fontWeight: '600'
+                            }}
+                          >
+                            Present
+                          </span>
+                        </div>
+                        <p className={styles.cardDescription}>{dosha.nadi.description}</p>
+                      </div>
+                    )}
+                    {dosha.bhakoot.hasDosha && (
+                      <div className={styles.doshaCard} style={{ borderLeft: `4px solid ${presentColor}` }}>
+                        <div className={styles.doshaHeader}>
+                          <h3 className={styles.cardTitle}>Bhakoot Dosha</h3>
+                          <span
+                            className={styles.doshaBadge}
+                            style={{
+                              background: presentColor,
+                              color: 'white',
+                              padding: '4px 12px',
+                              borderRadius: '12px',
+                              fontSize: '0.875rem',
+                              fontWeight: '600'
+                            }}
+                          >
+                            Present
+                          </span>
+                        </div>
+                        <p className={styles.cardDescription}>{dosha.bhakoot.description}</p>
+                      </div>
+                    )}
                   </div>
-
-                  <div className={styles.doshaCard} style={{ borderLeft: `4px solid ${dosha.nadi.hasDosha ? presentColor : '#b8cfb0'}` }}>
-                    <div className={styles.doshaHeader}>
-                      <h3 className={styles.cardTitle}>Nadi Dosha</h3>
-                      <span
-                        className={styles.doshaBadge}
-                        style={{
-                          ...(dosha.nadi.hasDosha ? { background: presentColor, color: 'white' } : notPresentStyle),
-                          padding: '4px 12px',
-                          borderRadius: '12px',
-                          fontSize: '0.875rem',
-                          fontWeight: '600'
-                        }}
-                      >
-                        {dosha.nadi.hasDosha ? 'Present' : 'Not Present'}
-                      </span>
-                    </div>
-                    <p className={styles.cardDescription}>{dosha.nadi.description}</p>
-                  </div>
-
-                  <div className={styles.doshaCard} style={{ borderLeft: `4px solid ${dosha.bhakoot.hasDosha ? presentColor : '#b8cfb0'}` }}>
-                    <div className={styles.doshaHeader}>
-                      <h3 className={styles.cardTitle}>Bhakoot Dosha</h3>
-                      <span
-                        className={styles.doshaBadge}
-                        style={{
-                          ...(dosha.bhakoot.hasDosha ? { background: presentColor, color: 'white' } : notPresentStyle),
-                          padding: '4px 12px',
-                          borderRadius: '12px',
-                          fontSize: '0.875rem',
-                          fontWeight: '600'
-                        }}
-                      >
-                        {dosha.bhakoot.hasDosha ? 'Present' : 'Not Present'}
-                      </span>
-                    </div>
-                    <p className={styles.cardDescription}>{dosha.bhakoot.description}</p>
-                  </div>
-                </div>
+                ) : (
+                  <p className={styles.cardSubtext} style={{ marginTop: '1rem' }}>No doshas detected. All checked parameters (Manglik, Nadi, Bhakoot) are clear.</p>
+                )}
                 <CalculationInfo showDasha={false} showAyanamsa={true} />
                 <TrustNote variant="loggedIn" />
               </>

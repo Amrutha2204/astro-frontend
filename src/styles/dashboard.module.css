@@ -934,6 +934,29 @@ border-color: var(--border);
   border-bottom: 1px solid #e5e7eb;
 }
 
+.pageTitleLabel {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.pageTitleButton {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.pageTitleButton:hover {
+  background: #f5ebe0;
+  color: #6b4423;
+}
+
 .backButton {
   background: #6b4423;
   color: white;
