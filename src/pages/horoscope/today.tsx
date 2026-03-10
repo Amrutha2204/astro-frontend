@@ -22,7 +22,7 @@ export default function DailyHoroscopePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [horoscopeType, setHoroscopeType] = useState<"daily" | "weely" | "monthly">("daily");
+  const [horoscopeType, setHoroscopeType] = useState<"daily" | "weekly" | "monthly">("daily");
   const fetchHoroscope = useCallback(async () => {
     const t = token?.trim();
     if (!t || t.split(".").length !== 3) {
@@ -66,25 +66,6 @@ setHoroscope(data);
     }
     fetchHoroscope();
   }, [rehydrated, token, horoscopeType, dispatch, router, fetchHoroscope]);
-
-  if (loading) {
-    return (
-      <div className={styles.dashboardContainer}>
-        <AppHeader />
-        <div className={styles.dashboardContent}>
-          <AppSidebar />
-          <main className={styles.mainContent}>
-            <div className={styles.kundliContainer}>
-              <h1 className={styles.sectionTitle}>🌙 Daily Horoscope</h1>
-              <div className={styles.loadingContainer}>
-                <p><span className={styles.loadingSpinner} /> Loading daily insights…</p>
-              </div>
-            </div>
-          </main>
-        </div>
-      </div>
-    );
-  }
 
   if (error) {
     return (
@@ -130,59 +111,94 @@ setHoroscope(data);
 
             <h1 className={styles.sectionTitle}>🌙 Horoscope</h1>
             <div className={styles.horoscopeNav}>
-  <span className={styles.activeNav}>
-    Today
-  </span>
-
-  <span
-    className={styles.navItem}
-    onClick={() => router.push("/horoscope/weekly")}
-  >
-    Weekly
-  </span>
-
-  <span
-    className={styles.navItem}
-    onClick={() => router.push("/horoscope/monthly")}
-  >
-    Monthly
-  </span>
-</div>
-            {horoscope && (
+              <span className={styles.activeNav}>Today</span>
+              <span className={styles.navItem} onClick={() => router.push("/horoscope/weekly")}>Weekly</span>
+              <span className={styles.navItem} onClick={() => router.push("/horoscope/monthly")}>Monthly</span>
+            </div>
+            {loading ? (
+              <div className={styles.loadingContainer}>
+                <p><span className={styles.loadingSpinner} /> Loading daily insights…</p>
+              </div>
+            ) : horoscope ? (
               <>
-                <span className={styles.youAreHereBadge}>Today</span>
-                <div className={styles.infoGrid}>
-                  <div className={`${styles.infoCard} ${styles.cardActive}`}>
-                    <h3>Date</h3>
-                    <p className={styles.infoValue}>{horoscope.date || new Date().toLocaleDateString()}</p>
-                  </div>
-                  <div className={`${styles.infoCard} ${styles.cardActive}`}>
-                    <h3>Day type</h3>
-                    <p className={styles.infoValue}>{horoscope.dayType || "N/A"}</p>
+                <p className={styles.dailyPredictionsSubtitle} style={{ marginTop: 12, marginBottom: 0 }}>
+                  Based on your chart and current transits
+                </p>
+                <div className={styles.todayHeroCard}>
+                  <div
+                    className={styles.todayHeroAccent}
+                    style={{
+                      background:
+                        horoscope.dayType === "Good"
+                          ? "linear-gradient(180deg, #4ade80, #22c55e)"
+                          : horoscope.dayType === "Challenging"
+                            ? "linear-gradient(180deg, #fb923c, #ef4444)"
+                            : "linear-gradient(180deg, #a8b3c0, #64748b)",
+                    }}
+                    aria-hidden
+                  />
+                  <div className={styles.todayHeroBody}>
+                    <div className={styles.todayHeroHeader}>
+                      <span className={styles.todayHeroDate}>
+                        {horoscope.date
+                          ? new Date(horoscope.date).toLocaleDateString("en-US", {
+                              weekday: "long",
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })
+                          : new Date().toLocaleDateString("en-US", {
+                              weekday: "long",
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })}
+                      </span>
+                      {horoscope.dayType && (
+                        <span
+                          className={`${styles.horoscopeTypeBadge} ${
+                            horoscope.dayType === "Good"
+                              ? styles.horoscopeTypeBadgeGood
+                              : horoscope.dayType === "Challenging"
+                                ? styles.horoscopeTypeBadgeChallenging
+                                : styles.horoscopeTypeBadgeNeutral
+                          }`}
+                        >
+                          {horoscope.dayType}
+                        </span>
+                      )}
+                    </div>
+                    <p className={styles.todayHeroFocus}>
+                      {horoscope.mainTheme || "No theme available"}
+                    </p>
+                    {horoscope.reason && (
+                      <div className={styles.todayReasonBlock}>
+                        <p className={styles.todayReasonLabel}>Why today?</p>
+                        <p className={styles.todayReasonText}>{horoscope.reason}</p>
+                      </div>
+                    )}
+                    {(horoscope.doAvoid || horoscope.goodTime) && (
+                      <div className={styles.todayTipsBlock}>
+                        {horoscope.doAvoid && (
+                          <div className={styles.todayTipCard}>
+                            <p className={styles.todayTipLabel}>Do / Avoid today</p>
+                            <p className={styles.todayTipText}>{horoscope.doAvoid}</p>
+                          </div>
+                        )}
+                        {horoscope.goodTime && (
+                          <div className={styles.todayTipCard}>
+                            <p className={styles.todayTipLabel}>Good time</p>
+                            <p className={styles.todayTipText}>{horoscope.goodTime}</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
-                <div className="mt-8">
-                  <h2 className={styles.sectionTitle}>Today's focus</h2>
-                  <p className="mb-5 text-lg leading-relaxed">
-                    {horoscope.mainTheme || "No theme available"}
-                  </p>
-                </div>
-
-                {horoscope.reason && (
-                  <div className={`mt-5 ${styles.explanationLine}`}>
-                    <strong>Why today?</strong> {horoscope.reason}
-                  </div>
-                )}
-                {(horoscope.doAvoid || horoscope.goodTime) && (
-                  <div className={`mt-5 ${styles.doAvoidBlock}`}>
-                    {horoscope.doAvoid && <p><strong>Do / Avoid today:</strong> {horoscope.doAvoid}</p>}
-                    {horoscope.goodTime && <p><strong>Good time:</strong> {horoscope.goodTime}</p>}
-                  </div>
-                )}
                 <CalculationInfo showDasha={false} showAyanamsa={true} />
                 <TrustNote variant="loggedIn" />
               </>
-            )}
+            ) : null}
           </div>
         </main>
       </div>

@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
-import { astroApi, KundliResponse } from "@/services/api";
+import { astroApi, KundliResponse, CHART_OPTIONS } from "@/services/api";
 import { paymentApi } from "@/services/paymentService";
 import { reportsApi, GenerateReportResponse } from "@/services/reportsService";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
@@ -23,7 +23,7 @@ export default function KundliPage() {
   const [kundli, setKundli] = useState<KundliResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [chartSystem, setChartSystem] = useState<"vedic" | "western">("vedic");
+  const [chartSelection, setChartSelection] = useState<string>("lagna");
   const [reportPaying, setReportPaying] = useState(false);
   const [reportDownload, setReportDownload] = useState<GenerateReportResponse | null>(null);
 
@@ -53,7 +53,7 @@ export default function KundliPage() {
     }
     try {
       setLoading(true);
-      const data = await astroApi.getMyKundli(t, undefined, chartSystem);
+      const data = await astroApi.getMyKundli(t, undefined, chartSelection);
       setKundli(data);
       setError(null);
     } catch (err) {
@@ -66,7 +66,7 @@ export default function KundliPage() {
     } finally {
       setLoading(false);
     }
-  }, [token, dispatch, router, chartSystem]);
+  }, [token, dispatch, router, chartSelection]);
 
   useEffect(() => {
     if (!rehydrated) return;
@@ -78,9 +78,10 @@ export default function KundliPage() {
     fetchKundli();
   }, [rehydrated, token, dispatch, router, fetchKundli]);
 
-  const handleSystemChange = (system: "vedic" | "western") => {
-    setChartSystem(system);
+  const handleChartChange = (chart: string) => {
+    setChartSelection(chart);
   };
+  const isWestern = chartSelection === "western";
 
   const loadRazorpay = (): Promise<void> => {
     if (typeof window === "undefined") return Promise.reject(new Error("No window"));
@@ -193,33 +194,38 @@ export default function KundliPage() {
           <div className={styles.kundliContainer}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12, marginBottom: 16 }}>
               <h1 className={styles.pageTitle}>My Kundli</h1>
-              <div className={styles.formTabs} style={{ marginBottom: 0 }}>
-                <button
-                  type="button"
-                  onClick={() => handleSystemChange("vedic")}
-                  className={chartSystem === "vedic" ? styles.activeTab : styles.tab}
+              <label className={styles.infoLabel} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span>Chart:</span>
+                <select
+                  value={chartSelection}
+                  onChange={(e) => handleChartChange(e.target.value)}
+                  className={styles.chartSelect}
+                  aria-label="Select chart type"
                 >
-                  Vedic
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleSystemChange("western")}
-                  className={chartSystem === "western" ? styles.activeTab : styles.tab}
-                >
-                  Western
-                </button>
-              </div>
+                  {CHART_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
             </div>
             {error && <ErrorMessage message={error} />}
+
+            {loading && !kundli && (
+              <Loading text="Loading your chart..." variant="page" />
+            )}
 
             {kundli && (
               <div className={styles.kundliContent}>
                 <div className={styles.kundliSection}>
-                  <h2 className={styles.sectionTitle}>{chartSystem === "western" ? "Chart overview (Western)" : "Basic Information"}</h2>
+                  <h2 className={styles.sectionTitle}>
+                    {kundli.chartLabel || (isWestern ? "Chart overview (Western)" : "Basic Information")}
+                  </h2>
                   <div className={styles.infoGrid}>
                     <div className={`${styles.infoItem} ${styles.lagnaBg}`}>
                       <span className={styles.infoLabel}>
-                          {chartSystem === "western" ? "Ascendant:" : "Lagna (Ascendant): "}
+                          {isWestern ? "Ascendant:" : "Lagna (Ascendant): "}
                       </span>
                       <span className={styles.infoContent}>{kundli.lagna || "N/A"}</span>
                     </div>
@@ -234,7 +240,7 @@ export default function KundliPage() {
                         <span className={styles.infoContent}>{kundli.sunSign || "N/A"}</span>
                     </div>
 
-                    {chartSystem === "vedic" && (
+                    {!isWestern && (
                       <>
                         <div className={`${styles.infoItem} ${styles.nakshatraBg}`}>
   <span className={styles.infoLabel}>Nakshatra: </span>
@@ -334,6 +340,11 @@ export default function KundliPage() {
                     </button>
                   )}
                 </div>
+                {loading && (
+                  <div className={styles.chartUpdatingBar}>
+                    <Loading text="Updating chart..." variant="inline" />
+                  </div>
+                )}
               </div>
             )}
           </div>

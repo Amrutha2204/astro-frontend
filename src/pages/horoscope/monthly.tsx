@@ -54,47 +54,6 @@ export default function MonthlyHoroscopePage() {
     fetchHoroscope();
   }, [rehydrated, token, dispatch, router, fetchHoroscope]);
 
-  if (loading) {
-    return (
-      <div className={styles.dashboardContainer}>
-        <AppHeader />
-        <div className={styles.dashboardContent}>
-          <AppSidebar />
-          <main className={styles.mainContent}>
-            <div className={styles.kundliContainer}>
-              <h1 className={styles.sectionTitle}>🌙 Horoscope</h1>
-
-<div className={styles.horoscopeTabs}>
-  <button
-    className={styles.horoscopeTab}
-    onClick={() => router.push("/horoscope/today")}
-  >
-    🌙 Today
-  </button>
-
-  <button
-    className={styles.horoscopeTab}
-    onClick={() => router.push("/horoscope/weekly")}
-  >
-    📅 Weekly
-  </button>
-
-  <button
-    className={`${styles.horoscopeTab} ${styles.activeHoroscopeTab}`}
-  >
-    📆 Monthly
-  </button>
-</div>
-              <div className={styles.loadingContainer}>
-                <p><span className={styles.loadingSpinner} /> Loading your monthly insights…</p>
-              </div>
-            </div>
-          </main>
-        </div>
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className={styles.dashboardContainer}>
@@ -167,25 +126,15 @@ export default function MonthlyHoroscopePage() {
             </div>
             <h1 className={styles.sectionTitle}>🌙 Horoscope</h1>
             <div className={styles.horoscopeNav}>
-  <span
-    className={styles.navItem}
-    onClick={() => router.push("/horoscope/today")}
-  >
-    Today
-  </span>
-
-  <span
-    className={styles.navItem}
-    onClick={() => router.push("/horoscope/weekly")}
-  >
-    Weekly
-  </span>
-
-  <span className={styles.activeNav}>
-    Monthly
-  </span>
-</div>
-            {horoscope && (
+              <span className={styles.navItem} onClick={() => router.push("/horoscope/today")}>Today</span>
+              <span className={styles.navItem} onClick={() => router.push("/horoscope/weekly")}>Weekly</span>
+              <span className={styles.activeNav}>Monthly</span>
+            </div>
+            {loading ? (
+              <div className={styles.loadingContainer}>
+                <p><span className={styles.loadingSpinner} /> Loading your monthly insights…</p>
+              </div>
+            ) : horoscope ? (
               <>
                 {horoscope.monthStart && (
                   <div className={styles.infoGrid}>
@@ -210,7 +159,8 @@ export default function MonthlyHoroscopePage() {
 
                 {horoscope.predictions && Array.isArray(horoscope.predictions) && horoscope.predictions.length > 0 && (
                   <div className="mt-8">
-                    <h2 className={styles.sectionTitle}>Daily predictions</h2>
+                    <h2 className={styles.dailyPredictionsTitle}>Daily predictions</h2>
+                    <p className={styles.dailyPredictionsSubtitle}>Based on your chart and current transits</p>
                     <div className={styles.planetsGrid}>
                       {horoscope.predictions.map((prediction: any, index: number) => {
                         const predDate = prediction.date ? new Date(prediction.date) : null;
@@ -218,45 +168,42 @@ export default function MonthlyHoroscopePage() {
                         const isToday = predDate && predDate.toDateString() === today.toDateString();
                         const isPast = predDate && predDate < today && predDate.toDateString() !== today.toDateString();
                         const isTomorrow = predDate && index > 0 && horoscope.predictions[index - 1]?.date && new Date(horoscope.predictions[index - 1].date).toDateString() === today.toDateString();
+                        const dayType = prediction.horoscope?.dayType;
+                        const typeBadgeClass = dayType === 'Good' ? styles.horoscopeTypeBadgeGood : dayType === 'Challenging' ? styles.horoscopeTypeBadgeChallenging : styles.horoscopeTypeBadgeNeutral;
+                        const accentClass = dayType === 'Good' ? styles.horoscopeDayCardAccentGood : dayType === 'Challenging' ? styles.horoscopeDayCardAccentChallenging : styles.horoscopeDayCardAccentNeutral;
                         return (
                           <div
                             key={index}
                             className={`${styles.planetCard} ${isToday ? styles.cardActive : ""} ${isPast ? styles.cardPast : ""} ${isTomorrow ? styles.cardFuture : ""}`}
                           >
-                            {isToday && <span className={styles.youAreHereBadge}>Today</span>}
-                            {isTomorrow && <span className={styles.upNextBadge}>Up next</span>}
-                            <h4>
-                              {prediction.date ? new Date(prediction.date).toLocaleDateString('en-US', { 
-                                month: 'short', 
-                                day: 'numeric' 
-                              }) : `Day ${index + 1}`}
-                            </h4>
-                            {prediction.horoscope?.dayType && (
-                              <p className="mb-2">
-                                <strong>Type:</strong> 
-                                <span
-                                  className={`font-semibold ${
-                                  prediction.horoscope.dayType === "Good"
-                                  ? "text-emerald-500"
-                                  : prediction.horoscope.dayType === "Challenging"
-                                  ? "text-red-500"
-                                  : "text-gray-500"
-                                }`}
-                              >
-                                  {prediction.horoscope.dayType}
-                                </span>
-                              </p>
-                            )}
-                            {prediction.horoscope?.mainTheme && (
-                              <p className="mt-2 text-sm leading-relaxed">
-                                <strong>Focus:</strong> {prediction.horoscope.mainTheme}
-                              </p>
-                            )}
-                            {prediction.horoscope?.reason && (
-                              <p className="mt-2.5 text-xs italic text-gray-600">
-                                {prediction.horoscope.reason}
-                              </p>
-                            )}
+                            <div className={styles.horoscopeDayCard}>
+                              <div className={`${styles.horoscopeDayCardAccent} ${accentClass}`} aria-hidden />
+                              <div className={styles.horoscopeDayCardBody}>
+                                <div className={styles.horoscopeDayCardHeader}>
+                                  <div className={styles.horoscopeCardDate}>
+                                    {isToday && <><span className={styles.youAreHereBadge}>Today</span> </>}
+                                    {isTomorrow && !isToday && <><span className={styles.upNextBadge}>Up next</span> </>}
+                                    {prediction.date ? new Date(prediction.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : `Day ${index + 1}`}
+                                  </div>
+                                  {dayType && (
+                                    <span className={`${styles.horoscopeTypeBadge} ${typeBadgeClass}`}>
+                                      {dayType}
+                                    </span>
+                                  )}
+                                </div>
+                                {prediction.horoscope?.mainTheme && (
+                                  <p className={styles.horoscopeDayCardFocus}>
+                                    {prediction.horoscope.mainTheme}
+                                  </p>
+                                )}
+                                {prediction.horoscope?.reason && (
+                                  <div>
+                                    <p className={styles.horoscopeTransitsLabel}>Planetary positions</p>
+                                    <p className={styles.horoscopeTransits}>{prediction.horoscope.reason}</p>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
                           </div>
                         );
                       })}
@@ -264,7 +211,7 @@ export default function MonthlyHoroscopePage() {
                   </div>
                 )}
               </>
-            )}
+            ) : null}
           </div>
         </main>
       </div>

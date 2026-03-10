@@ -1,5 +1,7 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
 
+**Design reference:** UI and layout are being aligned with the **Horoscosmo** app. When changing screens or styles, match the existing design direction (other dev work) and the Horoscosmo reference.
+
 ## Getting Started
 
 First, run the development server:

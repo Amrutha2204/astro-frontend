@@ -4,6 +4,7 @@ import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
 import PageHeader from "@/components/layout/PageHeader";
 import CalculationInfo from "@/components/common/CalculationInfo";
+import Loading from "@/components/ui/Loading";
 import styles from "@/styles/dashboard.module.css";
 import formStyles from "@/styles/birthDetails.module.css";
 import cal from "@/styles/calendar.module.css";
@@ -225,164 +226,222 @@ const [place, setPlace] = useState<string>(
                 rahuLoading
               }
             />
-            <h1 className={styles.pageTitle}>Calendar</h1>
-            <div className={cal.birthCard}>
-  <div className={cal.birthLabel}>BIRTH PLACE</div>
+            <div className={cal.wrapper}>
+            <div className={cal.locationCard}>
+              <div className={cal.locationIcon} aria-hidden>📍</div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div className={cal.locationLabel}>Birth place / Location</div>
+                {storedUser?.birthPlace ? (
+                  <div className={cal.locationValue}>{place}</div>
+                ) : (
+                  <input
+                    type="text"
+                    placeholder="e.g. Delhi, Mumbai"
+                    value={place}
+                    onChange={(e) => setPlace(e.target.value)}
+                    aria-label="Birth place"
+                  />
+                )}
+              </div>
+            </div>
 
-  {storedUser?.birthPlace ? (
-    <div className={cal.birthValue}>{place}</div>
-  ) : (
-    <input
-      type="text"
-      placeholder="Enter birth place"
-      value={place}
-      onChange={(e) => setPlace(e.target.value)}
-      className={formStyles.input}
-    />
-  )}
-</div>
-
-            {/* Tabs */}
-            <div className={cal.tabs}>
-  {tabs.map((t) => (
-    <button
-      key={t.id}
-      onClick={() => setActiveTab(t.id)}
-      className={activeTab === t.id ? cal.activeTab : cal.tab}
-    >
-      {t.label}
-    </button>
-  ))}
-</div>
+            <div className={cal.tabRow}>
+              {tabs.map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => setActiveTab(t.id)}
+                  className={activeTab === t.id ? cal.activeTab : cal.tab}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
 
             {/* TODAY */}
             {activeTab === "today" && (
-  <>
-    {todayLoading && <p>Loading today calendar...</p>}
-
-    {todayError && <p className={styles.noDataMessage}>{todayError}</p>}
-
-    {!todayLoading && todayData && (
-      <div className={cal.infoCard}>
-        <h3>{todayData.date}</h3>
-        <p>
-          {todayData.moonPhase} · {todayData.tithi} · {todayData.nakshatra}
-        </p>
-        {todayData.paksha && (
-          <p><strong>Paksha:</strong> {todayData.paksha}</p>
-        )}
-        {todayData.ritu && (
-          <p><strong>Ritu:</strong> {todayData.ritu}</p>
-        )}
-        {todayData.hinduMonth && (
-          <p><strong>Hindu month:</strong> {todayData.hinduMonth}</p>
-        )}
-        {(todayData.sunrise ?? todayData.sunset) && (
-          <p>
-            <strong>Sun:</strong>{" "}
-            {todayData.sunrise ? `Rise ${todayData.sunrise}` : ""}
-            {todayData.sunrise && todayData.sunset ? " · " : ""}
-            {todayData.sunset ? `Set ${todayData.sunset}` : ""}
-          </p>
-        )}
-        {(todayData.moonRise ?? todayData.moonSet) && (
-          <p>
-            <strong>Moon:</strong>{" "}
-            {todayData.moonRise ? `Rise ${todayData.moonRise}` : ""}
-            {todayData.moonRise && todayData.moonSet ? " · " : ""}
-            {todayData.moonSet ? `Set ${todayData.moonSet}` : ""}
-          </p>
-        )}
-        {todayData.majorPlanetaryEvents?.length > 0 && (
-          <p>
-            <strong>Events:</strong>{" "}
-            {todayData.majorPlanetaryEvents.join(", ")}
-          </p>
-        )}
-      </div>
-    )}
-  </>
-)}
+              <div className={cal.todaySection}>
+                {todayLoading && (
+                  <div className={cal.loadingWrap}>
+                    <Loading text="Loading today’s panchang..." variant="page" />
+                  </div>
+                )}
+                {todayError && <p className={cal.errorMessage}>{todayError}</p>}
+                {!todayLoading && todayData && (
+                  <div className={cal.panchangHero}>
+                    <div className={cal.panchangDate}>{todayData.date}</div>
+                    <div className={cal.panchangSub}>
+                      {todayData.moonPhase} · {todayData.tithi} · {todayData.nakshatra}
+                    </div>
+                    <div className={cal.panchangGrid}>
+                      {todayData.tithi && (
+                        <div className={cal.panchangCell}>
+                          <div className={cal.panchangCellLabel}>Tithi</div>
+                          <div className={cal.panchangCellValue}>{todayData.tithi}</div>
+                        </div>
+                      )}
+                      {todayData.nakshatra && (
+                        <div className={cal.panchangCell}>
+                          <div className={cal.panchangCellLabel}>Nakshatra</div>
+                          <div className={cal.panchangCellValue}>{todayData.nakshatra}</div>
+                        </div>
+                      )}
+                      {todayData.moonPhase && (
+                        <div className={cal.panchangCell}>
+                          <div className={cal.panchangCellLabel}>Moon phase</div>
+                          <div className={cal.panchangCellValue}>{todayData.moonPhase}</div>
+                        </div>
+                      )}
+                      {todayData.paksha && (
+                        <div className={cal.panchangCell}>
+                          <div className={cal.panchangCellLabel}>Paksha</div>
+                          <div className={cal.panchangCellValue}>{todayData.paksha}</div>
+                        </div>
+                      )}
+                      {todayData.ritu && (
+                        <div className={cal.panchangCell}>
+                          <div className={cal.panchangCellLabel}>Ritu</div>
+                          <div className={cal.panchangCellValue}>{todayData.ritu}</div>
+                        </div>
+                      )}
+                      {todayData.hinduMonth && (
+                        <div className={cal.panchangCell}>
+                          <div className={cal.panchangCellLabel}>Hindu month</div>
+                          <div className={cal.panchangCellValue}>{todayData.hinduMonth}</div>
+                        </div>
+                      )}
+                    </div>
+                    {((todayData.sunrise ?? todayData.sunset) || (todayData.moonRise ?? todayData.moonSet)) && (
+                      <div className={cal.timesRow}>
+                        {(todayData.sunrise ?? todayData.sunset) && (
+                          <div className={cal.timesCard}>
+                            <div className={`${cal.timesIcon} ${cal.timesIconSun}`}>☀</div>
+                            <div className={cal.timesText}>
+                              {todayData.sunrise ? `Rise ${todayData.sunrise}` : ""}
+                              {todayData.sunrise && todayData.sunset ? " · " : ""}
+                              {todayData.sunset ? `Set ${todayData.sunset}` : ""}
+                            </div>
+                          </div>
+                        )}
+                        {(todayData.moonRise ?? todayData.moonSet) && (
+                          <div className={cal.timesCard}>
+                            <div className={`${cal.timesIcon} ${cal.timesIconMoon}`}>☽</div>
+                            <div className={cal.timesText}>
+                              {todayData.moonRise ? `Rise ${todayData.moonRise}` : ""}
+                              {todayData.moonRise && todayData.moonSet ? " · " : ""}
+                              {todayData.moonSet ? `Set ${todayData.moonSet}` : ""}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    {todayData.majorPlanetaryEvents?.length > 0 && (
+                      <div className={cal.eventsBlock}>
+                        <div className={cal.eventsLabel}>Planetary events</div>
+                        <div className={cal.eventsList}>
+                          {todayData.majorPlanetaryEvents.join(", ")}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* FESTIVALS */}
-           {activeTab === "festivals" && (
-  <>
-    {/* Toggle */}
-    <div style={{ display: "flex", gap: 16, marginBottom: 8 }}>
-      <label>
-        <input
-          type="radio"
-          checked={!festivalsByMonth}
-          onChange={() => setFestivalsByMonth(false)}
-        />{" "}
-        By Date
-      </label>
-
-      <label>
-        <input
-          type="radio"
-          checked={festivalsByMonth}
-          onChange={() => setFestivalsByMonth(true)}
-        />{" "}
-        By Month
-      </label>
-    </div>
-
-    {/* Date / Month Input */}
-    <input
-      type={festivalsByMonth ? "month" : "date"}
-      value={festivalsByMonth ? festMonth : festDate}
-      onChange={(e) =>
-        festivalsByMonth
-          ? setFestMonth(e.target.value)
-          : setFestDate(e.target.value)
-      }
-      className={formStyles.input}
-    />
-
-    <button onClick={fetchFestivals} className={styles.retryButton}>
-      Get Festivals
-    </button>
-
-    {festivalsLoading && <p>Loading festivals...</p>}
-
-{festivalsError && (
-  <p className={styles.noDataMessage}>{festivalsError}</p>
-)}
-
-{festivalsData?.festivals?.length === 0 && (
-  <p className={styles.noDataMessage}>No festivals found</p>
-)}
-
-{festivalsData?.festivals?.map((f, i) => (
-  <div key={i} className={styles.infoItem}>
-    <strong>{f.name}</strong>
-    {f.note && <p>{f.note}</p>}
-  </div>
-))}
-  </>
-)}
+            {activeTab === "festivals" && (
+              <>
+                <div className={cal.filterBar}>
+                  <label>
+                    <input
+                      type="radio"
+                      checked={!festivalsByMonth}
+                      onChange={() => setFestivalsByMonth(false)}
+                    />
+                    By date
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      checked={festivalsByMonth}
+                      onChange={() => setFestivalsByMonth(true)}
+                    />
+                    By month
+                  </label>
+                  <input
+                    type={festivalsByMonth ? "month" : "date"}
+                    value={festivalsByMonth ? festMonth : festDate}
+                    onChange={(e) =>
+                      festivalsByMonth
+                        ? setFestMonth(e.target.value)
+                        : setFestDate(e.target.value)
+                    }
+                    aria-label={festivalsByMonth ? "Month" : "Date"}
+                  />
+                  <button
+                    type="button"
+                    onClick={fetchFestivals}
+                    disabled={festivalsLoading}
+                    className={cal.primaryButton}
+                  >
+                    {festivalsLoading ? "Loading…" : "Get festivals"}
+                  </button>
+                </div>
+                {festivalsLoading && (
+                  <div className={cal.loadingWrap}>
+                    <Loading text="Loading festivals..." variant="page" />
+                  </div>
+                )}
+                {festivalsError && <p className={cal.errorMessage}>{festivalsError}</p>}
+                {!festivalsLoading && festivalsData?.festivals?.length === 0 && (
+                  <p className={cal.emptyMessage}>No festivals found for this date.</p>
+                )}
+                {!festivalsLoading && festivalsData?.festivals && festivalsData.festivals.length > 0 && (
+                  <div className={cal.festivalsGrid}>
+                    {festivalsData.festivals.map((f, i) => (
+                      <div key={i} className={cal.festivalCard}>
+                        <div className={cal.festivalName}>{f.name}</div>
+                        {f.note && <p className={cal.festivalNote}>{f.note}</p>}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
 
             {/* MUHURAT */}
             {activeTab === "muhurat" && (
               <>
-              <div className={styles.calendarInputBox}>
-                <input
-                  type="date"
-                  value={muhuratDate}
-                  onChange={(e) => setMuhuratDate(e.target.value)}
-                />
+                <div className={cal.filterBar}>
+                  <label style={{ marginBottom: 0 }}>Date</label>
+                  <input
+                    type="date"
+                    value={muhuratDate}
+                    onChange={(e) => setMuhuratDate(e.target.value)}
+                    aria-label="Date for muhurat"
+                  />
+                  <button
+                    type="button"
+                    onClick={fetchMuhurat}
+                    disabled={muhuratLoading}
+                    className={cal.primaryButton}
+                  >
+                    {muhuratLoading ? "Loading…" : "Get muhurat"}
+                  </button>
                 </div>
-                <button onClick={fetchMuhurat} className={styles.retryButton}>
-                  Get Muhurat
-                </button>
-
-                {muhuratData && (
-                  <div className={styles.infoCard}>
-                    <p>
-                      Abhijit: {muhuratData.abhijitMuhurat.start} –{" "}
-                      {muhuratData.abhijitMuhurat.end}
-                    </p>
+                {muhuratLoading && (
+                  <div className={cal.loadingWrap}>
+                    <Loading text="Loading muhurat..." variant="page" />
+                  </div>
+                )}
+                {muhuratData && !muhuratLoading && (
+                  <div className={cal.resultCard}>
+                    <div className={cal.resultCardTitle}>Abhijit Muhurat</div>
+                    <div className={cal.muhuratHighlight}>
+                      <span className={cal.muhuratHighlightLabel}>Time (UTC)</span>
+                      <span className={cal.muhuratHighlightTime}>
+                        {muhuratData.abhijitMuhurat.start} – {muhuratData.abhijitMuhurat.end}
+                      </span>
+                    </div>
                   </div>
                 )}
               </>
@@ -391,26 +450,40 @@ const [place, setPlace] = useState<string>(
             {/* AUSPICIOUS */}
             {activeTab === "auspicious" && (
               <>
-              <div className={styles.calendarInputBox}>
-                <input
-                  type="date"
-                  value={auspiciousDate}
-                  onChange={(e) => setAuspiciousDate(e.target.value)}
-                  className={formStyles.input}
-                />
+                <div className={cal.filterBar}>
+                  <label style={{ marginBottom: 0 }}>Date</label>
+                  <input
+                    type="date"
+                    value={auspiciousDate}
+                    onChange={(e) => setAuspiciousDate(e.target.value)}
+                    aria-label="Date to check"
+                  />
+                  <button
+                    type="button"
+                    onClick={fetchAuspicious}
+                    disabled={auspiciousLoading}
+                    className={cal.primaryButton}
+                  >
+                    {auspiciousLoading ? "Checking…" : "Check auspicious"}
+                  </button>
                 </div>
-                <button onClick={fetchAuspicious} className={styles.retryButton}>
-                  Check
-                </button>
-
-                {auspiciousData && (
-                  <div className={styles.infoCard}>
-                    <strong>
-                      {auspiciousData.isAuspicious
-                        ? "Auspicious Day ✅"
-                        : "Not Auspicious ❌"}
-                    </strong>
-                    <p>{auspiciousData.reason}</p>
+                {auspiciousLoading && (
+                  <div className={cal.loadingWrap}>
+                    <Loading text="Checking..." variant="page" />
+                  </div>
+                )}
+                {auspiciousData && !auspiciousLoading && (
+                  <div className={cal.resultCard}>
+                    <div className={cal.resultCardTitle}>
+                      {auspiciousData.isAuspicious ? (
+                        <span className={cal.auspiciousYes}>Auspicious day ✓</span>
+                      ) : (
+                        <span className={cal.auspiciousNo}>Not auspicious</span>
+                      )}
+                    </div>
+                    <p className={cal.resultCardContent} style={{ marginTop: 8, marginBottom: 0 }}>
+                      {auspiciousData.reason}
+                    </p>
                   </div>
                 )}
               </>
@@ -418,78 +491,73 @@ const [place, setPlace] = useState<string>(
 
             {activeTab === "rahu" && (
               <>
-                <div style={{ marginBottom: 20, display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
-                  <label className={formStyles.label} style={{ marginBottom: 0 }}>Date</label>
+                <div className={cal.filterBar}>
+                  <label style={{ marginBottom: 0 }}>Date</label>
                   <input
                     type="date"
-                    className={formStyles.input}
                     value={rahuDate}
                     onChange={(e) => setRahuDate(e.target.value)}
-                    style={{ marginBottom: 0, maxWidth: 160 }}
+                    aria-label="Date"
                   />
-                  <label className={formStyles.label} style={{ marginBottom: 0 }}>Place</label>
+                  <label style={{ marginBottom: 0 }}>Place</label>
                   <input
                     type="text"
-                    className={formStyles.input}
                     value={place}
                     onChange={(e) => setPlace(e.target.value)}
-                    placeholder="Delhi"
-                    style={{ marginBottom: 0, maxWidth: 140 }}
+                    placeholder="e.g. Delhi"
+                    aria-label="Place"
                   />
                   <button
                     type="button"
                     onClick={fetchRahuYamagandam}
                     disabled={rahuLoading}
-                    className={styles.retryButton}
+                    className={cal.primaryButton}
                   >
                     {rahuLoading ? "Loading…" : "Get Rahu Kaal / Yamagandam"}
                   </button>
                 </div>
-                {rahuError && (
-                  <p className={styles.noDataMessage} style={{ marginBottom: 12 }}>{rahuError}</p>
+                {rahuLoading && (
+                  <div className={cal.loadingWrap}>
+                    <Loading text="Loading..." variant="page" />
+                  </div>
                 )}
-                {rahuData && (
-                  <>
-                    <div className={styles.infoItem} style={{ marginBottom: 12 }}>
-                      <span className={styles.infoLabel}>Date</span>
-                      <span className={styles.infoValue}>{rahuData.date}</span>
-                    </div>
-                    <div className={styles.infoItem} style={{ marginBottom: 12 }}>
-                      <span className={styles.infoLabel}>Sun (UTC)</span>
-                      <span className={styles.infoValue}>
-                        Sunrise {rahuData.sunrise} · Sunset {rahuData.sunset}
-                      </span>
-                    </div>
-                    <p className={styles.explanationLine} style={{ marginBottom: 16, fontSize: 13 }}>
-                      Times are in UTC. Convert to your local time zone. These periods are traditionally considered inauspicious for starting important work.
+                {rahuError && !rahuLoading && (
+                  <p className={cal.errorMessage}>{rahuError}</p>
+                )}
+                {rahuData && !rahuLoading && (
+                  <div className={cal.resultCard}>
+                    <div className={cal.resultCardTitle}>{rahuData.date}</div>
+                    <p className={cal.utcNote}>
+                      Sun: Sunrise {rahuData.sunrise} · Sunset {rahuData.sunset} (UTC). Convert to your local time. These periods are traditionally considered inauspicious for starting important work.
                     </p>
-                    <div className={styles.infoItem} style={{ marginBottom: 12, borderLeft: "4px solid #b45309" }}>
-                      <span className={styles.infoLabel}>Rahu Kaal</span>
-                      <span className={styles.infoValue}>
+                    <div className={cal.rahuBlock}>
+                      <div className={cal.rahuBlockLabel}>Rahu Kaal</div>
+                      <div className={cal.rahuBlockValue}>
                         {rahuData.rahuKaal.start} – {rahuData.rahuKaal.end}
-                      </span>
-                      <p className={styles.cardDescription} style={{ marginTop: 8, marginBottom: 0 }}>
-                        {rahuData.rahuKaal.note}
-                      </p>
+                      </div>
+                      {rahuData.rahuKaal.note && (
+                        <p className={cal.rahuBlockNote}>{rahuData.rahuKaal.note}</p>
+                      )}
                     </div>
-                    <div className={styles.infoItem} style={{ marginBottom: 12, borderLeft: "4px solid #92400e" }}>
-                      <span className={styles.infoLabel}>Yamagandam</span>
-                      <span className={styles.infoValue}>
+                    <div className={`${cal.rahuBlock} ${cal.rahuBlockYama}`}>
+                      <div className={cal.rahuBlockLabel}>Yamagandam</div>
+                      <div className={cal.rahuBlockValue}>
                         {rahuData.yamagandam.start} – {rahuData.yamagandam.end}
-                      </span>
-                      <p className={styles.cardDescription} style={{ marginTop: 8, marginBottom: 0 }}>
-                        {rahuData.yamagandam.note}
-                      </p>
+                      </div>
+                      {rahuData.yamagandam.note && (
+                        <p className={cal.rahuBlockNote}>{rahuData.yamagandam.note}</p>
+                      )}
                     </div>
                     {rahuData.source && (
-                      <p style={{ marginTop: 12, fontSize: 12, color: "#6b7280" }}>Source: {rahuData.source}</p>
+                      <p style={{ marginTop: 16, fontSize: 12, color: "#6b7280" }}>Source: {rahuData.source}</p>
                     )}
-                  </>
+                  </div>
                 )}
               </>
             )}
 
             <CalculationInfo showDasha={false} showAyanamsa={true} note="Calendar data uses Swiss Ephemeris." />
+            </div>
           </div>
         </main>
       </div>

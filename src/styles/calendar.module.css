@@ -1,292 +1,531 @@
 /* =========================
-   PAGE TITLE
+   CALENDAR PAGE — Premium layout
 ========================= */
 
-.pageTitle {
-  font-size: 26px;
-  font-weight: 700;
-  margin-bottom: 20px;
-  color: #2c2c54;
+.wrapper {
+  max-width: 900px;
+  margin: 0 auto;
 }
-
 
 /* =========================
-   BIRTH PLACE CARD
+   LOCATION CARD
 ========================= */
 
-.birthCard {
-  background: #f7f7f7;
-  border-left: 4px solid #6b4423;
-  border-radius: 12px;
-  padding: 16px 20px;
-  margin-bottom: 24px;
+.locationCard {
+  background: linear-gradient(135deg, #fffbf5 0%, #fdf6eb 100%);
+  border: 1px solid #ecdcc4;
+  border-radius: 16px;
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 2px 12px rgba(107, 68, 35, 0.06);
 }
 
-.birthLabel {
-  font-size: 13px;
-  letter-spacing: 1px;
+.locationIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #8b5e34 0%, #6b4423 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.locationLabel {
+  font-size: 11px;
   font-weight: 600;
-  color: #6b5b52;
+  letter-spacing: 0.08em;
+  color: #8b7355;
+  text-transform: uppercase;
   margin-bottom: 4px;
 }
 
-.birthValue {
+.locationValue {
   font-size: 18px;
   font-weight: 600;
-  color: #2c2c54;
+  color: #2d2a26;
+}
+
+.locationCard input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 14px;
+  border: 1px solid #e0d4c4;
+  border-radius: 10px;
+  font-size: 15px;
+  background: #fff;
+  color: #2d2a26;
+}
+
+.locationCard input::placeholder {
+  color: #9c8b73;
+}
+
+.locationCard input:focus {
+  outline: none;
+  border-color: #6b4423;
+  box-shadow: 0 0 0 3px rgba(107, 68, 35, 0.12);
 }
 
 /* =========================
-   TABS — clean active underline
+   TABS — Pill style
 ========================= */
 
-.tabs {
+.tabRow {
   display: flex;
-  gap: 32px;
-  margin-bottom: 24px;
-  border-bottom: 1px solid #e5e5e5;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 28px;
+  padding: 4px;
+  background: #f8f5f0;
+  border-radius: 14px;
+  border: 1px solid #ebe4d8;
 }
 
-/* ALL tabs — no underline */
-.tab,
-.activeTab {
-  background: none;
-  border: none;
-  padding: 0 0 12px 0;
-  font-size: 16px;
+.tab {
+  padding: 10px 18px;
+  font-size: 14px;
   font-weight: 500;
-  cursor: pointer;
   color: #6b5b52;
-  position: relative;
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-/* hover */
 .tab:hover {
   color: #6b4423;
+  background: rgba(107, 68, 35, 0.08);
 }
 
-/* active tab text */
 .activeTab {
-  color: #6b4423;
-  font-weight: 600;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #fff;
+  background: linear-gradient(135deg, #7d5a3c 0%, #6b4423 100%);
+  box-shadow: 0 2px 8px rgba(107, 68, 35, 0.25);
 }
 
-/* underline ONLY active tab */
-.activeTab::after {
+.activeTab:hover {
+  color: #fff;
+  background: linear-gradient(135deg, #8b6342 0%, #7a5028 100%);
+  box-shadow: 0 4px 12px rgba(107, 68, 35, 0.3);
+}
+
+/* =========================
+   TODAY — Panchang hero
+========================= */
+
+.todaySection {
+  animation: fadeIn 0.35s ease-out;
+}
+
+.panchangHero {
+  background: linear-gradient(145deg, #2d2438 0%, #1a1625 50%, #15121c 100%);
+  border-radius: 20px;
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  color: #fff;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.panchangHero::before {
   content: "";
   position: absolute;
-  left: 0;
-  bottom: -2px;
-  width: 100%;
-  height: 3px;
-  background: #6b4423;
-  border-radius: 2px;
-}
-
-/* =========================
-   FILTER / INPUT CARD
-========================= */
-
-.filterCard {
-  background: #f2f3f7;
-  border-radius: 18px;
-  padding: 22px 24px;
-  margin-bottom: 24px;
-  border-left: 4px solid #6b4423;
-}
-
-.filterCard h3 {
-  margin-bottom: 14px;
-  font-size: 18px;
-  color: #3b3b6d;
-}
-
-.filters {
-  display: flex;
-  gap: 18px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-
-/* =========================
-   DATE INPUT BOX
-========================= */
-
-.calendarInputBox,
-.dateBox {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 10px 14px;
-  min-width: 160px;
-}
-
-.calendarInputBox input,
-.dateBox input[type="date"] {
-  border: none;
-  background: transparent;
-  font-size: 14px;
-  outline: none;
-  cursor: pointer;
-  width: 100%;
-}
-
-
-/* =========================
-   PRIMARY BUTTON
-========================= */
-
-.primaryButton {
-  padding: 12px 26px;
-  border-radius: 14px;
-  font-size: 15px;
-  font-weight: 600;
-  background: linear-gradient(135deg, #6b4423);
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.primaryButton:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.15);
-}
-
-.primaryButton:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-
-/* =========================
-   CALENDAR DATA CARD
-========================= */
-
-.infoCard {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 18px;
-  margin-bottom: 18px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-}
-
-.infoCard h3 {
-  margin-bottom: 6px;
-  font-size: 16px;
-  color: #2c2c54;
-}
-
-.infoCard p {
-  font-size: 14px;
-  color: #555;
-  margin: 4px 0;
-}
-
-
-/* =========================
-   MONTH HEADER
-========================= */
-
-.monthHeader {
-  margin: 24px 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-  color: #3b3b6d;
-}
-
-
-/* =========================
-   CARD GRID (Festivals etc.)
-========================= */
-
-.cardGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 16px;
-}
-
-.card {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s ease;
-}
-
-.card:hover {
-  transform: translateY(-4px);
-}
-
-
-/* =========================
-   BADGE
-========================= */
-
-.badge {
-  display: inline-block;
-  padding: 4px 10px;
-  font-size: 12px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #6b4423);
-  color: #fbfafd;
-  font-weight: 600;
-}
-
-.panchangContainer {
-  max-width: 650px;
-  margin: auto;
-  padding: 25px;
-  border-radius: 16px;
-  background: linear-gradient(135deg,#1e1e3f,#3b2f63);
-  color: white;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-}
-
-.panchangTitle {
-  text-align: center;
-  font-size: 26px;
-  margin-bottom: 5px;
+  top: -50%;
+  right: -20%;
+  width: 60%;
+  height: 120%;
+  background: radial-gradient(ellipse, rgba(139, 94, 52, 0.15) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 .panchangDate {
-  text-align: center;
-  opacity: 0.8;
-  margin-bottom: 25px;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin-bottom: 6px;
+  color: #f5f0e8;
+}
+
+.panchangSub {
+  font-size: 14px;
+  opacity: 0.85;
+  margin-bottom: 24px;
+  color: #d4cfc4;
 }
 
 .panchangGrid {
   display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
 }
 
-.panchangCard {
+.panchangCell {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
-  padding: 18px;
+  padding: 14px 16px;
   text-align: center;
-  color: white;
+  backdrop-filter: blur(8px);
 }
 
-.panchangEvents {
-  margin-top: 25px;
-  padding: 18px;
-  background: rgba(255,255,255,0.1);
+.panchangCellLabel {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 6px;
+}
+
+.panchangCellValue {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.35;
+}
+
+/* Sun/Moon times row */
+.timesRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.timesCard {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.timesIcon {
+  width: 40px;
+  height: 40px;
   border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
 }
 
-.moon {
-  background: linear-gradient(135deg,#5f9cff,#3c66d6);
+.timesIconSun {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
 }
 
-.tithi {
-  background: linear-gradient(135deg,#ff9a44,#ff6a00);
+.timesIconMoon {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
 }
 
-.nakshatra {
-  background: linear-gradient(135deg,#9b59b6,#6c3483);
+.timesText {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.4;
+}
+
+.eventsBlock {
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.eventsLabel {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 8px;
+}
+
+.eventsList {
+  font-size: 14px;
+  color: #e8e4dc;
+  line-height: 1.5;
+}
+
+/* =========================
+   FILTER BAR (Festivals, Muhurat, etc.)
+========================= */
+
+.filterBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 16px 20px;
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #e8dfd2;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.filterBar label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #4a4238;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.filterBar input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #6b4423;
+  cursor: pointer;
+}
+
+.filterBar input[type="date"],
+.filterBar input[type="month"],
+.filterBar input[type="text"] {
+  padding: 10px 14px;
+  border: 1px solid #e0d4c4;
+  border-radius: 10px;
+  font-size: 14px;
+  min-width: 140px;
+  background: #fdfcfa;
+}
+
+.filterBar input:focus {
+  outline: none;
+  border-color: #6b4423;
+}
+
+.primaryButton {
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #7d5a3c 0%, #6b4423 100%);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(107, 68, 35, 0.2);
+}
+
+.primaryButton:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(107, 68, 35, 0.3);
+}
+
+.primaryButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* =========================
+   FESTIVALS — Card grid
+========================= */
+
+.festivalsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.festivalCard {
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px 22px;
+  border: 1px solid #e8dfd2;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.festivalCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(107, 68, 35, 0.1);
+}
+
+.festivalName {
+  font-size: 17px;
+  font-weight: 600;
+  color: #2d2a26;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0ebe3;
+}
+
+.festivalNote {
+  font-size: 14px;
+  color: #6b5b52;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* =========================
+   RESULT CARDS (Muhurat, Auspicious, Rahu)
+========================= */
+
+.resultCard {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px 28px;
+  margin-bottom: 20px;
+  border: 1px solid #e8dfd2;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.resultCardTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2d2a26;
+  margin-bottom: 12px;
+}
+
+.resultCardContent {
+  font-size: 15px;
+  color: #4a4238;
+  line-height: 1.6;
+}
+
+.muhuratHighlight {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, #fef7ed 0%, #fdf0dc 100%);
+  border-radius: 12px;
+  border: 1px solid #f0dcc4;
+  margin-top: 12px;
+}
+
+.muhuratHighlightLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8b5e34;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.muhuratHighlightTime {
+  font-size: 16px;
+  font-weight: 700;
+  color: #6b4423;
+}
+
+.auspiciousYes {
+  color: #0d9488;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.auspiciousNo {
+  color: #b45309;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.rahuBlock {
+  margin-bottom: 20px;
+  padding: 18px 22px;
+  background: #fdfcfa;
+  border-radius: 14px;
+  border: 1px solid #e8dfd2;
+  border-left: 4px solid #b45309;
+}
+
+.rahuBlockYama {
+  border-left-color: #92400e;
+}
+
+.rahuBlockLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b5b52;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.rahuBlockValue {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2d2a26;
+  margin-bottom: 6px;
+}
+
+.rahuBlockNote {
+  font-size: 13px;
+  color: #6b5b52;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.utcNote {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  background: #f8f7f5;
+  border-radius: 10px;
+  border-left: 3px solid #9ca3af;
+}
+
+/* =========================
+   LOADING & EMPTY
+========================= */
+
+.loadingWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 240px;
+}
+
+.emptyMessage {
+  text-align: center;
+  padding: 32px 24px;
+  font-size: 15px;
+  color: #6b5b52;
+  background: #fdfcfa;
+  border-radius: 14px;
+  border: 1px dashed #e0d4c4;
+}
+
+.errorMessage {
+  padding: 16px 20px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  color: #b91c1c;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
