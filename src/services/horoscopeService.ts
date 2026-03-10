@@ -12,16 +12,21 @@ export interface DailyHoroscopeResponse {
 }
 
 export interface WeeklyHoroscopeResponse {
-  weekType: string;
-  mainTheme: string;
-  predictions: Array<{ date: string; theme: string; advice: string }>;
+  weekStart: string;
+  predictions: Array<{
+    date: string;
+    day: string;
+    horoscope: { dayType: string; mainTheme: string; reason: string };
+  }>;
   source: string;
 }
 
 export interface MonthlyHoroscopeResponse {
-  monthType: string;
-  mainTheme: string;
-  predictions: Array<{ date: string; theme: string; advice: string }>;
+  monthStart: string;
+  predictions: Array<{
+    date: string;
+    horoscope: { dayType: string; mainTheme: string; reason: string };
+  }>;
   source: string;
 }
 

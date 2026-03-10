@@ -35,6 +35,7 @@ const AUTH_MENU_BASE: NavItem[] = [
   { id: "subscription", label: "Subscription", href: "/subscription/plans" },
   { id: "payment", label: "Wallet & Payment", href: "/payment" },
   { id: "reports", label: "Premium Reports", href: "/reports" },
+  { id: "profile", label: "Profile", href: "/profile" },
   { id: "notifications", label: "Notifications", href: "/settings/notifications" },
 ];
 

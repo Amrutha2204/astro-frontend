@@ -51,14 +51,85 @@ export default function CareerGuidancePage() {
           {guidance && (
             <div className={styles.card}>
               <h3 className={styles.cardTitle}>Career Advice</h3>
-              <p className={styles.guidanceText}>
-                {guidance.guidance.split("\n").map((line, idx) => (
-                  <span key={idx}>
-                    {line}
-                    <br />
-                  </span>
-                ))}
-              </p>
+              {guidance.sections &&
+              Object.keys(guidance.sections).length > 0 ? (
+                <div className={styles.sections}>
+                  {guidance.sections.strengths && (
+                    <section className={styles.section}>
+                      <h4 className={styles.sectionTitle}>Strengths</h4>
+                      <p className={styles.guidanceText}>
+                        {guidance.sections.strengths.split("\n").map((line, idx) => (
+                          <span key={idx}>
+                            {line}
+                            <br />
+                          </span>
+                        ))}
+                      </p>
+                    </section>
+                  )}
+                  {guidance.sections.suitableFields && (
+                    <section className={styles.section}>
+                      <h4 className={styles.sectionTitle}>Suitable Fields</h4>
+                      <p className={styles.guidanceText}>
+                        {guidance.sections.suitableFields.split("\n").map((line, idx) => (
+                          <span key={idx}>
+                            {line}
+                            <br />
+                          </span>
+                        ))}
+                      </p>
+                    </section>
+                  )}
+                  {guidance.sections.timing && (
+                    <section className={styles.section}>
+                      <h4 className={styles.sectionTitle}>Timing</h4>
+                      <p className={styles.guidanceText}>
+                        {guidance.sections.timing.split("\n").map((line, idx) => (
+                          <span key={idx}>
+                            {line}
+                            <br />
+                          </span>
+                        ))}
+                      </p>
+                    </section>
+                  )}
+                  {guidance.sections.tips && (
+                    <section className={styles.section}>
+                      <h4 className={styles.sectionTitle}>Tips</h4>
+                      <p className={styles.guidanceText}>
+                        {guidance.sections.tips.split("\n").map((line, idx) => (
+                          <span key={idx}>
+                            {line}
+                            <br />
+                          </span>
+                        ))}
+                      </p>
+                    </section>
+                  )}
+                  {guidance.sections.disclaimer && (
+                    <section className={styles.section}>
+                      <h4 className={styles.sectionTitle}>Disclaimer</h4>
+                      <p className={styles.guidanceText}>
+                        {guidance.sections.disclaimer.split("\n").map((line, idx) => (
+                          <span key={idx}>
+                            {line}
+                            <br />
+                          </span>
+                        ))}
+                      </p>
+                    </section>
+                  )}
+                </div>
+              ) : (
+                <p className={styles.guidanceText}>
+                  {guidance.guidance.split("\n").map((line, idx) => (
+                    <span key={idx}>
+                      {line}
+                      <br />
+                    </span>
+                  ))}
+                </p>
+              )}
               <p className={styles.timestamp}>
                 Guidance generated on: {new Date(guidance.timestamp).toLocaleString()}
               </p>

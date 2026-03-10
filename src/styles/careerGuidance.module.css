@@ -25,6 +25,23 @@
   color: #6b4423;
 }
 
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.section {
+  margin-bottom: 0;
+}
+
+.sectionTitle {
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #6b4423;
+}
+
 .guidanceText {
   font-size: 15px;
   line-height: 1.6;

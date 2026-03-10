@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
+import PageHeader from "@/components/layout/PageHeader";
 import CalculationInfo from "@/components/common/CalculationInfo";
 import TrustNote from "@/components/common/TrustNote";
 import { dashaApi, DashaResponse, DashaTimelineResponse } from "@/services/dashaService";
@@ -126,16 +127,15 @@ export default function DashaPage() {
       <div className={styles.dashboardContent}>
         <AppSidebar />
         <main className={styles.mainContent}>
-          <div className={styles.pageHeader}>
-            <button onClick={() => router.back()} className={styles.backButton}>
-              ← Back
-            </button>
-            <button onClick={fetchDasha} className={styles.refreshButton}>
-              🔄 Refresh
-            </button>
-          </div>
-
           <div className={styles.kundliContainer}>
+            <PageHeader
+              title="Your period (Dasha)"
+              onTitleClick={fetchDasha}
+              onBack={() => router.back()}
+              onRefresh={fetchDasha}
+              refreshAriaLabel="Refresh Dasha"
+              disableRefresh={loading}
+            />
             <h1 className={styles.sectionTitle}>Your period (Dasha)</h1>
 
             {currentDasha && (

@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
+import PageHeader from "@/components/layout/PageHeader";
 import CalculationInfo from "@/components/common/CalculationInfo";
 import TrustNote from "@/components/common/TrustNote";
 import { astroApi, CreateShareableCardDto, StoredCardResponse } from "@/services/api";
@@ -145,15 +146,7 @@ export default function ShareableCardPage() {
         <AppSidebar />
         <main className={styles.mainContent}>
           <div className={styles.kundliContainer}>
-            <div className={styles.pageHeader}>
-              <button
-                type="button"
-                onClick={() => router.back()}
-                className={styles.backButton}
-              >
-                ← Back
-              </button>
-            </div>
+            <PageHeader onBack={() => router.back()} />
 
             <h1 className={styles.sectionTitle}>Shareable Card</h1>
             {loading && <p>Creating card, please wait…</p>}

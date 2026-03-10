@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
+import PageHeader from "@/components/layout/PageHeader";
 import { aiAssistantApi, ExplainKundliResponse } from "@/services/aiAssistantService";
 import { showError, showSuccess } from "@/utils/toast";
 import { selectToken, selectIsRehydrated } from "@/store/slices/authSlice";
@@ -49,13 +50,8 @@ export default function ExplainKundliPage() {
       <div className={styles.dashboardContent}>
         <AppSidebar />
         <main className={styles.mainContent}>
-          <div className={styles.pageHeader}>
-            <button onClick={() => router.back()} className={styles.backButton}>
-              ← Back
-            </button>
-          </div>
-
           <div className={styles.kundliContainer}>
+            <PageHeader onBack={() => router.back()} />
             <h1 className={styles.sectionTitle}>AI Kundli Explanation</h1>
             <p className="text-sm text-gray-500 mb-8">
   Get a detailed AI-powered explanation of your birth chart. Choose a focus area or get an overall explanation.

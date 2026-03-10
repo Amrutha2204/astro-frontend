@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
+import PageHeader from "@/components/layout/PageHeader";
 import { compatibilityApi, CompatibilityRequest, GunaMilanResponse, MarriageCompatibilityResponse } from "@/services/compatibilityService";
 import { paymentApi } from "@/services/paymentService";
 import { reportsApi, GenerateReportResponse } from "@/services/reportsService";
+import { getUserDetails } from "@/services/userService";
 import { getCoordinatesFromCity, isCityRecognized } from "@/utils/coordinates";
 import { showError, showSuccess, showWarning } from "@/utils/toast";
 import { selectToken } from "@/store/slices/authSlice";
@@ -14,8 +16,11 @@ import Loading from "@/components/ui/Loading";
 
 const REDIRECT_DELAY_MS = 2000;
 
+export type PartnerGender = "male" | "female" | "";
+
 interface PartnerFormData {
   name: string;
+  gender: PartnerGender;
   year: number;
   month: number;
   day: number;
@@ -41,8 +46,10 @@ export default function CompatibilityPage() {
   const [reportPaying, setReportPaying] = useState(false);
   const [reportDownload, setReportDownload] = useState<GenerateReportResponse | null>(null);
   const [selectedGunaIndex, setSelectedGunaIndex] = useState<number | null>(null);
+  const [partner1Prefilled, setPartner1Prefilled] = useState(false);
   const [partner1, setPartner1] = useState<PartnerFormData>({
     name: '',
+    gender: '',
     year: new Date().getFullYear() - 25,
     month: 1,
     day: 1,
@@ -54,6 +61,7 @@ export default function CompatibilityPage() {
   });
   const [partner2, setPartner2] = useState<PartnerFormData>({
     name: '',
+    gender: '',
     year: new Date().getFullYear() - 23,
     month: 1,
     day: 1,
@@ -63,6 +71,37 @@ export default function CompatibilityPage() {
     latitude: 28.6139,
     longitude: 77.209,
   });
+
+  useEffect(() => {
+    const t = token?.trim();
+    if (!t || t.split(".").length !== 3 || partner1Prefilled) return;
+    getUserDetails(t)
+      .then((res: any) => {
+        const dob = res?.dob;
+        const birthPlace = res?.birthPlace ?? "";
+        const birthTime = res?.birthTime ?? "12:00:00";
+        const name = (res?.user?.name ?? res?.name ?? "") ?? "";
+        if (!dob || !birthPlace) return;
+        const d = new Date(dob);
+        if (isNaN(d.getTime())) return;
+        const [h = 12, m = 0] = birthTime.split(":").map(Number);
+        const coords = getCoordinatesFromCity(birthPlace);
+        setPartner1({
+          name: typeof name === "string" ? name : "",
+          gender: "",
+          year: d.getFullYear(),
+          month: d.getMonth() + 1,
+          day: d.getDate(),
+          hour: h,
+          minute: m,
+          birthPlace,
+          latitude: coords.lat,
+          longitude: coords.lng,
+        });
+        setPartner1Prefilled(true);
+      })
+      .catch(() => {});
+  }, [token]);
 
   const handlePartner1Change = (field: keyof PartnerFormData, value: string | number) => {
     const updated = { ...partner1, [field]: value };
@@ -87,6 +126,10 @@ export default function CompatibilityPage() {
   const validateForm = (): boolean => {
     if (!partner1.birthPlace.trim() || !partner2.birthPlace.trim()) {
       showError("Please enter birth place for both partners");
+      return false;
+    }
+    if (partner1.gender && partner2.gender && partner1.gender === partner2.gender) {
+      showError("Partners must have different genders for compatibility match.");
       return false;
     }
     if (partner1.year < 1900 || partner1.year > new Date().getFullYear()) {
@@ -288,9 +331,7 @@ export default function CompatibilityPage() {
 
   const main = (
     <main className={styles.mainContent}>
-      <div className={styles.pageHeader}>
-        <button onClick={() => router.back()} className={styles.backButton}>← Back</button>
-      </div>
+      <PageHeader onBack={() => router.back()} />
       <div className={styles.kundliContainer}>
             <h1 className={styles.sectionTitle}>Match Horoscope (Compatibility)</h1>
 
@@ -336,6 +377,19 @@ export default function CompatibilityPage() {
                         onChange={(e) => handlePartner1Change('name', e.target.value)}
                         placeholder="Partner 1 name"
                       />
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label>Gender (Optional)</label>
+                      <select
+                        value={partner1.gender}
+                        onChange={(e) => handlePartner1Change('gender', e.target.value as PartnerGender)}
+                        style={{ padding: '8px', borderRadius: '6px', minWidth: '120px' }}
+                      >
+                        <option value="">Select</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                      </select>
+                      <p className={styles.compatTimeHint}>Partners must have different genders for match.</p>
                     </div>
                     <div className={styles.inputGroup}>
                       <label>Birth Place *</label>
@@ -429,6 +483,19 @@ export default function CompatibilityPage() {
                         onChange={(e) => handlePartner2Change('name', e.target.value)}
                         placeholder="Partner 2 name"
                       />
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label>Gender (Optional)</label>
+                      <select
+                        value={partner2.gender}
+                        onChange={(e) => handlePartner2Change('gender', e.target.value as PartnerGender)}
+                        style={{ padding: '8px', borderRadius: '6px', minWidth: '120px' }}
+                      >
+                        <option value="">Select</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                      </select>
+                      <p className={styles.compatTimeHint}>Partners must have different genders for match.</p>
                     </div>
                     <div className={styles.inputGroup}>
                       <label>Birth Place *</label>
@@ -615,6 +682,12 @@ export default function CompatibilityPage() {
         Score: {gunaMilanResult?.gunas[selectedGunaIndex].score}/
         {gunaMilanResult?.gunas[selectedGunaIndex].maxScore}
       </p>
+
+      {gunaMilanResult?.gunas[selectedGunaIndex].parameterMeaning && (
+        <p className={styles.cardDescription} style={{ marginBottom: 12 }}>
+          {gunaMilanResult.gunas[selectedGunaIndex].parameterMeaning}
+        </p>
+      )}
 
       <p>
         {gunaMilanResult?.gunas[selectedGunaIndex].description}

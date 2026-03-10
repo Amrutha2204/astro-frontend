@@ -7,7 +7,6 @@ import { astroApi, KundliResponse } from "@/services/api";
 import { paymentApi } from "@/services/paymentService";
 import { reportsApi, GenerateReportResponse } from "@/services/reportsService";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
-import houseMeanings from "@/services/houseMeanings";
 import { isValidJwtFormat } from "@/utils/auth";
 import { showError, showSuccess } from "@/utils/toast";
 import styles from "@/styles/dashboard.module.css";
@@ -289,7 +288,7 @@ export default function KundliPage() {
                       {kundli.houses.map((houseData) => (
                       <div key={houseData.house} className={styles.houseCard}>
                       <div className={styles.houseTitle}>
-      House {houseData.house} – {houseMeanings[Number(houseData.house)]}
+      House {houseData.house} – {houseData.meaning ?? "—"}
     </div>
                     <div className={styles.houseSign}>
                     Sign: {houseData.sign}

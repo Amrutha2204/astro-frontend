@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/router";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
+import PageHeader from "@/components/layout/PageHeader";
 import CalculationInfo from "@/components/common/CalculationInfo";
 import styles from "@/styles/dashboard.module.css";
 import formStyles from "@/styles/birthDetails.module.css";
@@ -30,6 +32,7 @@ function getMonthStr(): string {
 }
 
 export default function CalendarPage() {
+  const router = useRouter();
   /** ✅ Read logged-in user from localStorage */
   const [storedUser, setStoredUser] = useState<any>(null);
 const [isMounted, setIsMounted] = useState(false);
@@ -166,6 +169,40 @@ const [place, setPlace] = useState<string>(
     { id: "rahu", label: "Rahu Kaal / Yamagandam" },
   ];
 
+  const handleRefresh = useCallback(() => {
+    if (activeTab === "today") {
+      // Re-run today's calendar fetch
+      if (!place) return;
+      (async () => {
+        try {
+          setTodayLoading(true);
+          const data = await astroApi.getGuestCalendar(place);
+          setTodayData(data);
+          setTodayError(null);
+        } catch {
+          setTodayError("Failed to load today calendar");
+        } finally {
+          setTodayLoading(false);
+        }
+      })();
+    } else if (activeTab === "festivals") {
+      fetchFestivals();
+    } else if (activeTab === "muhurat") {
+      fetchMuhurat();
+    } else if (activeTab === "auspicious") {
+      fetchAuspicious();
+    } else if (activeTab === "rahu") {
+      fetchRahuYamagandam();
+    }
+  }, [
+    activeTab,
+    place,
+    fetchFestivals,
+    fetchMuhurat,
+    fetchAuspicious,
+    fetchRahuYamagandam,
+  ]);
+
   return (
     <div className={styles.dashboardContainer}>
       <AppHeader />
@@ -173,6 +210,21 @@ const [place, setPlace] = useState<string>(
         <AppSidebar />
         <main className={styles.mainContent}>
           <div className={styles.kundliContainer}>
+            <PageHeader
+              title="Calendar"
+              onTitleClick={handleRefresh}
+              onBack={() => router.push("/dashboard")}
+              backAriaLabel="Go back to dashboard"
+              onRefresh={handleRefresh}
+              refreshAriaLabel="Refresh calendar"
+              disableRefresh={
+                todayLoading ||
+                festivalsLoading ||
+                muhuratLoading ||
+                auspiciousLoading ||
+                rahuLoading
+              }
+            />
             <h1 className={styles.pageTitle}>Calendar</h1>
             <div className={cal.birthCard}>
   <div className={cal.birthLabel}>BIRTH PLACE</div>
@@ -216,7 +268,31 @@ const [place, setPlace] = useState<string>(
         <p>
           {todayData.moonPhase} · {todayData.tithi} · {todayData.nakshatra}
         </p>
-
+        {todayData.paksha && (
+          <p><strong>Paksha:</strong> {todayData.paksha}</p>
+        )}
+        {todayData.ritu && (
+          <p><strong>Ritu:</strong> {todayData.ritu}</p>
+        )}
+        {todayData.hinduMonth && (
+          <p><strong>Hindu month:</strong> {todayData.hinduMonth}</p>
+        )}
+        {(todayData.sunrise ?? todayData.sunset) && (
+          <p>
+            <strong>Sun:</strong>{" "}
+            {todayData.sunrise ? `Rise ${todayData.sunrise}` : ""}
+            {todayData.sunrise && todayData.sunset ? " · " : ""}
+            {todayData.sunset ? `Set ${todayData.sunset}` : ""}
+          </p>
+        )}
+        {(todayData.moonRise ?? todayData.moonSet) && (
+          <p>
+            <strong>Moon:</strong>{" "}
+            {todayData.moonRise ? `Rise ${todayData.moonRise}` : ""}
+            {todayData.moonRise && todayData.moonSet ? " · " : ""}
+            {todayData.moonSet ? `Set ${todayData.moonSet}` : ""}
+          </p>
+        )}
         {todayData.majorPlanetaryEvents?.length > 0 && (
           <p>
             <strong>Events:</strong>{" "}
