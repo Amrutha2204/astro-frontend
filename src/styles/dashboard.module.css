@@ -543,6 +543,15 @@ border-color: var(--border);
 .kundliContainer {
   max-width: 1200px;
   margin: 0 auto;
+  position: relative;
+}
+
+.kundliContent {
+  background: white;
+  border-radius: 14px;
+  padding: 32px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  animation: fadeIn 0.3s ease-out;
 }
 
 .pageTitle {
@@ -550,13 +559,6 @@ border-color: var(--border);
   font-weight: bold;
   color: #1f2937;
   margin: 0 0 30px 0;
-}
-
-.kundliContent {
-  background: white;
-  border-radius: 12px;
-  padding: 30px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .kundliSection {
@@ -854,11 +856,38 @@ border-color: var(--border);
 
 .loadingContainer {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 400px;
-  font-size: 18px;
+  gap: 16px;
+  min-height: 320px;
+  font-size: 16px;
   color: #6b7280;
+}
+
+.loadingInline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.loadingText {
+  font-weight: 500;
+}
+
+.chartUpdatingBar {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: #fdf8f3;
+  border-radius: 8px;
+  border: 1px solid #e8ddd0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .errorContainer {
@@ -1167,6 +1196,17 @@ border-color: var(--border);
   color: #6b4423;
   cursor: pointer;
   border-bottom: 3px solid #6b4423;
+}
+
+.chartSelect {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 8px;
+  background: var(--bg-main);
+  color: var(--text-main);
+  cursor: pointer;
+  min-width: 220px;
 }
 
 .partnersForm {
@@ -2353,14 +2393,19 @@ border-color: var(--border);
 /* Loading feedback */
 .loadingSpinner {
   display: inline-block;
-  width: 24px;
-  height: 24px;
-  border: 3px solid #e8ddd0;
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--border-color, #e8ddd0);
   border-top-color: #6b4423;
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  vertical-align: middle;
-  margin-right: 8px;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+.loadingSpinnerSm {
+  width: 18px;
+  height: 18px;
+  border-width: 2px;
 }
 
 @keyframes spin {
@@ -2374,6 +2419,19 @@ border-color: var(--border);
   align-items: center;
   justify-content: center;
   gap: 10px;
+}
+
+/* Skeleton pulse for loading placeholders */
+.skeletonBlock {
+  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background-size: 200% 100%;
+  animation: skeletonPulse 1.2s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+@keyframes skeletonPulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 /* Smoother appearance for result blocks */
@@ -2641,26 +2699,289 @@ border-color: var(--border);
   border-radius: 2px;
 }
 
+/* Weekly: single-column list (Horoscosmo-style, clutter-free) */
+.horoscopeDayList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+/* Monthly: 2-column grid */
 .planetsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 16px;
-  margin-top: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+  margin-top: 20px;
 }
 
 .planetCard {
-  background: #f6efe6;
-  border-radius: 12px;
-  padding: 16px;
-  text-align: center;
-  border: 1px solid #e5d7c7;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.08);
-  transition: all 0.2s ease;
+  background: #fff;
+  border-radius: 14px;
+  padding: 0;
+  text-align: left;
+  border: 1px solid #eae8e4;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+  overflow: hidden;
 }
 
 .planetCard:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+  border-color: #e0ddd8;
+}
+
+.planetCard.cardActive {
+  border-color: rgba(107, 68, 35, 0.25);
+  box-shadow: 0 4px 14px rgba(107, 68, 35, 0.12);
+  background: linear-gradient(135deg, #fff 0%, #fefcf9 100%);
+}
+
+.planetCard.cardActive:hover {
+  box-shadow: 0 8px 20px rgba(107, 68, 35, 0.14);
+}
+
+/* Horoscosmo-style day card: left accent + content */
+.horoscopeDayCard {
+  display: flex;
+  min-height: 1px;
+}
+
+.horoscopeDayCardAccent {
+  width: 5px;
+  flex-shrink: 0;
+  border-radius: 0 2px 2px 0;
+}
+
+.horoscopeDayCardAccentGood {
+  background: linear-gradient(180deg, #4ade80, #22c55e);
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.2);
+}
+
+.horoscopeDayCardAccentNeutral {
+  background: linear-gradient(180deg, #a8b3c0, #64748b);
+}
+
+.horoscopeDayCardAccentChallenging {
+  background: linear-gradient(180deg, #fb923c, #ef4444);
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.15);
+}
+
+.horoscopeDayCardBody {
+  flex: 1;
+  padding: 16px 18px;
+  min-width: 0;
+}
+
+.horoscopeDayCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.horoscopeDayCardHeader .youAreHereBadge,
+.horoscopeDayCardHeader .upNextBadge {
+  margin-bottom: 0;
+  margin-right: 8px;
+}
+
+.horoscopeCardDate {
+  font-size: 0.925rem;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: 0.02em;
+}
+
+.horoscopeTypeBadge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.horoscopeTypeBadgeGood {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.horoscopeTypeBadgeNeutral {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.horoscopeTypeBadgeChallenging {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.horoscopeCardContent {
+  text-align: left;
+}
+
+.horoscopeDayCardFocus {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #374151;
+  margin: 0 0 12px 0;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.horoscopeFocusLabel {
+  font-weight: 600;
+  color: #6b4423;
+  margin-right: 4px;
+}
+
+.horoscopeFocus {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #374151;
+  margin-bottom: 10px;
+}
+
+.horoscopeTransitsLabel {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #9ca3af;
+  margin-bottom: 4px;
+}
+
+.horoscopeTransits {
+  font-size: 0.7rem;
+  line-height: 1.5;
+  color: #6b7280;
+  background: #f8fafc;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-top: 6px;
+  border: 1px solid #f1f5f9;
+}
+
+.dailyPredictionsTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 4px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  letter-spacing: -0.02em;
+}
+
+.dailyPredictionsSubtitle {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-top: 6px;
+  margin-bottom: 0;
+}
+
+/* Today horoscope – hero card and sections */
+.todayHeroCard {
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #eae8e4;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  overflow: hidden;
+  margin-top: 20px;
+  display: flex;
+}
+
+.todayHeroAccent {
+  width: 5px;
+  flex-shrink: 0;
+  border-radius: 0 2px 2px 0;
+}
+
+.todayHeroBody {
+  flex: 1;
+  padding: 20px 22px;
+  min-width: 0;
+}
+
+.todayHeroHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.todayHeroDate {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: 0.02em;
+}
+
+.todayHeroFocus {
+  font-size: 1.15rem;
+  line-height: 1.65;
+  color: #1f2937;
+  font-weight: 500;
+  margin: 0 0 18px 0;
+  letter-spacing: 0.01em;
+}
+
+.todayReasonBlock {
+  margin-top: 20px;
+  padding: 14px 16px;
+  background: #f8fafc;
+  border-radius: 10px;
+  border: 1px solid #f1f5f9;
+}
+
+.todayReasonLabel {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #9ca3af;
+  margin-bottom: 6px;
+}
+
+.todayReasonText {
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: #4b5563;
+}
+
+.todayTipsBlock {
+  margin-top: 16px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.todayTipCard {
+  padding: 14px 16px;
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+
+.todayTipLabel {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b4423;
+  margin-bottom: 6px;
+}
+
+.todayTipText {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #374151;
 }
 
 .heartSection{

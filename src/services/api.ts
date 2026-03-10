@@ -36,6 +36,8 @@ export interface SignUpResponse {
 
 // -------------------- Astro Interfaces --------------------
 export interface KundliResponse {
+  chart?: string;
+  chartLabel?: string;
   lagna: string;
   moonSign: string;
   sunSign?: string;
@@ -47,6 +49,20 @@ export interface KundliResponse {
   houses: Array<{ house: number; sign: string; degree: number; meaning?: string }>;
   source: string;
 }
+
+/** Chart options for dropdown: Lagna, Navamsa, etc., and Western */
+export const CHART_OPTIONS: { value: string; label: string }[] = [
+  { value: "lagna", label: "Lagna (D-1)" },
+  { value: "navamsa", label: "Navamsa (D-9)" },
+  { value: "saptamsa", label: "Saptamsa (D-7)" },
+  { value: "dasamsa", label: "Dasamsa (D-10)" },
+  { value: "dwadasamsa", label: "Dwadasamsa (D-12)" },
+  { value: "shodasamsa", label: "Shodasamsa (D-16)" },
+  { value: "vimsamsa", label: "Vimsamsa (D-20)" },
+  { value: "chaturvimsamsa", label: "Chaturvimsamsa (D-24)" },
+  { value: "trimsamsa", label: "Trimsamsa (D-30)" },
+  { value: "western", label: "Western (Tropical)" },
+];
 
 export interface TransitResponse {
   date: string;
@@ -200,12 +216,19 @@ export interface CareerGuidanceResponse {
 // -------------------- Astro API --------------------
 export const astroApi = {
   // -------------------- Kundli & Natal --------------------
-  async getMyKundli(token: string, chartType?: string, system?: "vedic" | "western"): Promise<KundliResponse> {
+  async getMyKundli(token: string, chartType?: string, chart?: string): Promise<KundliResponse> {
     const t = token?.trim();
     if (!isValidJwtFormat(t)) throw new Error("Invalid token format. Please login again.");
     const params: Record<string, string> = {};
     if (chartType) params.chartType = chartType;
-    if (system) params.system = system;
+    if (chart) {
+      if (chart === "western") {
+        params.system = "western";
+      } else {
+        params.system = "vedic";
+        params.chart = chart;
+      }
+    }
     return request<KundliResponse>(ASTRO_BASE, "/api/v1/kundli/my-kundli", {
       method: "GET",
       token: t,
@@ -254,6 +277,8 @@ export const astroApi = {
     birthTime?: string;
     placeOfBirth: string;
     unknownTime?: boolean;
+    system?: "vedic" | "western";
+    chart?: string;
   }): Promise<KundliResponse> {
     const body: Record<string, unknown> = {
       dob: dto.dob,
@@ -265,6 +290,16 @@ export const astroApi = {
       body.birthTime = dto.birthTime.trim();
     } else {
       body.unknownTime = true;
+    }
+    if (dto.chart) {
+      if (dto.chart === "western") {
+        body.system = "western";
+      } else {
+        body.system = "vedic";
+        body.chart = dto.chart;
+      }
+    } else if (dto.system) {
+      body.system = dto.system;
     }
     return request<KundliResponse>(ASTRO_BASE, "/api/v1/kundli/guest", { method: "POST", body });
   },

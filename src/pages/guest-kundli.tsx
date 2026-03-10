@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { astroApi, KundliResponse } from "@/services/api";
+import { astroApi, KundliResponse, CHART_OPTIONS } from "@/services/api";
 import { onboardGuest } from "@/services/authService";
 import { showError } from "@/utils/toast";
 import AppHeader from "@/components/layout/AppHeader";
@@ -24,6 +24,7 @@ type GuestSession = {
     unknownTime?: boolean;
   };
   kundli: KundliResponse;
+  chartSelection?: string;
 };
 
 function getStored(): GuestSession | null {
@@ -95,6 +96,7 @@ export default function GuestKundliPage() {
   const [unknownTime, setUnknownTime] = useState(false);
   const [placeOfBirth, setPlaceOfBirth] = useState("");
 
+  const [chartSelection, setChartSelection] = useState<string>("lagna");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -121,6 +123,7 @@ export default function GuestKundliPage() {
         birthTime: unknownTime ? undefined : birthTime.trim(),
         placeOfBirth: placeOfBirth.trim(),
         unknownTime: unknownTime || undefined,
+        chart: chartSelection,
       });
       const session: GuestSession = {
         birthDetails: {
@@ -132,6 +135,7 @@ export default function GuestKundliPage() {
           unknownTime: unknownTime || undefined,
         },
         kundli,
+        chartSelection,
       };
       setStored(session);
       setStoredState(session);
@@ -155,43 +159,97 @@ export default function GuestKundliPage() {
     setPlaceOfBirth("");
   };
 
+  const handleChartChange = async (newChart: string) => {
+    const details = stored?.birthDetails;
+    if (!details) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const kundli = await astroApi.getGuestKundli({
+        dob: details.dob,
+        birthTime: details.unknownTime ? undefined : details.birthTime,
+        placeOfBirth: details.placeOfBirth,
+        unknownTime: details.unknownTime,
+        chart: newChart,
+      });
+      const next: GuestSession = { ...stored, kundli, chartSelection: newChart };
+      setStored(next);
+      setStoredState(next);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load chart.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const k = stored?.kundli;
   const b = stored?.birthDetails;
+  const currentChartSelection = stored?.chartSelection ?? "lagna";
+  const isWestern = currentChartSelection === "western";
 
   const mainContent = !mounted ? (
-    <div className={styles.loadingWrap}>Loading...</div>
+    <div className={styles.loadingWrap}>
+      <Loading text="Loading..." variant="page" />
+    </div>
   ) : stored && k && b ? (
     <div className={styles.resultWrapper}>
             <button type="button" className={styles.calculateNewBtn} onClick={handleCalculateNew}>
               Enter different details
             </button>
             <div className={dStyles.kundliContainer}>
-              <h1 className={dStyles.pageTitle}>
-                {b.name
-                  ? `Kundli for ${b.name}${b.gender ? ` (${b.gender === "male" ? "Male" : "Female"})` : ""}`
-                  : "Your Kundli"}
-              </h1>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12, marginBottom: 16 }}>
+                <h1 className={dStyles.pageTitle}>
+                  {b.name
+                    ? `Kundli for ${b.name}${b.gender ? ` (${b.gender === "male" ? "Male" : "Female"})` : ""}`
+                    : "Your Kundli"}
+                </h1>
+                <label className={dStyles.infoLabel} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span>Chart:</span>
+                  <select
+                    value={currentChartSelection}
+                    onChange={(e) => handleChartChange(e.target.value)}
+                    className={dStyles.chartSelect}
+                    disabled={loading}
+                    aria-label="Select chart type"
+                  >
+                    {CHART_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              {loading && (
+                <div className={dStyles.chartUpdatingBar}>
+                  <Loading text="Loading chart..." variant="inline" />
+                </div>
+              )}
               <div className={dStyles.kundliContent}>
                 <div className={dStyles.kundliSection}>
-                  <h2 className={dStyles.sectionTitle}>Chart overview</h2>
+                  <h2 className={dStyles.sectionTitle}>{k.chartLabel || (isWestern ? "Chart overview (Western)" : "Chart overview")}</h2>
                   <div className={dStyles.infoGrid}>
                     <div className={dStyles.infoItem}>
-                      <span className={dStyles.infoLabel}>Lagna (Ascendant):</span>
+                      <span className={dStyles.infoLabel}>{isWestern ? "Ascendant:" : "Lagna (Ascendant):"}</span>
                       <span className={dStyles.infoValue}>{k.lagna || "N/A"}</span>
                     </div>
                     <div className={dStyles.infoItem}>
                       <span className={dStyles.infoLabel}>Moon Sign:</span>
                       <span className={dStyles.infoValue}>{k.moonSign || "N/A"}</span>
                     </div>
-                    <div className={dStyles.infoItem}>
-                      <span className={dStyles.infoLabel}>Nakshatra:</span>
-                      <span className={dStyles.infoValue}>{k.nakshatra || "N/A"}</span>
-                    </div>
-                    {k.pada != null && (
-                      <div className={dStyles.infoItem}>
-                        <span className={dStyles.infoLabel}>Pada:</span>
-                        <span className={dStyles.infoValue}>{k.pada}</span>
-                      </div>
+                    {!isWestern && (
+                      <>
+                        <div className={dStyles.infoItem}>
+                          <span className={dStyles.infoLabel}>Nakshatra:</span>
+                          <span className={dStyles.infoValue}>{k.nakshatra || "N/A"}</span>
+                        </div>
+                        {k.pada != null && (
+                          <div className={dStyles.infoItem}>
+                            <span className={dStyles.infoLabel}>Pada:</span>
+                            <span className={dStyles.infoValue}>{k.pada}</span>
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>
@@ -340,10 +398,31 @@ export default function GuestKundliPage() {
             />
             <p className={formStyles.hint}>City name is used to fetch coordinates for accurate planetary positions.</p>
 
+            <label className={formStyles.label}>Chart type</label>
+            <select
+              className={formStyles.input}
+              value={chartSelection}
+              onChange={(e) => setChartSelection(e.target.value)}
+              aria-label="Select chart type"
+            >
+              {CHART_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+
             {error && <p className="text-amber-900 text-sm mb-3">{error}</p>}
 
             <button type="submit" className={formStyles.button} disabled={loading}>
-              {loading ? "Calculating…" : "Get My Kundli"}
+              {loading ? (
+                <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                  <span className={`${dStyles.loadingSpinner} ${dStyles.loadingSpinnerSm}`} aria-hidden />
+                  Calculating…
+                </span>
+              ) : (
+                "Get My Kundli"
+              )}
             </button>
           </form>
         </div>
