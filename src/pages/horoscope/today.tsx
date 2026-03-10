@@ -21,6 +21,7 @@ export default function DailyHoroscopePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [horoscopeType, setHoroscopeType] = useState<"daily" | "weely" | "monthly">("daily");
   const fetchHoroscope = useCallback(async () => {
     const t = token?.trim();
     if (!t || t.split(".").length !== 3) {
@@ -30,7 +31,17 @@ export default function DailyHoroscopePage() {
     }
     try {
       setLoading(true);
-      const data = await horoscopeApi.getDailyHoroscope(t);
+      let data;
+
+if (horoscopeType === "daily") {
+  data = await horoscopeApi.getDailyHoroscope(t);
+} else if (horoscopeType === "weekly") {
+  data = await horoscopeApi.getWeeklyHoroscope(t);
+} else {
+  data = await horoscopeApi.getMonthlyHoroscope(t);
+}
+
+setHoroscope(data);
       setHoroscope(data);
       setError(null);
     } catch (err) {
@@ -53,7 +64,7 @@ export default function DailyHoroscopePage() {
       return;
     }
     fetchHoroscope();
-  }, [rehydrated, token, dispatch, router, fetchHoroscope]);
+  }, [rehydrated, token, horoscopeType, dispatch, router, fetchHoroscope]);
 
   if (loading) {
     return (
@@ -65,7 +76,7 @@ export default function DailyHoroscopePage() {
             <div className={styles.kundliContainer}>
               <h1 className={styles.sectionTitle}>🌙 Daily Horoscope</h1>
               <div className={styles.loadingContainer}>
-                <p><span className={styles.loadingSpinner} /> Loading today’s horoscope…</p>
+                <p><span className={styles.loadingSpinner} /> Loading daily insights…</p>
               </div>
             </div>
           </main>
@@ -126,8 +137,26 @@ export default function DailyHoroscopePage() {
               </div>
             </div>
 
-            <h1 className={styles.sectionTitle}>🌙 Daily Horoscope</h1>
-            
+            <h1 className={styles.sectionTitle}>🌙 Horoscope</h1>
+            <div className={styles.horoscopeNav}>
+  <span className={styles.activeNav}>
+    Today
+  </span>
+
+  <span
+    className={styles.navItem}
+    onClick={() => router.push("/horoscope/weekly")}
+  >
+    Weekly
+  </span>
+
+  <span
+    className={styles.navItem}
+    onClick={() => router.push("/horoscope/monthly")}
+  >
+    Monthly
+  </span>
+</div>
             {horoscope && (
               <>
                 <span className={styles.youAreHereBadge}>Today</span>
@@ -161,25 +190,6 @@ export default function DailyHoroscopePage() {
                 )}
                 <CalculationInfo showDasha={false} showAyanamsa={true} />
                 <TrustNote variant="loggedIn" />
-
-                <div className={styles.sevenDayPreviewWrap}>
-                  <h3>Next 7 days</h3>
-                  <div className={styles.sevenDayPreviewBlur}>
-                    <p>Mon — Steady progress; good for routine tasks.</p>
-                    <p>Tue — Focus on communication and short travel.</p>
-                    <p>Wed — Favorable for finances and decisions.</p>
-                    <p>Thu — Emotional clarity; relationships in focus.</p>
-                    <p>Fri — Creative energy; avoid haste.</p>
-                    <p>Sat — Rest and reflection recommended.</p>
-                    <p>Sun — New beginnings; plan for the week ahead.</p>
-                  </div>
-                  <div className={styles.sevenDayPreviewCta}>
-                    <p>Unlock your personalized week ahead</p>
-                    <button type="button" onClick={() => router.push("/horoscope/weekly")}>
-                      See full weekly horoscope →
-                    </button>
-                  </div>
-                </div>
               </>
             )}
           </div>

@@ -61,7 +61,29 @@ export default function WeeklyHoroscopePage() {
           <AppSidebar />
           <main className={styles.mainContent}>
             <div className={styles.kundliContainer}>
-              <h1 className={styles.sectionTitle}>📅 Weekly Horoscope</h1>
+              <h1 className={styles.sectionTitle}>🌙 Horoscope</h1>
+
+<div className={styles.horoscopeTabs}>
+  <button
+    className={styles.horoscopeTab}
+    onClick={() => router.push("/horoscope/today")}
+  >
+    🌙 Daily
+  </button>
+
+  <button
+    className={styles.horoscopeTab}
+    onClick={() => router.push("/horoscope/weekly")}
+  >
+    📅 Weekly
+  </button>
+
+  <button
+    className={`${styles.horoscopeTab} ${styles.activeHoroscopeTab}`}
+  >
+    📆 Monthly
+  </button>
+</div>
               <div className={styles.loadingContainer}>
                 <p><span className={styles.loadingSpinner} /> Loading your weekly predictions…</p>
               </div>
@@ -80,7 +102,26 @@ export default function WeeklyHoroscopePage() {
           <AppSidebar />
           <main className={styles.mainContent}>
             <div className={styles.kundliContainer}>
-              <h1 className={styles.sectionTitle}>📅 Weekly Horoscope</h1>
+              <h1 className={styles.sectionTitle}>🌙 Horoscope</h1>
+              <div className={styles.horoscopeNav}>
+  <span
+    className={styles.navItem}
+    onClick={() => router.push("/horoscope/today")}
+  >
+    Today
+  </span>
+
+  <span className={styles.activeNav}>
+    Weekly
+  </span>
+
+  <span
+    className={styles.navItem}
+    onClick={() => router.push("/horoscope/monthly")}
+  >
+    Monthly
+  </span>
+</div>
               <ErrorMessage message={error} />
               <div className="mt-5 flex gap-3">
                 <button onClick={fetchHoroscope} className={styles.primaryButton}>
@@ -123,14 +164,31 @@ export default function WeeklyHoroscopePage() {
                 </button>
               </div>
             </div>
+            <h1 className={styles.sectionTitle}>🌙 Horoscope</h1>
+            <div className={styles.horoscopeNav}>
+  <span
+    className={styles.navItem}
+    onClick={() => router.push("/horoscope/today")}
+  >
+    Today
+  </span>
 
-            <h1 className={styles.sectionTitle}>📅 Weekly Horoscope</h1>
-            
+  <span className={styles.activeNav}>
+    Weekly
+  </span>
+
+  <span
+    className={styles.navItem}
+    onClick={() => router.push("/horoscope/monthly")}
+  >
+    Monthly
+  </span>
+</div>
             {horoscope && (
               <>
                 {horoscope.weekStart && (
                   <div className={styles.infoGrid}>
-                    <div className={styles.infoCard}>
+                    <div className={`${styles.infoCard} ${styles.cardActive}`}>
                       <h3>Week starts</h3>
                       <p className={styles.infoValue}>
                         {new Date(horoscope.weekStart).toLocaleDateString('en-US', { 

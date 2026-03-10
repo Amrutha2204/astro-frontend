@@ -40,6 +40,7 @@ export default function CompatibilityPage() {
   const [unknownTime2, setUnknownTime2] = useState(false);
   const [reportPaying, setReportPaying] = useState(false);
   const [reportDownload, setReportDownload] = useState<GenerateReportResponse | null>(null);
+  const [selectedGunaIndex, setSelectedGunaIndex] = useState<number | null>(null);
   const [partner1, setPartner1] = useState<PartnerFormData>({
     name: '',
     year: new Date().getFullYear() - 25,
@@ -215,6 +216,13 @@ export default function CompatibilityPage() {
       longitude: partner2.longitude,
     },
   });
+
+  const percentage =
+  gunaMilanResult
+    ? Math.round(
+        (gunaMilanResult.totalScore / gunaMilanResult.maxScore) * 100
+      )
+    : 0;
 
   const handleGetPdfReport = async () => {
     const t = token?.trim();
@@ -524,17 +532,116 @@ export default function CompatibilityPage() {
                     One or more birth places were not recognized, so Delhi was used for coordinates. For accurate results, use a city from our list (e.g. Mumbai, Delhi, London, Dubai).
                   </div>
                 )}
-                <div className={styles.gunaMilanSummary}>
-                  <div className={styles.gunaMilanCard}>
-                    <h3 className={styles.cardTitle}>Total Score</h3>
-                    <p className={styles.cardValue} style={{ fontSize: '2.5rem' }}>
-                      {gunaMilanResult.totalScore} / {gunaMilanResult.maxScore}
-                    </p>
-                    <p className={styles.cardSubtext} style={{ fontSize: '1.5rem', fontWeight: 'bold', color: getVerdictColor(gunaMilanResult.verdict) }}>
-                      {gunaMilanResult.percentage}% - {gunaMilanResult.verdict}
-                    </p>
-                  </div>
-                </div>
+
+                <div className={styles.matchHeaderContainer}> 
+            <div className={styles.matchHeader}>
+  {partner1.name || "Person 1"} ❤️ {partner2.name || "Person 2"}
+</div>
+</div>
+
+                <div className={styles.heartSection}>
+                <div className={styles.heartContainer}>
+  <svg viewBox="0 0 512 512" className={styles.heartIcon}>
+    <path d="M471.7 73.1c-54.5-46.4-136-38.3-186.4 13.7L256 116.6l-29.3-29.8C176.3 34.8 94.8 26.7 40.3 73.1-23.6 127.4-10.6 230.8 43 284.3l193.5 199.8c10.5 10.9 27.5 10.9 38 0L469 284.3c53.6-53.5 66.6-156.9 2.7-211.2z"/>
+  </svg>
+
+  <div className={styles.heartScore}>
+    {gunaMilanResult.totalScore}/{gunaMilanResult.maxScore}
+  </div>
+</div>
+
+  <h2 className={styles.compatibilityTitle}>
+    {gunaMilanResult.verdict}
+  </h2>
+
+  <div className={styles.alignTags}>
+    {gunaMilanResult.gunas
+      .filter(g => g.score === g.maxScore)
+      .map((guna, i) => (
+        <span key={i} className={styles.tag}>
+          ✨ {guna.name}
+        </span>
+      ))}
+  </div>
+</div>
+
+                <div className={styles.parameters}>
+  <h3 className={styles.parametersTitle}>
+    Compatibility Parameters
+  </h3>
+
+  <div className={styles.parameterGrid}>
+  {gunaMilanResult.gunas.map((guna, index) => (
+    <div
+      key={index}
+      className={styles.parameterCard}
+      onClick={() => setSelectedGunaIndex(index)}
+    >
+      <div className={styles.parameterHeader}>
+        <span className={styles.parameterScore}>
+          {guna.score}/{guna.maxScore}
+        </span>
+      </div>
+
+      <h4>{guna.name}</h4>
+
+      <div className={styles.progressBar}>
+        <div
+          className={styles.progressFill}
+          style={{
+            width: `${(guna.score / guna.maxScore) * 100}%`
+          }}
+        />
+      </div>
+    </div>
+  ))}
+</div>
+</div>
+
+                {selectedGunaIndex !== null && (
+  <div className={styles.gunaDetailModal}>
+    <div className={styles.gunaDetailCard}>
+      
+      <button
+        className={styles.closeBtn}
+        onClick={() => setSelectedGunaIndex(null)}
+      >
+        ✕
+      </button>
+
+      <h2>{gunaMilanResult?.gunas[selectedGunaIndex].name}</h2>
+
+      <p style={{fontWeight:"bold"}}>
+        Score: {gunaMilanResult?.gunas[selectedGunaIndex].score}/
+        {gunaMilanResult?.gunas[selectedGunaIndex].maxScore}
+      </p>
+
+      <p>
+        {gunaMilanResult?.gunas[selectedGunaIndex].description}
+      </p>
+
+      <div style={{display:"flex",justifyContent:"space-between",marginTop:20}}>
+        
+        <button
+          disabled={selectedGunaIndex === 0}
+          onClick={() => setSelectedGunaIndex((i)=> (i! - 1))}
+        >
+          ← Previous
+        </button>
+
+        <button
+          disabled={selectedGunaIndex === gunaMilanResult!.gunas.length - 1}
+          onClick={() => setSelectedGunaIndex((i)=> (i! + 1))}
+        >
+          Next →
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+)}
+
                 <div className={styles.shareRow}>
                   <button type="button" onClick={handleShareWhatsApp} className={styles.whatsappShareBtn} aria-label="Share via WhatsApp">
                     Share via WhatsApp
@@ -574,19 +681,7 @@ export default function CompatibilityPage() {
                     <p className={styles.leadGatePrivacy}>We use your email only to send this report. No spam.</p>
                   </div>
                 )}
-                {unlocked && (
-                  <div className={styles.gunasList}>
-                    {gunaMilanResult.gunas.map((guna, index) => (
-                      <div key={index} className={styles.gunaCard}>
-                        <div className={styles.gunaHeader}>
-                          <h4 className={styles.gunaName}>{guna.name}</h4>
-                          <span className={styles.gunaScore}>{guna.score} / {guna.maxScore}</span>
-                        </div>
-                        <p className={styles.gunaDescription}>{guna.description}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
+               
               </div>
             )}
 

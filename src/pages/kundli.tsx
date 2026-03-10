@@ -218,29 +218,34 @@ export default function KundliPage() {
                 <div className={styles.kundliSection}>
                   <h2 className={styles.sectionTitle}>{chartSystem === "western" ? "Chart overview (Western)" : "Basic Information"}</h2>
                   <div className={styles.infoGrid}>
-                    <div className={styles.infoItem}>
-                      <span className={styles.infoLabel}>{chartSystem === "western" ? "Ascendant:" : "Lagna (Ascendant):"}</span>
-                      <span className={styles.infoValue}>{kundli.lagna || "N/A"}</span>
+                    <div className={`${styles.infoItem} ${styles.lagnaBg}`}>
+                      <span className={styles.infoLabel}>
+                          {chartSystem === "western" ? "Ascendant:" : "Lagna (Ascendant): "}
+                      </span>
+                      <span className={styles.infoContent}>{kundli.lagna || "N/A"}</span>
                     </div>
-                    <div className={styles.infoItem}>
-                      <span className={styles.infoLabel}>Moon Sign:</span>
-                      <span className={styles.infoValue}>{kundli.moonSign || "N/A"}</span>
+
+                    <div className={`${styles.infoItem} ${styles.moonBg}`}>
+                      <span className={styles.infoLabel}>Moon Sign:  </span>
+                      <span className={styles.infoContent}>{kundli.moonSign || "N/A"}</span>
                     </div>
-                    <div className={styles.infoItem}>
-                      <span className={styles.infoLabel}>Sun Sign:</span>
-                      <span className={styles.infoValue}>{kundli.sunSign || "N/A"}</span>
+
+                    <div className={`${styles.infoItem} ${styles.sunBg}`}>
+                        <span className={styles.infoLabel}>Sun Sign:  </span>
+                        <span className={styles.infoContent}>{kundli.sunSign || "N/A"}</span>
                     </div>
+
                     {chartSystem === "vedic" && (
                       <>
-                        <div className={styles.infoItem}>
-                          <span className={styles.infoLabel}>Nakshatra:</span>
-                          <span className={styles.infoValue}>{kundli.nakshatra || "N/A"}</span>
-                        </div>
+                        <div className={`${styles.infoItem} ${styles.nakshatraBg}`}>
+  <span className={styles.infoLabel}>Nakshatra: </span>
+  <span className={styles.infoContent}>{kundli.nakshatra || "N/A"}</span>
+</div>
                         {kundli.pada != null && kundli.pada > 0 && (
-                          <div className={styles.infoItem}>
-                            <span className={styles.infoLabel}>Pada:</span>
-                            <span className={styles.infoValue}>{kundli.pada}</span>
-                          </div>
+                          <div className={`${styles.infoItem} ${styles.padaBg}`}>
+  <span className={styles.infoLabel}>Pada: </span>
+  <span className={styles.infoContent}>{kundli.pada}</span>
+</div>
                         )}
                       </>
                     )}
