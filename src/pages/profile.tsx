@@ -98,7 +98,7 @@ const ProfilePage = () => {
                   <div className={styles.infoGrid}>
                     <div className={styles.infoItem}>
                       <span className={styles.infoLabel}>Name</span>
-                      <span className={styles.infoValue}>{user.name || "—"}</span>
+                      <span className={styles.infoContent}>{user.name || "—"}</span>
                     </div>
                     <div className={styles.infoItem}>
                       <span className={styles.infoLabel}>Email</span>

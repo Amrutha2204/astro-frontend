@@ -195,7 +195,7 @@
 
 .cardGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(3, minmax(240px, 1fr));
   gap: 20px;
 }
 
@@ -269,4 +269,11 @@
   font-size: 13px;
   margin-top: 8px;
   color: #777;
+}
+
+.planetImage {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  margin-bottom: 10px;
 }
