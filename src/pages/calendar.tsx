@@ -314,21 +314,43 @@ const [place, setPlace] = useState<string>(
                       <div className={cal.timesRow}>
                         {(todayData.sunrise ?? todayData.sunset) && (
                           <div className={cal.timesCard}>
-                            <div className={`${cal.timesIcon} ${cal.timesIconSun}`}>☀</div>
-                            <div className={cal.timesText}>
-                              {todayData.sunrise ? `Rise ${todayData.sunrise}` : ""}
-                              {todayData.sunrise && todayData.sunset ? " · " : ""}
-                              {todayData.sunset ? `Set ${todayData.sunset}` : ""}
+                            <div className={cal.timesCardImage}>
+                              <img
+                                src="/images/calendar/sunrise/sunrise.jpg"
+                                alt="Sunrise"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none';
+                                }}
+                              />
+                            </div>
+                            <div className={cal.timesCardContent}>
+                              <div className={`${cal.timesIcon} ${cal.timesIconSun}`}>☀</div>
+                              <div className={cal.timesText}>
+                                {todayData.sunrise ? `SunRise ${todayData.sunrise}` : ""}
+                                {todayData.sunrise && todayData.sunset ? " · " : ""}
+                                {todayData.sunset ? `SunSet ${todayData.sunset}` : ""}
+                              </div>
                             </div>
                           </div>
                         )}
                         {(todayData.moonRise ?? todayData.moonSet) && (
                           <div className={cal.timesCard}>
-                            <div className={`${cal.timesIcon} ${cal.timesIconMoon}`}>☽</div>
-                            <div className={cal.timesText}>
-                              {todayData.moonRise ? `Rise ${todayData.moonRise}` : ""}
-                              {todayData.moonRise && todayData.moonSet ? " · " : ""}
-                              {todayData.moonSet ? `Set ${todayData.moonSet}` : ""}
+                            <div className={cal.timesCardImage}>
+                              <img
+                                src="/images/calendar/moonrise/moonrise.jpg"
+                                alt="Moonrise"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none';
+                                }}
+                              />
+                            </div>
+                            <div className={cal.timesCardContent}>
+                              <div className={`${cal.timesIcon} ${cal.timesIconMoon}`}>☽</div>
+                              <div className={cal.timesText}>
+                                {todayData.moonRise ? `MoonRise ${todayData.moonRise}` : ""}
+                                {todayData.moonRise && todayData.moonSet ? " · " : ""}
+                                {todayData.moonSet ? `MoonSet ${todayData.moonSet}` : ""}
+                              </div>
                             </div>
                           </div>
                         )}

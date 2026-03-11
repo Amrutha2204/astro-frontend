@@ -132,14 +132,15 @@
 }
 
 .panchangHero {
-  background: linear-gradient(145deg, #2d2438 0%, #1a1625 50%, #15121c 100%);
-  border-radius: 20px;
-  padding: 28px 32px;
-  margin-bottom: 24px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+  border-radius: 24px;
+  padding: 40px 48px;
+  margin-bottom: 32px;
   color: #fff;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 100px rgba(59, 130, 246, 0.1);
   position: relative;
   overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.2);
 }
 
 .panchangHero::before {
@@ -147,54 +148,79 @@
   position: absolute;
   top: -50%;
   right: -20%;
+  width: 70%;
+  height: 140%;
+  background: radial-gradient(ellipse, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.panchangHero::after {
+  content: "";
+  position: absolute;
+  bottom: -50%;
+  left: -10%;
   width: 60%;
   height: 120%;
-  background: radial-gradient(ellipse, rgba(139, 94, 52, 0.15) 0%, transparent 70%);
+  background: radial-gradient(ellipse, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
   pointer-events: none;
 }
 
 .panchangDate {
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  margin-bottom: 6px;
-  color: #f5f0e8;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+  color: #fff;
+  background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .panchangSub {
-  font-size: 14px;
-  opacity: 0.85;
-  margin-bottom: 24px;
-  color: #d4cfc4;
+  font-size: 16px;
+  opacity: 0.8;
+  margin-bottom: 28px;
+  color: #cbd5e1;
+  font-weight: 500;
 }
 
 .panchangGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
 }
 
 .panchangCell {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
-  padding: 14px 16px;
+  background: linear-gradient(135deg, rgba(71, 85, 105, 0.4) 0%, rgba(51, 65, 85, 0.3) 100%);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 14px;
+  padding: 18px 16px;
   text-align: center;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(12px);
+  transition: all 0.3s ease;
+  cursor: default;
+}
+
+.panchangCell:hover {
+  background: linear-gradient(135deg, rgba(71, 85, 105, 0.6) 0%, rgba(51, 65, 85, 0.5) 100%);
+  border-color: rgba(148, 163, 184, 0.5);
+  transform: translateY(-4px);
 }
 
 .panchangCellLabel {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.65);
-  margin-bottom: 6px;
+  color: rgba(148, 163, 184, 0.8);
+  margin-bottom: 8px;
 }
 
 .panchangCellValue {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   color: #fff;
   line-height: 1.35;
 }
@@ -202,66 +228,115 @@
 /* Sun/Moon times row */
 .timesRow {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 12px;
-  margin-top: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+  margin-top: 24px;
 }
 
 .timesCard {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 14px 16px;
+  background: linear-gradient(135deg, rgba(71, 85, 105, 0.4) 0%, rgba(51, 65, 85, 0.3) 100%);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 18px;
+  padding: 0;
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: default;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
-.timesIcon {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+.timesCard:hover {
+  background: linear-gradient(135deg, rgba(71, 85, 105, 0.6) 0%, rgba(51, 65, 85, 0.5) 100%);
+  border-color: rgba(148, 163, 184, 0.5);
+  transform: translateY(-8px);
+  box-shadow: 0 16px 40px rgba(59, 130, 246, 0.15);
+}
+
+.timesCardImage {
+  width: 100%;
+  height: 160px;
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #0284c7 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  overflow: hidden;
+  font-size: 70px;
+  position: relative;
+  border-bottom: 2px solid rgba(148, 163, 184, 0.2);
+}
+
+.timesCardImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.timesCardContent {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-grow: 1;
+}
+
+.timesIcon {
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
   flex-shrink: 0;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 .timesIconSun {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
 }
 
 .timesIconMoon {
-  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
 }
 
 .timesText {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.9);
-  line-height: 1.4;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.6;
+  font-weight: 600;
 }
 
 .eventsBlock {
-  margin-top: 16px;
-  padding: 14px 18px;
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 20px;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, rgba(71, 85, 105, 0.4) 0%, rgba(51, 65, 85, 0.3) 100%);
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  backdrop-filter: blur(12px);
+  transition: all 0.3s ease;
+}
+
+.eventsBlock:hover {
+  background: linear-gradient(135deg, rgba(71, 85, 105, 0.6) 0%, rgba(51, 65, 85, 0.5) 100%);
+  border-color: rgba(148, 163, 184, 0.5);
 }
 
 .eventsLabel {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.65);
-  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: rgba(148, 163, 184, 0.8);
+  margin-bottom: 10px;
+  text-transform: uppercase;
 }
 
 .eventsList {
-  font-size: 14px;
-  color: #e8e4dc;
-  line-height: 1.5;
+  font-size: 15px;
+  color: #e8f0fe;
+  line-height: 1.6;
+  font-weight: 500;
 }
 
 /* =========================
