@@ -84,7 +84,8 @@ export default function TransitsPage() {
   const [majorError, setMajorError] = useState<string | null>(null);
 
   /* ECLIPSES */
-  const [eclipseFrom, setEclipseFrom] = useState(todayStr());
+  const [eclipseFrom, setEclipseFrom] = useState("1900-01-01");
+  const [eclipseTo, setEclipseTo] = useState("2100-01-01");
   const [solarEclipses, setSolarEclipses] = useState<Eclipse[]>([]);
   const [lunarEclipses, setLunarEclipses] = useState<Eclipse[]>([]);
 
@@ -119,6 +120,16 @@ export default function TransitsPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+  loadEclipses();
+}, []);
+
+useEffect(() => {
+  if (activeTab === "eclipses") {
+    loadEclipses();
+  }
+}, [activeTab]);
+
   const loadRetrogrades = async () => {
      if (!place) {
     setError("Please enter birth place");
@@ -148,18 +159,16 @@ export default function TransitsPage() {
   };
 
   const loadEclipses = async () => {
-     if (!place) {
-    setError("Please enter birth place");
-    return;
-  }
   try {
     const data = await astroApi.getEclipses(eclipseFrom);
-    setSolarEclipses(data.solar);
-    setLunarEclipses(data.lunar);
+
+    setSolarEclipses(data.solar || []);
+    setLunarEclipses(data.lunar || []);
+
   } catch {
     setError("Unable to load eclipses. Please try again later.");
   }
-  };
+};
 
   const handleRefresh = useCallback(() => {
     if (activeTab === "today") {
@@ -214,9 +223,9 @@ export default function TransitsPage() {
           <div className={styles.tabs}>
             {[
               { id: "today", label: "Today" },
+              { id: "eclipses", label: "Eclipses" },
               { id: "retrogrades", label: "Retrogrades" },
               { id: "major", label: "Major Transits" },
-              { id: "eclipses", label: "Eclipses" },
             ].map((t) => (
               <button
                 key={t.id}
@@ -339,37 +348,78 @@ export default function TransitsPage() {
               <div className={styles.filterCard}>
                 <h3>🌘 Eclipses</h3>
                 <div className={styles.filters}>
-                  <div className={styles.dateBox}>
-                    <input type="date" value={eclipseFrom} onChange={(e) => setEclipseFrom(e.target.value)} />
+                  <div className={styles.dateInputGroup}>
+                    <label className={styles.dateLabel}>From</label>
+                    <div className={styles.dateBox}>
+                      <input type="date" value={eclipseFrom} onChange={(e) => setEclipseFrom(e.target.value)} />
+                    </div>
+                  </div>
+                  <div className={styles.dateInputGroup}>
+                    <label className={styles.dateLabel}>To</label>
+                    <div className={styles.dateBox}>
+                      <input type="date" value={eclipseTo} onChange={(e) => setEclipseTo(e.target.value)} />
+                    </div>
                   </div>
                   <button className={styles.primaryButton} onClick={loadEclipses}>Get Eclipses</button>
                 </div>
               </div>
 
-              <h3 className={styles.monthHeader}>🌞 Solar Eclipses</h3>
-              <div className={styles.cardGrid}>
-                {solarEclipses.map((e) => (
-                  <div key={e.date} className={styles.card}>
-                    <span className={styles.badge}>Solar</span>
-                    <h4>{formatDate(e.date)}</h4>
-                    <p>{e.type}</p>
-                  </div>
-                ))}
-              </div>
+              <div className={styles.eclipseContainer}>
+                <div className={styles.eclipseSection}>
+                  <h3 className={styles.eclipseTitle}>🌞 Solar Eclipses</h3>
+                  {solarEclipses.length > 0 ? (
+                    <div className={styles.cardGrid}>
+                      {solarEclipses
+                        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+                        .map((e) => (
+                        <div key={e.date} className={`${styles.card} ${styles.eclipseCard} ${styles.solarCard}`}>
+                          <div className={styles.eclipseBadgeContainer}>
+                            <span className={styles.badge}>Solar</span>
+                          </div>
+                          <div className={styles.eclipseContent}>
+                            <h4 className={styles.eclipseDate}>{formatDate(e.date)}</h4>
+                            <p className={styles.eclipseType}>{e.type}</p>
+                            <div className={styles.eclipseDetails}>
+                              {e.maximum && <p><strong>Max:</strong> {new Date(e.maximum).toLocaleTimeString()}</p>}
+                              {e.umbralMagnitude !== undefined && <p><strong>Umbral:</strong> {e.umbralMagnitude.toFixed(2)}</p>}
+                              {e.penumbralMagnitude !== undefined && <p><strong>Penumbral:</strong> {e.penumbralMagnitude.toFixed(3)}</p>}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className={styles.noEclipses}>No solar eclipses in this period</p>
+                  )}
+                </div>
 
-              <h3 className={styles.monthHeader}>🌕 Lunar Eclipses</h3>
-              <div className={styles.cardGrid}>
-                {lunarEclipses.map((e) => (
-                  <div key={e.date} className={styles.card}>
-                    <span className={styles.badge}>Lunar</span>
-                    <h4>{formatDate(e.date)}</h4>
-                    <p><strong>Type:</strong> {e.type}</p>
-                    <p><strong>Maximum:</strong> {e.maximum ? new Date(e.maximum).toLocaleString() : "-"}</p>
-                    {e.umbralMagnitude !== undefined && <p><strong>Umbral Mag:</strong> {e.umbralMagnitude}</p>}
-                    {e.penumbralMagnitude !== undefined && <p><strong>Penumbral Mag:</strong> {e.penumbralMagnitude.toFixed(3)}</p>}
-                    {e.sarosNumber && <p><strong>Saros:</strong> {e.sarosNumber} / {e.sarosMember}</p>}
-                  </div>
-                ))}
+                <div className={styles.eclipseSection}>
+                  <h3 className={styles.eclipseTitle}>🌕 Lunar Eclipses</h3>
+                  {lunarEclipses.length > 0 ? (
+                    <div className={styles.cardGrid}>
+                      {lunarEclipses
+                        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+                        .map((e) => (
+                        <div key={e.date} className={`${styles.card} ${styles.eclipseCard} ${styles.lunarCard}`}>
+                          <div className={styles.eclipseBadgeContainer}>
+                            <span className={styles.badge}>Lunar</span>
+                          </div>
+                          <div className={styles.eclipseContent}>
+                            <h4 className={styles.eclipseDate}>{formatDate(e.date)}</h4>
+                            <p className={styles.eclipseType}>{e.type}</p>
+                            <div className={styles.eclipseDetails}>
+                              {e.maximum && <p><strong>Max:</strong> {new Date(e.maximum).toLocaleTimeString()}</p>}
+                              {e.umbralMagnitude !== undefined && <p><strong>Umbral:</strong> {e.umbralMagnitude.toFixed(2)}</p>}
+                              {e.penumbralMagnitude !== undefined && <p><strong>Penumbral:</strong> {e.penumbralMagnitude.toFixed(3)}</p>}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className={styles.noEclipses}>No lunar eclipses in this period</p>
+                  )}
+                </div>
               </div>
             </>
           )}
