@@ -383,7 +383,7 @@ export default function CompatibilityPage() {
                       <select
                         value={partner1.gender}
                         onChange={(e) => handlePartner1Change('gender', e.target.value as PartnerGender)}
-                        style={{ padding: '8px', borderRadius: '6px', minWidth: '120px' }}
+                        className="formSelect"
                       >
                         <option value="">Select</option>
                         <option value="male">Male</option>
@@ -489,7 +489,7 @@ export default function CompatibilityPage() {
                       <select
                         value={partner2.gender}
                         onChange={(e) => handlePartner2Change('gender', e.target.value as PartnerGender)}
-                        style={{ padding: '8px', borderRadius: '6px', minWidth: '120px' }}
+                        className="formSelect"
                       >
                         <option value="">Select</option>
                         <option value="male">Male</option>

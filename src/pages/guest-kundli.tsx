@@ -7,6 +7,8 @@ import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
 import CalculationInfo from "@/components/common/CalculationInfo";
 import TrustNote from "@/components/common/TrustNote";
+import DatePickerField from "@/components/ui/DatePickerField";
+import TimePickerField from "@/components/ui/TimePickerField";
 import styles from "@/styles/guestKundli.module.css";
 import formStyles from "@/styles/birthDetails.module.css";
 import dStyles from "@/styles/dashboard.module.css";
@@ -208,7 +210,7 @@ export default function GuestKundliPage() {
                   <select
                     value={currentChartSelection}
                     onChange={(e) => handleChartChange(e.target.value)}
-                    className={dStyles.chartSelect}
+                    className={`formSelect formSelectInline ${dStyles.chartSelect}`}
                     disabled={loading}
                     aria-label="Select chart type"
                   >
@@ -335,7 +337,7 @@ export default function GuestKundliPage() {
 
             <label className={formStyles.label}>Gender (optional)</label>
             <select
-              className={formStyles.input}
+              className={`${formStyles.input} formSelect`}
               value={gender}
               onChange={(e) => setGender((e.target.value || "") as "male" | "female" | "")}
             >
@@ -345,12 +347,12 @@ export default function GuestKundliPage() {
             </select>
 
             <label className={formStyles.label}>Birth date *</label>
-            <input
-              type="date"
-              className={formStyles.input}
+            <DatePickerField
               value={dob}
-              onChange={(e) => setDob(e.target.value)}
+              onChange={setDob}
+              placeholder="dd/mm/yyyy"
               required
+              aria-label="Date of birth"
             />
 
             <div className={styles.timeRow}>
@@ -371,13 +373,13 @@ export default function GuestKundliPage() {
             </div>
             {!unknownTime && (
               <>
-                <input
-                  type="time"
-                  className={formStyles.input}
+                <TimePickerField
                   value={birthTime}
-                  onChange={(e) => setBirthTime(e.target.value)}
-                  step="1"
+                  onChange={setBirthTime}
+                  placeholder="--:--"
+                  step={1}
                   required
+                  aria-label="Birth time"
                 />
                 <p className={formStyles.hint}>Use hours and minutes; add seconds if known for better accuracy.</p>
               </>
@@ -400,7 +402,7 @@ export default function GuestKundliPage() {
 
             <label className={formStyles.label}>Chart type</label>
             <select
-              className={formStyles.input}
+              className={`${formStyles.input} formSelect`}
               value={chartSelection}
               onChange={(e) => setChartSelection(e.target.value)}
               aria-label="Select chart type"

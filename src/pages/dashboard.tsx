@@ -240,17 +240,15 @@ export default function Dashboard() {
       style={{ backgroundColor: service.color }}
       onClick={service.onClick}
     >
-      <h3 className={styles.cardTitle}>{service.title}</h3>
-       {service.description}
-      
-      {/* Render your local images here */}
       {service.image && (
-        <img 
-          src={service.image} 
-          alt={service.title} 
-          className={styles.cardImage} 
+        <img
+          src={service.image}
+          alt=""
+          className={styles.cardImage}
         />
       )}
+      <h3 className={styles.cardTitle}>{service.title}</h3>
+      <p className={styles.cardDescription}>{service.description}</p>
     </div>
   ))}
 </div>

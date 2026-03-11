@@ -298,20 +298,29 @@
   cursor: pointer;
 }
 
-.filterBar input[type="date"],
-.filterBar input[type="month"],
+/* Text inputs in filterBar match global form style (dropdown/date) */
 .filterBar input[type="text"] {
-  padding: 10px 14px;
-  border: 1px solid #e0d4c4;
-  border-radius: 10px;
-  font-size: 14px;
+  min-height: 46px;
+  padding: 11px 14px;
+  border: 1px solid #d4c4a8;
+  border-radius: 14px;
+  font-size: 15px;
   min-width: 140px;
-  background: #fdfcfa;
+  background: linear-gradient(to bottom, #fffefc 0%, #faf8f4 100%);
+  box-shadow: 0 1px 2px rgba(107, 68, 35, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.filterBar input:focus {
+.filterBar input[type="text"]:focus {
   outline: none;
-  border-color: #6b4423;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(107, 68, 35, 0.2), 0 1px 3px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  background: #fffefc;
+}
+
+.filterBar input[type="text"]:hover {
+  border-color: #b8a078;
+  box-shadow: 0 2px 6px rgba(107, 68, 35, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
 .primaryButton {

@@ -64,7 +64,7 @@ export default function ExplainKundliPage() {
                 <select
                   value={focus}
                   onChange={(e) => setFocus(e.target.value)}
-                  className={styles.focusSelect}
+                  className={`formSelect ${styles.focusSelect}`}
                   disabled={loading}
                 >
                   <option value="overall">Overall Chart</option>

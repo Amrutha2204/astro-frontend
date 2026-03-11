@@ -17,6 +17,8 @@ import styles from "@/styles/familyProfiles.module.css";
 import dashboardStyles from "@/styles/dashboard.module.css";
 import AppSidebar from "@/components/layout/AppSidebar";
 import AppHeader from "@/components/layout/AppHeader";
+import DatePickerField from "@/components/ui/DatePickerField";
+import TimePickerField from "@/components/ui/TimePickerField";
 import Loading from "@/components/ui/Loading";
 import {
   selectToken,
@@ -270,12 +272,12 @@ const [showSubscribeModal, setShowSubscribeModal] = useState(false);
                     </div>
                     <div className={styles.field}>
                       <label className={styles.fieldLabel} htmlFor="fp-dob">Date of birth *</label>
-                      <input
+                      <DatePickerField
                         id="fp-dob"
-                        type="date"
-                        className={styles.input}
                         value={form.dob}
-                        onChange={(e) => setForm({ ...form, dob: e.target.value })}
+                        onChange={(v) => setForm({ ...form, dob: v })}
+                        placeholder="dd/mm/yyyy"
+                        aria-label="Date of birth"
                       />
                     </div>
                     <div className={styles.field}>
@@ -290,12 +292,12 @@ const [showSubscribeModal, setShowSubscribeModal] = useState(false);
                     </div>
                     <div className={styles.field}>
                       <label className={styles.fieldLabel} htmlFor="fp-time">Birth time</label>
-                      <input
+                      <TimePickerField
                         id="fp-time"
-                        type="time"
-                        className={styles.input}
                         value={form.birthTime}
-                        onChange={(e) => setForm({ ...form, birthTime: e.target.value })}
+                        onChange={(v) => setForm({ ...form, birthTime: v })}
+                        placeholder="--:--"
+                        aria-label="Birth time"
                       />
                     </div>
                     <div className={styles.field}>

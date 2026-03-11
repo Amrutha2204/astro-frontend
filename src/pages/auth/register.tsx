@@ -234,7 +234,7 @@ export default function Register() {
                     onChange={handleChange}
                     disabled={loading}
                     required
-                    className={styles.input}
+                    className={`${styles.input} formDateInput`}
                   />
                 </div>
               )}

@@ -40,14 +40,18 @@ const AppHeader = () => {
     router.push(isGuest ? "/" : "/dashboard");
   };
 
+  const backTitle = "Back to previous page";
+  const homeTitle = isGuest ? "Go to home" : "Go to dashboard";
+
   return (
     <header className={styles.header}>
       <div className={styles.headerLeft}>
         <button
+          type="button"
           className={styles.closeButton}
           onClick={handleBack}
-          aria-label="Go back"
-          title="Go back"
+          aria-label={backTitle}
+          title={backTitle}
         >
           ←
         </button>
@@ -55,7 +59,8 @@ const AppHeader = () => {
           type="button"
           className={styles.logo}
           onClick={handleHomeClick}
-          aria-label={isGuest ? "Go to home" : "Go to dashboard"}
+          aria-label={homeTitle}
+          title={homeTitle}
         >
           {t("appName")}
         </button>

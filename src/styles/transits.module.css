@@ -144,6 +144,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+<<<<<<< HEAD
   background: linear-gradient(135deg, #ffffff, #f9f7f5);
   border: 2px solid #e0d5c7;
   border-radius: 14px;
@@ -189,6 +190,12 @@
 .dateBox input[type="date"]::placeholder {
   color: #999;
 }
+=======
+  min-width: 160px;
+}
+
+/* date input uses global .formDateInput for consistent look */
+>>>>>>> 1156c4a2e2d90a8d90f965b3a5c99900bb395a93
 
 
 /* =========================

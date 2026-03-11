@@ -57,10 +57,21 @@ const AppSidebar = () => {
       ? [...AUTH_MENU_BASE, { id: "admin", label: "Admin", href: "/admin" }]
       : AUTH_MENU_BASE;
 
+  const homeHref = isGuest ? "/" : "/dashboard";
+  const sidebarTitle = isGuest ? "Jyotishya Darshan" : "My Kundli";
+  const sidebarTitleAria = isGuest ? "Go to home" : "Go to dashboard";
+
   return (
     <aside className={styles.sidebar}>
       <div className={styles.sidebarHeader}>
-        <h2 className={styles.kundliName}>{isGuest ? "Jyotishya Darshan" : "My Kundli"}</h2>
+        <Link
+          href={homeHref}
+          className={styles.sidebarTitleLink}
+          aria-label={sidebarTitleAria}
+          title={sidebarTitleAria}
+        >
+          {sidebarTitle}
+        </Link>
       </div>
 
       <nav className={styles.sidebarNav}>

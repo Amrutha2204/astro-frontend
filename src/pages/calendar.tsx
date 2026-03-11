@@ -369,6 +369,7 @@ const [place, setPlace] = useState<string>(
                   </label>
                   <input
                     type={festivalsByMonth ? "month" : "date"}
+                    className="formDateInput formDateInputInline"
                     value={festivalsByMonth ? festMonth : festDate}
                     onChange={(e) =>
                       festivalsByMonth
@@ -415,6 +416,7 @@ const [place, setPlace] = useState<string>(
                   <label style={{ marginBottom: 0 }}>Date</label>
                   <input
                     type="date"
+                    className="formDateInput formDateInputInline"
                     value={muhuratDate}
                     onChange={(e) => setMuhuratDate(e.target.value)}
                     aria-label="Date for muhurat"
@@ -454,6 +456,7 @@ const [place, setPlace] = useState<string>(
                   <label style={{ marginBottom: 0 }}>Date</label>
                   <input
                     type="date"
+                    className="formDateInput formDateInputInline"
                     value={auspiciousDate}
                     onChange={(e) => setAuspiciousDate(e.target.value)}
                     aria-label="Date to check"
@@ -495,6 +498,7 @@ const [place, setPlace] = useState<string>(
                   <label style={{ marginBottom: 0 }}>Date</label>
                   <input
                     type="date"
+                    className="formDateInput formDateInputInline"
                     value={rahuDate}
                     onChange={(e) => setRahuDate(e.target.value)}
                     aria-label="Date"

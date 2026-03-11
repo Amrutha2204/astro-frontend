@@ -64,9 +64,9 @@ export default function GuestDashaPage() {
               <label className={formStyles.label}>Full name (optional)</label>
               <input type="text" className={formStyles.input} value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="e.g. Rahul Sharma" />
               <label className={formStyles.label}>Birth date *</label>
-              <input type="date" className={formStyles.input} value={dob} onChange={(e) => setDob(e.target.value)} required />
+              <input type="date" className={`${formStyles.input} formDateInput`} value={dob} onChange={(e) => setDob(e.target.value)} required />
               <label className={formStyles.label}>Birth time *</label>
-              <input type="time" className={formStyles.input} value={birthTime} onChange={(e) => setBirthTime(e.target.value)} step="1" required />
+              <input type="time" className={`${formStyles.input} formDateInput`} value={birthTime} onChange={(e) => setBirthTime(e.target.value)} step="1" required />
               <label className={formStyles.label}>Birth place (city) *</label>
               <input type="text" className={formStyles.input} value={placeOfBirth} onChange={(e) => setPlaceOfBirth(e.target.value)} placeholder="e.g. Mumbai" minLength={3} required />
               {error && <p className="text-red-600 text-sm my-3">{error}</p>}

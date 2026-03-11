@@ -267,10 +267,10 @@ useEffect(() => {
                 <h3>🔁 Retrogrades</h3>
                 <div className={styles.filters}>
                   <div className={styles.dateBox}>
-                    <input type="date" value={retroFrom} onChange={(e) => setRetroFrom(e.target.value)} />
+                    <input type="date" className="formDateInput" value={retroFrom} onChange={(e) => setRetroFrom(e.target.value)} />
                   </div>
                   <div className={styles.dateBox}>
-                    <input type="date" value={retroTo} onChange={(e) => setRetroTo(e.target.value)} />
+                    <input type="date" className="formDateInput" value={retroTo} onChange={(e) => setRetroTo(e.target.value)} />
                   </div>
                   <button className={styles.primaryButton} onClick={loadRetrogrades}>Get Retrogrades</button>
                 </div>
@@ -301,10 +301,10 @@ useEffect(() => {
                 <h3>🔱 Major Transits</h3>
                 <div className={styles.filters}>
                   <div className={styles.dateBox}>
-                    <input type="date" value={majorFrom} onChange={(e) => setMajorFrom(e.target.value)} />
+                    <input type="date" className="formDateInput" value={majorFrom} onChange={(e) => setMajorFrom(e.target.value)} />
                   </div>
                   <div className={styles.dateBox}>
-                    <input type="date" value={majorTo} onChange={(e) => setMajorTo(e.target.value)} />
+                    <input type="date" className="formDateInput" value={majorTo} onChange={(e) => setMajorTo(e.target.value)} />
                   </div>
                   <button className={styles.primaryButton} onClick={loadMajor} disabled={majorLoading}>
                     {majorLoading ? "Loading…" : "Get Transits"}
@@ -348,6 +348,7 @@ useEffect(() => {
               <div className={styles.filterCard}>
                 <h3>🌘 Eclipses</h3>
                 <div className={styles.filters}>
+<<<<<<< HEAD
                   <div className={styles.dateInputGroup}>
                     <label className={styles.dateLabel}>From</label>
                     <div className={styles.dateBox}>
@@ -359,6 +360,10 @@ useEffect(() => {
                     <div className={styles.dateBox}>
                       <input type="date" value={eclipseTo} onChange={(e) => setEclipseTo(e.target.value)} />
                     </div>
+=======
+                  <div className={styles.dateBox}>
+                    <input type="date" className="formDateInput" value={eclipseFrom} onChange={(e) => setEclipseFrom(e.target.value)} />
+>>>>>>> 1156c4a2e2d90a8d90f965b3a5c99900bb395a93
                   </div>
                   <button className={styles.primaryButton} onClick={loadEclipses}>Get Eclipses</button>
                 </div>
