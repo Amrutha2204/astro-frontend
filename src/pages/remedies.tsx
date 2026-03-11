@@ -60,38 +60,43 @@ export default function RemediesPage() {
     fetchRemedies();
   }, [rehydrated, token, dispatch, router, fetchRemedies]);
 
-  const getRemedyIcon = (type: string) => {
-    switch (type) {
-      case 'gemstone':
-        return '💎';
-      case 'mantra':
-        return '🕉️';
-      case 'fasting':
-        return '🌙';
-      case 'donation':
-        return '🙏';
-      case 'ritual':
-        return '🕯️';
-      default:
-        return '✨';
-    }
+  const getDetailGridClass = (remedy: any) => {
+    // For items with many properties, use fullWidth
+    const propertyCount = [
+      remedy.timing,
+      remedy.frequency,
+      remedy.duration,
+      remedy.benefits,
+      remedy.guidelines,
+      remedy.items
+    ].filter(Boolean).length;
+    
+    return propertyCount > 4 ? styles.fullWidth : '';
   };
 
-  const getRemedyColor = (type: string) => {
-    switch (type) {
-      case 'gemstone':
-        return '#9333ea';
-      case 'mantra':
-        return '#3b82f6';
-      case 'fasting':
-        return '#10b981';
-      case 'donation':
-        return '#f59e0b';
-      case 'ritual':
-        return '#ec4899';
-      default:
-        return '#6b7280';
-    }
+  const getRemedyImagePath = (type: string, name: string) => {
+    const lowerName = name?.toLowerCase().replace(/\s+/g, '-') || 'default';
+    return `/images/remedies/${type}/${lowerName}.jpg`;
+  };
+
+  const getGemstoneColor = (name: string) => {
+    const gemstoneColors: { [key: string]: { color: string; hex: string } } = {
+      'emerald': { color: 'Emerald Green', hex: '#50C878' },
+      'ruby': { color: 'Deep Red', hex: '#E0115F' },
+      'sapphire': { color: 'Royal Blue', hex: '#0F52BA' },
+      'diamond': { color: 'Colorless', hex: '#F0F8FF' },
+      'pearl': { color: 'White', hex: '#FFFDD0' },
+      'coral': { color: 'Coral Orange', hex: '#FF7F50' },
+      'opal': { color: 'Rainbow White', hex: '#E8DAEF' },
+      'topaz': { color: 'Golden Yellow', hex: '#FFC600' },
+      'amethyst': { color: 'Purple', hex: '#9966CC' },
+      'citrine': { color: 'Pale Yellow', hex: '#F1C40F' },
+      'turquoise': { color: 'Turquoise', hex: '#40E0D0' },
+      'garnet': { color: 'Deep Red', hex: '#DC143C' },
+    };
+    
+    const lowerName = name?.toLowerCase() || 'diamond';
+    return gemstoneColors[lowerName] || { color: 'Stone', hex: '#A9A9A9' };
   };
 
   if (loading) {
@@ -123,13 +128,14 @@ export default function RemediesPage() {
               disableRefresh={loading}
             />
             <h1 className={styles.sectionTitle}>Astrological Remedies</h1>
-            {error && <ErrorMessage message={error} />}
             <p style={{ color: '#6b7280', marginBottom: '30px' }}>
-              Personalized remedies and recommendations based on your birth chart to enhance positive energies and mitigate challenges.
+              Personalized remedies based on your birth chart details to enhance positive energies and mitigate challenges.
             </p>
+            {error && <ErrorMessage message={error} />}
 
             {remedies && (
               <>
+<<<<<<< HEAD
                 <div className={styles.bestTimingCard}>
                   <h3 className={styles.cardTitle}>Best Timing for Remedies</h3>
                   <div className={styles.timingDetails}>
@@ -291,32 +297,243 @@ export default function RemediesPage() {
                   <div ref={remedyDetailRef} className={styles.remedyDetailBox}>
                     <div className={styles.remedyDetailHeader}>
                       <h3 className={styles.remedyDetailTitle}>{selectedRemedy.emoji} {selectedRemedy.name}</h3>
+=======
+                <div className={styles.remediesGridContainer}>
+                  {remedyCategories.map((category) => {
+                    const count = getCategoryData(category.id).length;
+                    return (
+>>>>>>> eae096ef4910dea22e7e1e0afcd856bc74cd65cd
                       <button
-                        className={styles.closeButton}
-                        onClick={() => setSelectedRemedy(null)}
-                        aria-label="Close details"
+                        key={category.id}
+                        className={styles.remedyCategoryCard}
+                        onClick={() => setExpandedCategory(expandedCategory === category.id ? null : category.id)}
+                        style={{
+                          background: `linear-gradient(135deg, ${category.color}40 0%, ${category.color}20 100%)`
+                        }}
+                      >
+                        <div className={styles.categoryCardImage}>
+                          <img
+                            src={category.image}
+                            alt={category.name}
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                          <div className={styles.categoryCardOverlay} />
+                        </div>
+                        <div className={styles.categoryCardContent}>
+                          <h3 className={styles.categoryCardTitle}>{category.name}</h3>
+                          <p className={styles.categoryCardCount}>{count} items</p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {expandedCategory && (
+                  <div className={styles.expandedCategorySection}>
+                    <div className={styles.expandedCategoryHeader}>
+                      <h2 className={styles.expandedCategoryTitle}>
+                        {remedyCategories.find(c => c.id === expandedCategory)?.emoji}{' '}
+                        {remedyCategories.find(c => c.id === expandedCategory)?.name}
+                      </h2>
+                      <button
+                        className={styles.closeExpandButton}
+                        onClick={() => setExpandedCategory(null)}
                       >
                         ✕
                       </button>
                     </div>
-                    <div className={styles.remedyDetailContent}>
-                      <p className={styles.remedyDetailDescription}>{selectedRemedy.description}</p>
-                      {(selectedRemedy.timing || selectedRemedy.frequency) && (
-                        <div className={styles.remedyDetailInfo}>
-                          {selectedRemedy.timing && (
-                            <div className={styles.detailItem}>
-                              <strong>Timing:</strong>
-                              <span>{selectedRemedy.timing}</span>
+                    <div className={styles.itemsGridContainer}>
+                      {getCategoryData(expandedCategory).map((remedy, index) => (
+                        <button
+                          key={`${expandedCategory}-${index}`}
+                          className={styles.remedyItemCard}
+                          onClick={() => setSelectedRemedy({
+                            ...remedy,
+                            uniqueKey: `${expandedCategory}-${index}`,
+                            type: expandedCategory,
+                            emoji: remedyCategories.find(c => c.id === expandedCategory)?.emoji || '✨'
+                          })}
+                          style={{
+                            borderTopColor: getRemedyColor(expandedCategory)
+                          }}
+                        >
+                          <p className={styles.remedyItemName}>{remedy.name}</p>
+                          <p className={styles.remedyItemDescription}>
+                            {remedy.description?.substring(0, 80)}...
+                          </p>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {selectedRemedy && (
+                  <div className={styles.remedyModalOverlay} onClick={() => setSelectedRemedy(null)}>
+                    <div className={styles.remedyModalContainer} onClick={(e) => e.stopPropagation()}>
+                      <div className={styles.remedyDetailBox}>
+                        <div className={styles.remedyImageSection}>
+                          <img
+                            src={getRemedyImagePath(selectedRemedy.type, selectedRemedy.name)}
+                            alt={selectedRemedy.name}
+                            className={styles.remedyImage}
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        </div>
+
+                        {selectedRemedy.type === 'gemstone' && (
+                          <div className={styles.gemstoneHeader}>
+                            <div
+                              className={styles.colorSwatch}
+                              style={{
+                                background: getGemstoneColor(selectedRemedy.name).hex,
+                                boxShadow: `0 0 30px ${getGemstoneColor(selectedRemedy.name).hex}80`
+                              }}
+                            />
+                            <div className={styles.gemstoneInfo}>
+                              <p className={styles.colorLabel}>Stone Color</p>
+                              <p className={styles.colorName}>
+                                {getGemstoneColor(selectedRemedy.name).color}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                        
+                        <div className={styles.remedyDetailHeader}>
+                          <h3 className={styles.remedyDetailTitle}>
+                            {selectedRemedy.emoji} {selectedRemedy.name}
+                          </h3>
+                          <button
+                            className={styles.closeButton}
+                            onClick={() => setSelectedRemedy(null)}
+                            aria-label="Close details"
+                            style={{
+                              background: getRemedyColor(selectedRemedy.type),
+                              width: '40px',
+                              height: '40px',
+                              borderRadius: '50%',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              border: 'none',
+                              cursor: 'pointer',
+                              fontSize: '20px',
+                              flexShrink: 0,
+                              color: '#fff'
+                            }}
+                          >
+                            ✕
+                          </button>
+                        </div>
+                        <div className={styles.remedyDetailContent}>
+                          {selectedRemedy.description && (
+                            <div>
+                              <p className={styles.remedyDetailDescription}>
+                                {selectedRemedy.description}
+                              </p>
                             </div>
                           )}
-                          {selectedRemedy.frequency && (
-                            <div className={styles.detailItem}>
-                              <strong>Frequency:</strong>
-                              <span>{selectedRemedy.frequency}</span>
+                          
+                          {(selectedRemedy.timing || selectedRemedy.frequency || selectedRemedy.benefits || selectedRemedy.duration || selectedRemedy.guidelines || selectedRemedy.items) && (
+                            <div className={`${styles.remedyDetailInfo} ${getDetailGridClass(selectedRemedy)}`}>
+                              {selectedRemedy.timing && (
+                                <div className={styles.detailItem}>
+                                  <strong>⏰ Best Timing</strong>
+                                  <span>{selectedRemedy.timing}</span>
+                                </div>
+                              )}
+                              {selectedRemedy.frequency && (
+                                <div className={styles.detailItem}>
+                                  <strong>🔄 Frequency</strong>
+                                  <span>{selectedRemedy.frequency}</span>
+                                </div>
+                              )}
+                              {selectedRemedy.duration && (
+                                <div className={styles.detailItem}>
+                                  <strong>⏱️ Duration</strong>
+                                  <span>{selectedRemedy.duration}</span>
+                                </div>
+                              )}
+                              {selectedRemedy.benefits && (
+                                <div className={styles.detailItem}>
+                                  <strong>✨ Benefits</strong>
+                                  <span>{selectedRemedy.benefits}</span>
+                                </div>
+                              )}
+                              {selectedRemedy.guidelines && (
+                                <div className={styles.detailItem}>
+                                  <strong>📋 Guidelines</strong>
+                                  <span>{selectedRemedy.guidelines}</span>
+                                </div>
+                              )}
+                              {selectedRemedy.items && (
+                                <div className={styles.detailItem}>
+                                  <strong>📦 Items Needed</strong>
+                                  <span>{selectedRemedy.items}</span>
+                                </div>
+                              )}
+                            </div>
+                          )}
+
+                          {selectedRemedy.type === 'gemstone' && selectedRemedy.descriptions && (
+                            <div style={{ marginTop: '8px', paddingTop: '16px', borderTop: '1px solid rgba(107, 68, 35, 0.1)' }}>
+                              <p style={{ fontSize: '12px', fontWeight: '600', color: '#6b4423', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                💎 Gemstone Properties
+                              </p>
+                              <p style={{ fontSize: '14px', color: '#4b5563', lineHeight: '1.6' }}>
+                                {selectedRemedy.descriptions}
+                              </p>
+                            </div>
+                          )}
+
+                          {selectedRemedy.type === 'mantra' && selectedRemedy.descriptions && (
+                            <div style={{ marginTop: '8px', paddingTop: '16px', borderTop: '1px solid rgba(107, 68, 35, 0.1)' }}>
+                              <p style={{ fontSize: '12px', fontWeight: '600', color: '#6b4423', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                🕉️ Mantra Details
+                              </p>
+                              <p style={{ fontSize: '14px', color: '#4b5563', lineHeight: '1.6', fontStyle: 'italic' }}>
+                                {selectedRemedy.descriptions}
+                              </p>
+                            </div>
+                          )}
+
+                          {selectedRemedy.type === 'donation' && selectedRemedy.descriptions && (
+                            <div style={{ marginTop: '8px', paddingTop: '16px', borderTop: '1px solid rgba(107, 68, 35, 0.1)' }}>
+                              <p style={{ fontSize: '12px', fontWeight: '600', color: '#6b4423', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                🙏 Donation Purpose
+                              </p>
+                              <p style={{ fontSize: '14px', color: '#4b5563', lineHeight: '1.6' }}>
+                                {selectedRemedy.descriptions}
+                              </p>
+                            </div>
+                          )}
+
+                          {selectedRemedy.type === 'ritual' && selectedRemedy.descriptions && (
+                            <div style={{ marginTop: '8px', paddingTop: '16px', borderTop: '1px solid rgba(107, 68, 35, 0.1)' }}>
+                              <p style={{ fontSize: '12px', fontWeight: '600', color: '#6b4423', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                🕯️ Ritual Steps
+                              </p>
+                              <p style={{ fontSize: '14px', color: '#4b5563', lineHeight: '1.6' }}>
+                                {selectedRemedy.descriptions}
+                              </p>
+                            </div>
+                          )}
+
+                          {selectedRemedy.type === 'fasting' && selectedRemedy.descriptions && (
+                            <div style={{ marginTop: '8px', paddingTop: '16px', borderTop: '1px solid rgba(107, 68, 35, 0.1)' }}>
+                              <p style={{ fontSize: '12px', fontWeight: '600', color: '#6b4423', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                🌙 Fasting Guidelines
+                              </p>
+                              <p style={{ fontSize: '14px', color: '#4b5563', lineHeight: '1.6' }}>
+                                {selectedRemedy.descriptions}
+                              </p>
                             </div>
                           )}
                         </div>
-                      )}
+                      </div>
                     </div>
                   </div>
                 )}
