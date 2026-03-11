@@ -45,6 +45,21 @@ function formatDate(dateStr: string | undefined) {
   return isNaN(d.getTime()) ? dateStr : d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
 }
 
+const planetImages: Record<string, string> = {
+  Sun: "/images/sun-transit.png",
+  Moon: "/images/moon-transit.jpg",
+  Mercury: "/images/mercury.jpg",
+  Venus: "/images/venus-transit.jpg",
+  Mars: "/images/mars-transit.jpg",
+  Jupiter: "/images/jupiter-transit.jpg",
+  Saturn: "/images/saturn-transit.jpg",
+  Uranus: "/images/uranus-transit.jpg",
+  Neptune: "/images/neptune-transit.jpg",
+  Pluto: "/images/pluto-transit.jpg",
+  Rahu: "/images/rahu-transit.jpg",
+  Ketu: "/images/ketu-transit.jpg",
+};
+
 export default function TransitsPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -215,16 +230,26 @@ export default function TransitsPage() {
 
           {/* TODAY */}
           {activeTab === "today" && todayData && (
-            <div className={styles.cardGrid}>
-              {Object.values(todayData.currentPlanetPositions || {}).map((p) => (
-                <div key={p.name} className={styles.card}>
-                  <span className={styles.badge}>Planet</span>
-                  <h4>{p.name}</h4>
-                  <p>{p.sign.name}</p>
-                </div>
-              ))}
-            </div>
-          )}
+  <div className={styles.cardGrid}>
+    {Object.values(todayData.currentPlanetPositions || {}).map((p) => (
+      <div key={p.name} className={styles.card}
+      style={{
+    backgroundImage: `url(${planetImages[p.name]})`,
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "right bottom",
+    backgroundSize: "150px",
+  }}>
+
+        <span className={styles.badge}>Planet</span>
+
+        <h4>{p.name}</h4>
+
+        <p>{p.sign.name}</p>
+
+      </div>
+    ))}
+  </div>
+)}
 
           {/* RETROGRADES */}
           {activeTab === "retrogrades" && (
