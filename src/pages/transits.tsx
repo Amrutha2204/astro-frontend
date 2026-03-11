@@ -348,7 +348,6 @@ useEffect(() => {
               <div className={styles.filterCard}>
                 <h3>🌘 Eclipses</h3>
                 <div className={styles.filters}>
-<<<<<<< HEAD
                   <div className={styles.dateInputGroup}>
                     <label className={styles.dateLabel}>From</label>
                     <div className={styles.dateBox}>
@@ -360,10 +359,6 @@ useEffect(() => {
                     <div className={styles.dateBox}>
                       <input type="date" value={eclipseTo} onChange={(e) => setEclipseTo(e.target.value)} />
                     </div>
-=======
-                  <div className={styles.dateBox}>
-                    <input type="date" className="formDateInput" value={eclipseFrom} onChange={(e) => setEclipseFrom(e.target.value)} />
->>>>>>> 1156c4a2e2d90a8d90f965b3a5c99900bb395a93
                   </div>
                   <button className={styles.primaryButton} onClick={loadEclipses}>Get Eclipses</button>
                 </div>
