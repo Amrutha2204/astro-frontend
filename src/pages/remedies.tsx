@@ -20,7 +20,7 @@ export default function RemediesPage() {
   const [remedies, setRemedies] = useState<RemedyRecommendations | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'gemstones' | 'mantras' | 'fasting' | 'donations' | 'rituals'>('gemstones');
+  const [selectedRemedy, setSelectedRemedy] = useState<any>(null);
 
   const fetchRemedies = useCallback(async () => {
     const t = token?.trim();
@@ -87,24 +87,6 @@ export default function RemediesPage() {
     }
   };
 
-  const getActiveRemedies = () => {
-    if (!remedies) return [];
-    switch (activeTab) {
-      case 'gemstones':
-        return remedies.gemstones;
-      case 'mantras':
-        return remedies.mantras;
-      case 'fasting':
-        return remedies.fastingDays;
-      case 'donations':
-        return remedies.donations;
-      case 'rituals':
-        return remedies.rituals;
-      default:
-        return [];
-    }
-  };
-
   if (loading) {
     return (
       <div className={styles.dashboardContainer}>
@@ -163,84 +145,174 @@ export default function RemediesPage() {
                   </div>
                 </div>
 
-                <div className={styles.remediesTabs}>
-                  <button
-                    className={activeTab === 'gemstones' ? styles.activeRemedyTab : styles.remedyTab}
-                    onClick={() => setActiveTab('gemstones')}
-                    style={{ borderBottomColor: activeTab === 'gemstones' ? getRemedyColor('gemstone') : 'transparent' }}
-                  >
-                    💎 Gemstones ({remedies.gemstones.length})
-                  </button>
-                  <button
-                    className={activeTab === 'mantras' ? styles.activeRemedyTab : styles.remedyTab}
-                    onClick={() => setActiveTab('mantras')}
-                    style={{ borderBottomColor: activeTab === 'mantras' ? getRemedyColor('mantra') : 'transparent' }}
-                  >
-                    🕉️ Mantras ({remedies.mantras.length})
-                  </button>
-                  <button
-                    className={activeTab === 'fasting' ? styles.activeRemedyTab : styles.remedyTab}
-                    onClick={() => setActiveTab('fasting')}
-                    style={{ borderBottomColor: activeTab === 'fasting' ? getRemedyColor('fasting') : 'transparent' }}
-                  >
-                    🌙 Fasting ({remedies.fastingDays.length})
-                  </button>
-                  <button
-                    className={activeTab === 'donations' ? styles.activeRemedyTab : styles.remedyTab}
-                    onClick={() => setActiveTab('donations')}
-                    style={{ borderBottomColor: activeTab === 'donations' ? getRemedyColor('donation') : 'transparent' }}
-                  >
-                    🙏 Donations ({remedies.donations.length})
-                  </button>
-                  <button
-                    className={activeTab === 'rituals' ? styles.activeRemedyTab : styles.remedyTab}
-                    onClick={() => setActiveTab('rituals')}
-                    style={{ borderBottomColor: activeTab === 'rituals' ? getRemedyColor('ritual') : 'transparent' }}
-                  >
-                    🕯️ Rituals ({remedies.rituals.length})
-                  </button>
+                <div className={styles.remedySection}>
+                  <div className={styles.remedySectionHeader}>
+                    <h2 className={styles.remedySectionTitle}>💎 Gemstones</h2>
+                    <span className={styles.remedyCount}>{remedies.gemstones.length} items</span>
+                  </div>
+                  <div className={styles.remedyButtonContainer}>
+                    {remedies.gemstones.length > 0 ? (
+                      remedies.gemstones.map((remedy, index) => (
+                        <button
+                          key={`gemstone-${index}`}
+                          className={`${styles.remedyButton} ${selectedRemedy?.uniqueKey === `gemstone-${index}` ? styles.activeRemedyButton : ''}`}
+                          onClick={() => setSelectedRemedy({...remedy, uniqueKey: `gemstone-${index}`, type: 'gemstone', emoji: '💎'})}
+                          style={{
+                            borderColor: getRemedyColor('gemstone'),
+                            backgroundColor: selectedRemedy?.uniqueKey === `gemstone-${index}` ? getRemedyColor('gemstone') : 'transparent',
+                            color: selectedRemedy?.uniqueKey === `gemstone-${index}` ? '#fff' : getRemedyColor('gemstone'),
+                          }}
+                        >
+                          💎 {remedy.name}
+                        </button>
+                      ))
+                    ) : (
+                      <p className={styles.noItems}>No gemstone recommendations</p>
+                    )}
+                  </div>
                 </div>
 
-                <div className={styles.remediesList}>
-                  {getActiveRemedies().length > 0 ? (
-                    getActiveRemedies().map((remedy, index) => (
-                      <div
-                        key={index}
-                        className={styles.remedyCard}
-                        style={{ borderLeftColor: getRemedyColor(remedy.type) }}
-                      >
-                        <div className={styles.remedyHeader}>
-                          <div className={styles.remedyIconName}>
-                            <span className={styles.remedyIcon}>{getRemedyIcon(remedy.type)}</span>
-                            <h4 className={styles.remedyName}>{remedy.name}</h4>
-                          </div>
-                        </div>
-                        <p className={styles.remedyDescription}>{remedy.description}</p>
-                        {(remedy.timing || remedy.frequency) && (
-                          <div className={styles.remedyDetails}>
-                            {remedy.timing && (
-                              <div className={styles.remedyDetail}>
-                                <strong>Timing:</strong> {remedy.timing}
-                              </div>
-                            )}
-                            {remedy.frequency && (
-                              <div className={styles.remedyDetail}>
-                                <strong>Frequency:</strong> {remedy.frequency}
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    ))
-                  ) : (
-                    <div className={styles.noRemedies}>
-                      <p>No {activeTab} recommendations available at this time.</p>
-                      <p style={{ fontSize: '14px', color: '#6b7280', marginTop: '10px' }}>
-                        Consult an astrologer for personalized recommendations.
-                      </p>
-                    </div>
-                  )}
+                <div className={styles.remedySection}>
+                  <div className={styles.remedySectionHeader}>
+                    <h2 className={styles.remedySectionTitle}>🕉️ Mantras</h2>
+                    <span className={styles.remedyCount}>{remedies.mantras.length} items</span>
+                  </div>
+                  <div className={styles.remedyButtonContainer}>
+                    {remedies.mantras.length > 0 ? (
+                      remedies.mantras.map((remedy, index) => (
+                        <button
+                          key={`mantra-${index}`}
+                          className={`${styles.remedyButton} ${selectedRemedy?.uniqueKey === `mantra-${index}` ? styles.activeRemedyButton : ''}`}
+                          onClick={() => setSelectedRemedy({...remedy, uniqueKey: `mantra-${index}`, type: 'mantra', emoji: '🕉️'})}
+                          style={{
+                            borderColor: getRemedyColor('mantra'),
+                            backgroundColor: selectedRemedy?.uniqueKey === `mantra-${index}` ? getRemedyColor('mantra') : 'transparent',
+                            color: selectedRemedy?.uniqueKey === `mantra-${index}` ? '#fff' : getRemedyColor('mantra'),
+                          }}
+                        >
+                          🕉️ {remedy.name}
+                        </button>
+                      ))
+                    ) : (
+                      <p className={styles.noItems}>No mantra recommendations</p>
+                    )}
+                  </div>
                 </div>
+
+                <div className={styles.remedySection}>
+                  <div className={styles.remedySectionHeader}>
+                    <h2 className={styles.remedySectionTitle}>🌙 Fasting</h2>
+                    <span className={styles.remedyCount}>{remedies.fastingDays.length} items</span>
+                  </div>
+                  <div className={styles.remedyButtonContainer}>
+                    {remedies.fastingDays.length > 0 ? (
+                      remedies.fastingDays.map((remedy, index) => (
+                        <button
+                          key={`fasting-${index}`}
+                          className={`${styles.remedyButton} ${selectedRemedy?.uniqueKey === `fasting-${index}` ? styles.activeRemedyButton : ''}`}
+                          onClick={() => setSelectedRemedy({...remedy, uniqueKey: `fasting-${index}`, type: 'fasting', emoji: '🌙'})}
+                          style={{
+                            borderColor: getRemedyColor('fasting'),
+                            backgroundColor: selectedRemedy?.uniqueKey === `fasting-${index}` ? getRemedyColor('fasting') : 'transparent',
+                            color: selectedRemedy?.uniqueKey === `fasting-${index}` ? '#fff' : getRemedyColor('fasting'),
+                          }}
+                        >
+                          🌙 {remedy.name}
+                        </button>
+                      ))
+                    ) : (
+                      <p className={styles.noItems}>No fasting recommendations</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className={styles.remedySection}>
+                  <div className={styles.remedySectionHeader}>
+                    <h2 className={styles.remedySectionTitle}>🙏 Donations</h2>
+                    <span className={styles.remedyCount}>{remedies.donations.length} items</span>
+                  </div>
+                  <div className={styles.remedyButtonContainer}>
+                    {remedies.donations.length > 0 ? (
+                      remedies.donations.map((remedy, index) => (
+                        <button
+                          key={`donation-${index}`}
+                          className={`${styles.remedyButton} ${selectedRemedy?.uniqueKey === `donation-${index}` ? styles.activeRemedyButton : ''}`}
+                          onClick={() => setSelectedRemedy({...remedy, uniqueKey: `donation-${index}`, type: 'donation', emoji: '🙏'})}
+                          style={{
+                            borderColor: getRemedyColor('donation'),
+                            backgroundColor: selectedRemedy?.uniqueKey === `donation-${index}` ? getRemedyColor('donation') : 'transparent',
+                            color: selectedRemedy?.uniqueKey === `donation-${index}` ? '#fff' : getRemedyColor('donation'),
+                          }}
+                        >
+                          🙏 {remedy.name}
+                        </button>
+                      ))
+                    ) : (
+                      <p className={styles.noItems}>No donation recommendations</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className={styles.remedySection}>
+                  <div className={styles.remedySectionHeader}>
+                    <h2 className={styles.remedySectionTitle}>🕯️ Rituals</h2>
+                    <span className={styles.remedyCount}>{remedies.rituals.length} items</span>
+                  </div>
+                  <div className={styles.remedyButtonContainer}>
+                    {remedies.rituals.length > 0 ? (
+                      remedies.rituals.map((remedy, index) => (
+                        <button
+                          key={`ritual-${index}`}
+                          className={`${styles.remedyButton} ${selectedRemedy?.uniqueKey === `ritual-${index}` ? styles.activeRemedyButton : ''}`}
+                          onClick={() => setSelectedRemedy({...remedy, uniqueKey: `ritual-${index}`, type: 'ritual', emoji: '🕯️'})}
+                          style={{
+                            borderColor: getRemedyColor('ritual'),
+                            backgroundColor: selectedRemedy?.uniqueKey === `ritual-${index}` ? getRemedyColor('ritual') : 'transparent',
+                            color: selectedRemedy?.uniqueKey === `ritual-${index}` ? '#fff' : getRemedyColor('ritual'),
+                          }}
+                        >
+                          🕯️ {remedy.name}
+                        </button>
+                      ))
+                    ) : (
+                      <p className={styles.noItems}>No ritual recommendations</p>
+                    )}
+                  </div>
+                </div>
+
+                {selectedRemedy && (
+                  <div className={styles.remedyDetailBox}>
+                    <div className={styles.remedyDetailHeader}>
+                      <h3 className={styles.remedyDetailTitle}>{selectedRemedy.emoji} {selectedRemedy.name}</h3>
+                      <button
+                        className={styles.closeButton}
+                        onClick={() => setSelectedRemedy(null)}
+                        aria-label="Close details"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                    <div className={styles.remedyDetailContent}>
+                      <p className={styles.remedyDetailDescription}>{selectedRemedy.description}</p>
+                      {(selectedRemedy.timing || selectedRemedy.frequency) && (
+                        <div className={styles.remedyDetailInfo}>
+                          {selectedRemedy.timing && (
+                            <div className={styles.detailItem}>
+                              <strong>Timing:</strong>
+                              <span>{selectedRemedy.timing}</span>
+                            </div>
+                          )}
+                          {selectedRemedy.frequency && (
+                            <div className={styles.detailItem}>
+                              <strong>Frequency:</strong>
+                              <span>{selectedRemedy.frequency}</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </>
             )}
           </div>
