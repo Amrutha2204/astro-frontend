@@ -5,6 +5,7 @@ import AppSidebar from "@/components/layout/AppSidebar";
 import PageHeader from "@/components/layout/PageHeader";
 import CalculationInfo from "@/components/common/CalculationInfo";
 import Loading from "@/components/ui/Loading";
+import PlaceAutocomplete from "@/components/ui/PlaceAutocomplete";
 import styles from "@/styles/dashboard.module.css";
 import formStyles from "@/styles/birthDetails.module.css";
 import cal from "@/styles/calendar.module.css";
@@ -230,15 +231,14 @@ const [place, setPlace] = useState<string>(
             <div className={cal.locationCard}>
               <div className={cal.locationIcon} aria-hidden>📍</div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div className={cal.locationLabel}>Birth place / Location</div>
+                <div className={cal.locationLabel}>Birth place</div>
                 {storedUser?.birthPlace ? (
                   <div className={cal.locationValue}>{place}</div>
                 ) : (
-                  <input
-                    type="text"
-                    placeholder="e.g. Mumbai, Maharashtra, India or town/village"
+                  <PlaceAutocomplete
                     value={place}
-                    onChange={(e) => setPlace(e.target.value)}
+                    onChange={setPlace}
+                    placeholder="e.g. Mumbai, Maharashtra, India or town/village"
                     aria-label="Birth place"
                   />
                 )}
@@ -503,13 +503,12 @@ const [place, setPlace] = useState<string>(
                     onChange={(e) => setRahuDate(e.target.value)}
                     aria-label="Date"
                   />
-                  <label style={{ marginBottom: 0 }}>Place</label>
-                  <input
-                    type="text"
+                  <label style={{ marginBottom: 0 }}>Birth place</label>
+                  <PlaceAutocomplete
                     value={place}
-                    onChange={(e) => setPlace(e.target.value)}
-                    placeholder="e.g. Delhi"
-                    aria-label="Place"
+                    onChange={setPlace}
+                    placeholder="e.g. Mumbai, Maharashtra, India or town/village"
+                    aria-label="Birth place"
                   />
                   <button
                     type="button"

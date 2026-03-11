@@ -57,8 +57,8 @@ export default function BirthDetails() {
       <DatePickerField value={dob} onChange={setDob} placeholder="dd/mm/yyyy" aria-label="Date of birth" />
       <label>Birth Time</label>
       <TimePickerField value={birthTime} onChange={setBirthTime} placeholder="--:--" step={1} aria-label="Birth time" />
-      <label>Place of Birth</label>
-      <PlaceAutocomplete value={placeOfBirth} onChange={setPlaceOfBirth} placeholder="e.g. Mumbai, Maharashtra, India or town/village" aria-label="Place of birth" />
+      <label>Birth place *</label>
+      <PlaceAutocomplete value={placeOfBirth} onChange={setPlaceOfBirth} placeholder="e.g. Mumbai, Maharashtra, India or town/village" required aria-label="Birth place" />
       <button onClick={submit}>Save & Continue</button>
     </div>
   );

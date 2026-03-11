@@ -407,7 +407,7 @@ export default function CompatibilityPage() {
                       <p className={styles.compatTimeHint}>Partners must have different genders for match.</p>
                     </div>
                     <div className={styles.inputGroup}>
-                      <label>Birth Place *</label>
+                      <label>Birth place *</label>
                       <PlaceAutocomplete
                         value={partner1.birthPlace}
                         onChange={(v) => handlePartner1Change('birthPlace', v)}
@@ -513,7 +513,7 @@ export default function CompatibilityPage() {
                       <p className={styles.compatTimeHint}>Partners must have different genders for match.</p>
                     </div>
                     <div className={styles.inputGroup}>
-                      <label>Birth Place *</label>
+                      <label>Birth place *</label>
                       <PlaceAutocomplete
                         value={partner2.birthPlace}
                         onChange={(v) => handlePartner2Change('birthPlace', v)}

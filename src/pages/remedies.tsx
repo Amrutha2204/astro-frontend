@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
@@ -21,6 +21,13 @@ export default function RemediesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedRemedy, setSelectedRemedy] = useState<any>(null);
+  const remedyDetailRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (selectedRemedy && remedyDetailRef.current) {
+      remedyDetailRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [selectedRemedy]);
 
   const fetchRemedies = useCallback(async () => {
     const t = token?.trim();
@@ -281,7 +288,7 @@ export default function RemediesPage() {
                 </div>
 
                 {selectedRemedy && (
-                  <div className={styles.remedyDetailBox}>
+                  <div ref={remedyDetailRef} className={styles.remedyDetailBox}>
                     <div className={styles.remedyDetailHeader}>
                       <h3 className={styles.remedyDetailTitle}>{selectedRemedy.emoji} {selectedRemedy.name}</h3>
                       <button

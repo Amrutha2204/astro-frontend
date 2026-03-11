@@ -141,6 +141,16 @@
   gap: 8px;
 }
 
+.errorMessage {
+  color: #b91c1c;
+  font-size: 14px;
+  margin: 0 0 8px 0;
+  padding: 10px 12px;
+  background: #fef2f2;
+  border-radius: 8px;
+  border: 1px solid #fecaca;
+}
+
 .label {
   font-size: 14px;
   font-weight: 600;
