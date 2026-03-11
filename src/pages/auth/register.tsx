@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { registerUser } from "@/services/authService";
 import { showError, showSuccess, showWarning } from "@/utils/toast";
+import PlaceAutocomplete from "@/components/ui/PlaceAutocomplete";
 import styles from "@/styles/login.module.css";
 
 export default function Register() {
@@ -97,11 +98,20 @@ export default function Register() {
             birthTime: formData.birthTime || undefined,
           };
 
-      const res = await registerUser(payload as any);
-      
+      const { status, data } = await registerUser(payload as any);
+
+      if (status < 200 || status >= 300) {
+        const message = (data && typeof data === "object" && "message" in data && typeof (data as { message?: string }).message === "string")
+          ? (data as { message: string }).message
+          : "Registration failed. Please try again.";
+        setError(message);
+        showError(message);
+        return;
+      }
+
       if (formData.birthPlace.trim()) {
-  localStorage.setItem("birthPlace", formData.birthPlace.trim());
-}
+        localStorage.setItem("birthPlace", formData.birthPlace.trim());
+      }
       showSuccess("Registration successful! Please login.");
       setTimeout(() => {
         router.push("/auth/login");
@@ -111,6 +121,7 @@ export default function Register() {
         (err && typeof err === "object" && "message" in err && typeof (err as Error).message === "string")
           ? (err as Error).message
           : "Registration failed. Please try again.";
+      setError(errorMessage);
       showError(errorMessage);
       console.error("Registration error:", err);
     } finally {
@@ -250,17 +261,15 @@ export default function Register() {
               <div className={styles.formRow}>
                 <div className={styles.inputGroup}>
                   <label className={styles.label}>
-                    Birth Place <span className={styles.required}>*</span>
+                    Birth place <span className={styles.required}>*</span>
                   </label>
-                  <input
-                    type="text"
-                    name="birthPlace"
+                  <PlaceAutocomplete
                     value={formData.birthPlace}
-                    placeholder="City, State, Country"
-                    onChange={handleChange}
-                    disabled={loading}
+                    onChange={(v) => { setFormData({ ...formData, birthPlace: v }); setError(null); }}
+                    placeholder="e.g. Mumbai, Maharashtra, India or town/village"
                     required
-                    className={styles.input}
+                    disabled={loading}
+                    aria-label="Birth place"
                   />
                 </div>
 
@@ -280,6 +289,11 @@ export default function Register() {
               </div>
             )}
 
+            {error && (
+              <p className={styles.errorMessage} role="alert">
+                {error}
+              </p>
+            )}
             <button 
               type="submit"
               disabled={loading}

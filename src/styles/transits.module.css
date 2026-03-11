@@ -153,11 +153,14 @@
   display: flex;
   align-items: center;
   gap: 8px;
+<<<<<<< HEAD
+  min-width: 160px;
+=======
+>>>>>>> eae096ef4910dea22e7e1e0afcd856bc74cd65cd
   background: linear-gradient(135deg, #ffffff, #f9f7f5);
   border: 2px solid #e0d5c7;
   border-radius: 14px;
   padding: 12px 16px;
-  min-width: 180px;
   transition: all 0.2s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
@@ -198,6 +201,11 @@
 .dateBox input[type="date"]::placeholder {
   color: #999;
 }
+<<<<<<< HEAD
+
+/* date input uses global .formDateInput for consistent look */
+=======
+>>>>>>> eae096ef4910dea22e7e1e0afcd856bc74cd65cd
 
 
 /* =========================

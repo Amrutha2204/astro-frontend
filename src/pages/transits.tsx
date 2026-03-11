@@ -8,6 +8,7 @@ import dashboardStyles from "@/styles/dashboard.module.css";
 import styles from "@/styles/transits.module.css";
 import ErrorMessage from "@/components/ui/ErrorMessage";
 import Loading from "@/components/ui/Loading";
+import PlaceAutocomplete from "@/components/ui/PlaceAutocomplete";
 import {
   astroApi,
   TransitsTodayResponse,
@@ -219,17 +220,15 @@ useEffect(() => {
           <h1 className={styles.pageTitle}>Planetary Transits</h1>
           {loading && <div>Loading...</div>}
           <div className={styles.birthPlaceCard}>
-  <p className={styles.birthPlaceLabel}>BIRTH PLACE</p>
-
+  <p className={styles.birthPlaceLabel}>Birth place</p>
   {storedUser?.birthPlace ? (
     <h3 className={styles.birthPlaceValue}>{place}</h3>
   ) : (
-    <input
-      className={styles.birthPlaceInput}
-      type="text"
-      placeholder="e.g. City, State, Country or town/village"
+    <PlaceAutocomplete
       value={place}
-      onChange={(e) => setPlace(e.target.value)}
+      onChange={setPlace}
+      placeholder="e.g. Mumbai, Maharashtra, India or town/village"
+      aria-label="Birth place"
     />
   )}
 </div>
@@ -386,13 +385,13 @@ useEffect(() => {
                   <div className={styles.dateInputGroup}>
                     <label className={styles.dateLabel}>From</label>
                     <div className={styles.dateBox}>
-                      <input type="date" value={eclipseFrom} onChange={(e) => setEclipseFrom(e.target.value)} />
+                      <input type="date" className="formDateInput" value={eclipseFrom} onChange={(e) => setEclipseFrom(e.target.value)} />
                     </div>
                   </div>
                   <div className={styles.dateInputGroup}>
                     <label className={styles.dateLabel}>To</label>
                     <div className={styles.dateBox}>
-                      <input type="date" value={eclipseTo} onChange={(e) => setEclipseTo(e.target.value)} />
+                      <input type="date" className="formDateInput" value={eclipseTo} onChange={(e) => setEclipseTo(e.target.value)} />
                     </div>
                   </div>
                   <button className={styles.primaryButton} onClick={loadEclipses}>Get Eclipses</button>
