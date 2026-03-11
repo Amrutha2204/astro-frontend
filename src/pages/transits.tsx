@@ -75,6 +75,9 @@ export default function TransitsPage() {
   const [retroFrom, setRetroFrom] = useState(todayStr());
   const [retroTo, setRetroTo] = useState(todayStr());
   const [retroData, setRetroData] = useState<RetrogradesResponse["retrogrades"]>([]);
+  const [retroOnDate, setRetroOnDate] = useState(todayStr());
+  const [retroOnDateResult, setRetroOnDateResult] = useState<{ date: string; planetsRetrograde: string[] } | null>(null);
+  const [retroOnDateLoading, setRetroOnDateLoading] = useState(false);
 
   /* MAJOR */
   const [majorFrom, setMajorFrom] = useState(todayStr());
@@ -120,17 +123,28 @@ export default function TransitsPage() {
   }, []);
 
   const loadRetrogrades = async () => {
-     if (!place) {
-    setError("Please enter birth place");
-    return;
-  }
   try {
     const data = await astroApi.getRetrogrades(retroFrom, retroTo);
     setRetroData(data.retrogrades);
+    setError(null);
   } catch {
     setError("Unable to load retrogrades. Please try again later.");
   }
 };
+
+  const loadRetrogradesOnDate = async () => {
+    setRetroOnDateLoading(true);
+    setRetroOnDateResult(null);
+    try {
+      const data = await astroApi.getRetrogradesOnDate(retroOnDate);
+      setRetroOnDateResult(data);
+      setError(null);
+    } catch {
+      setError("Unable to load retrogrades for this date.");
+    } finally {
+      setRetroOnDateLoading(false);
+    }
+  };
 
   const loadMajor = async () => {
     setMajorError(null);
@@ -204,7 +218,7 @@ export default function TransitsPage() {
     <input
       className={styles.birthPlaceInput}
       type="text"
-      placeholder="Enter birth place"
+      placeholder="e.g. City, State, Country or town/village"
       value={place}
       onChange={(e) => setPlace(e.target.value)}
     />
@@ -255,7 +269,28 @@ export default function TransitsPage() {
           {activeTab === "retrogrades" && (
             <>
               <div className={styles.filterCard}>
-                <h3>🔁 Retrogrades</h3>
+                <h3>📅 On this day</h3>
+                <p className={styles.hintText}>Which planets are retrograde on a particular date (compare with Astrosage).</p>
+                <div className={styles.filters}>
+                  <div className={styles.dateBox}>
+                    <input type="date" className="formDateInput" value={retroOnDate} onChange={(e) => setRetroOnDate(e.target.value)} aria-label="Date" />
+                  </div>
+                  <button className={styles.primaryButton} onClick={loadRetrogradesOnDate} disabled={retroOnDateLoading}>
+                    {retroOnDateLoading ? "Checking…" : "Check"}
+                  </button>
+                </div>
+                {retroOnDateResult && (
+                  <div className={styles.resultOnDay}>
+                    <strong>On {formatDate(retroOnDateResult.date)}:</strong>{" "}
+                    {retroOnDateResult.planetsRetrograde.length === 0
+                      ? "No planets retrograde."
+                      : `${retroOnDateResult.planetsRetrograde.join(", ")} (retrograde)`}
+                  </div>
+                )}
+              </div>
+
+              <div className={styles.filterCard}>
+                <h3>🔁 Retrograde periods (date range)</h3>
                 <div className={styles.filters}>
                   <div className={styles.dateBox}>
                     <input type="date" className="formDateInput" value={retroFrom} onChange={(e) => setRetroFrom(e.target.value)} />

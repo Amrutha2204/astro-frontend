@@ -19,6 +19,7 @@ import AppSidebar from "@/components/layout/AppSidebar";
 import AppHeader from "@/components/layout/AppHeader";
 import DatePickerField from "@/components/ui/DatePickerField";
 import TimePickerField from "@/components/ui/TimePickerField";
+import PlaceAutocomplete from "@/components/ui/PlaceAutocomplete";
 import Loading from "@/components/ui/Loading";
 import {
   selectToken,
@@ -281,13 +282,13 @@ const [showSubscribeModal, setShowSubscribeModal] = useState(false);
                       />
                     </div>
                     <div className={styles.field}>
-                      <label className={styles.fieldLabel} htmlFor="fp-place">Birth place *</label>
-                      <input
+<label className={styles.fieldLabel} htmlFor="fp-place">Birth place *</label>
+                    <PlaceAutocomplete
                         id="fp-place"
-                        className={styles.input}
-                        placeholder="City"
                         value={form.birthPlace}
-                        onChange={(e) => setForm({ ...form, birthPlace: e.target.value })}
+                        onChange={(v) => setForm({ ...form, birthPlace: v })}
+                        placeholder="e.g. Mumbai, Maharashtra, India or town/village"
+                        aria-label="Birth place"
                       />
                     </div>
                     <div className={styles.field}>
@@ -371,7 +372,7 @@ const [showSubscribeModal, setShowSubscribeModal] = useState(false);
                         )}
                         <div className={styles.profileMetaRow}>
                           <span className={styles.profileMetaLabel}>Birth place</span>
-                          <span>{p.birthPlace}</span>
+                          <span className={styles.profileMetaValue} title={p.birthPlace}>{p.birthPlace}</span>
                         </div>
                         <div className={styles.profileMetaRow}>
                           <span className={styles.profileMetaLabel}>DOB</span>

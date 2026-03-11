@@ -6,6 +6,7 @@ import TrustNote from "@/components/common/TrustNote";
 import { dashaApi, type GuestBirthDto } from "@/services/dashaService";
 import styles from "@/styles/dashboard.module.css";
 import formStyles from "@/styles/birthDetails.module.css";
+import PlaceAutocomplete from "@/components/ui/PlaceAutocomplete";
 import Loading from "@/components/ui/Loading";
 
 export default function GuestDashaPage() {
@@ -67,8 +68,8 @@ export default function GuestDashaPage() {
               <input type="date" className={`${formStyles.input} formDateInput`} value={dob} onChange={(e) => setDob(e.target.value)} required />
               <label className={formStyles.label}>Birth time *</label>
               <input type="time" className={`${formStyles.input} formDateInput`} value={birthTime} onChange={(e) => setBirthTime(e.target.value)} step="1" required />
-              <label className={formStyles.label}>Birth place (city) *</label>
-              <input type="text" className={formStyles.input} value={placeOfBirth} onChange={(e) => setPlaceOfBirth(e.target.value)} placeholder="e.g. Mumbai" minLength={3} required />
+              <label className={formStyles.label}>Birth place (city, town or village) *</label>
+              <PlaceAutocomplete value={placeOfBirth} onChange={setPlaceOfBirth} placeholder="e.g. Mumbai, Maharashtra, India or town/village" required aria-label="Birth place" />
               {error && <p className="text-red-600 text-sm my-3">{error}</p>}
               <button type="submit" className={formStyles.button} disabled={loading}>{loading ? "Calculating…" : "See my period"}</button>
             </form>

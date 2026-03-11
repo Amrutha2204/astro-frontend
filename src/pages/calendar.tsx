@@ -236,7 +236,7 @@ const [place, setPlace] = useState<string>(
                 ) : (
                   <input
                     type="text"
-                    placeholder="e.g. Delhi, Mumbai"
+                    placeholder="e.g. Mumbai, Maharashtra, India or town/village"
                     value={place}
                     onChange={(e) => setPlace(e.target.value)}
                     aria-label="Birth place"

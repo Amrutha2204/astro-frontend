@@ -8,11 +8,13 @@ import { compatibilityApi, CompatibilityRequest, GunaMilanResponse, MarriageComp
 import { paymentApi } from "@/services/paymentService";
 import { reportsApi, GenerateReportResponse } from "@/services/reportsService";
 import { getUserDetails } from "@/services/userService";
-import { getCoordinatesFromCity, isCityRecognized } from "@/utils/coordinates";
+import { astroApi } from "@/services/api";
+import { isCityRecognized } from "@/utils/coordinates";
 import { showError, showSuccess, showWarning } from "@/utils/toast";
 import { selectToken } from "@/store/slices/authSlice";
 import styles from "@/styles/dashboard.module.css";
 import Loading from "@/components/ui/Loading";
+import PlaceAutocomplete from "@/components/ui/PlaceAutocomplete";
 
 const REDIRECT_DELAY_MS = 2000;
 
@@ -85,7 +87,6 @@ export default function CompatibilityPage() {
         const d = new Date(dob);
         if (isNaN(d.getTime())) return;
         const [h = 12, m = 0] = birthTime.split(":").map(Number);
-        const coords = getCoordinatesFromCity(birthPlace);
         setPartner1({
           name: typeof name === "string" ? name : "",
           gender: "",
@@ -95,30 +96,44 @@ export default function CompatibilityPage() {
           hour: h,
           minute: m,
           birthPlace,
-          latitude: coords.lat,
-          longitude: coords.lng,
+          latitude: 28.6139,
+          longitude: 77.209,
         });
         setPartner1Prefilled(true);
+        astroApi.getGeocode(birthPlace).then(
+          (res) => setPartner1((prev) => ({ ...prev, latitude: res.lat, longitude: res.lng })),
+          () => {}
+        );
       })
       .catch(() => {});
   }, [token]);
 
   const handlePartner1Change = (field: keyof PartnerFormData, value: string | number) => {
     const updated = { ...partner1, [field]: value };
-    if (field === 'birthPlace' && typeof value === 'string') {
-      const coords = getCoordinatesFromCity(value);
-      updated.latitude = coords.lat;
-      updated.longitude = coords.lng;
+    if (field === "birthPlace" && typeof value === "string") {
+      updated.latitude = 28.6139;
+      updated.longitude = 77.209;
+      setPartner1(updated);
+      astroApi.getGeocode(value).then(
+        (res) => setPartner1((prev) => ({ ...prev, latitude: res.lat, longitude: res.lng })),
+        () => {}
+      );
+      return;
     }
     setPartner1(updated);
   };
 
   const handlePartner2Change = (field: keyof PartnerFormData, value: string | number) => {
     const updated = { ...partner2, [field]: value };
-    if (field === 'birthPlace' && typeof value === 'string') {
-      const coords = getCoordinatesFromCity(value);
-      updated.latitude = coords.lat;
-      updated.longitude = coords.lng;
+    if (field === "birthPlace" && typeof value === "string") {
+      updated.latitude = 28.6139;
+      updated.longitude = 77.209;
+      setPartner2(updated);
+      astroApi.getGeocode(value).then(
+        (res) => setPartner2((prev) => ({ ...prev, latitude: res.lat, longitude: res.lng })),
+        () => {}
+      );
+      return;
     }
     setPartner2(updated);
   };
@@ -393,14 +408,14 @@ export default function CompatibilityPage() {
                     </div>
                     <div className={styles.inputGroup}>
                       <label>Birth Place *</label>
-                      <input
-                        type="text"
+                      <PlaceAutocomplete
                         value={partner1.birthPlace}
-                        onChange={(e) => handlePartner1Change('birthPlace', e.target.value)}
-                        placeholder="e.g. Mumbai, Delhi, London"
+                        onChange={(v) => handlePartner1Change('birthPlace', v)}
+                        placeholder="e.g. Mumbai, Maharashtra, India or town/village"
                         required
+                        aria-label="Partner 1 birth place"
                       />
-                      <p className={styles.compatTimeHint}>Use a city from our list (Indian and major international, e.g. Mumbai, London, Dubai). Unrecognized names fall back to Delhi.</p>
+                      <p className={styles.compatTimeHint}>City, town or village — start typing for suggestions worldwide.</p>
                     </div>
                   </div>
                   <div className={styles.formRow}>
@@ -499,14 +514,14 @@ export default function CompatibilityPage() {
                     </div>
                     <div className={styles.inputGroup}>
                       <label>Birth Place *</label>
-                      <input
-                        type="text"
+                      <PlaceAutocomplete
                         value={partner2.birthPlace}
-                        onChange={(e) => handlePartner2Change('birthPlace', e.target.value)}
-                        placeholder="e.g. Mumbai, Delhi, London"
+                        onChange={(v) => handlePartner2Change('birthPlace', v)}
+                        placeholder="e.g. Mumbai, Maharashtra, India or town/village"
                         required
+                        aria-label="Partner 2 birth place"
                       />
-                      <p className={styles.compatTimeHint}>Use a city from our list (Indian and major international, e.g. Mumbai, London, Dubai). Unrecognized names fall back to Delhi.</p>
+                      <p className={styles.compatTimeHint}>Start typing to see city suggestions. Unrecognized names fall back to Delhi.</p>
                     </div>
                   </div>
                   <div className={styles.formRow}>
@@ -596,7 +611,7 @@ export default function CompatibilityPage() {
                 <h2 className={styles.sectionTitle}>Guna Milan Results</h2>
                 {(!isCityRecognized(partner1.birthPlace) || !isCityRecognized(partner2.birthPlace)) && (
                   <div className={styles.birthPlaceWarning} role="alert">
-                    One or more birth places were not recognized, so Delhi was used for coordinates. For accurate results, use a city from our list (e.g. Mumbai, Delhi, London, Dubai).
+                    We resolve city, town or village names for coordinates. For best accuracy, pick a suggestion or enter the full place (e.g. City, State, Country).
                   </div>
                 )}
 
@@ -763,7 +778,7 @@ export default function CompatibilityPage() {
                 <h2 className={styles.sectionTitle}>Marriage Compatibility Results</h2>
                 {(!isCityRecognized(partner1.birthPlace) || !isCityRecognized(partner2.birthPlace)) && (
                   <div className={styles.birthPlaceWarning} role="alert">
-                    One or more birth places were not recognized, so Delhi was used for coordinates. For accurate results, use a city from our list (e.g. Mumbai, Delhi, London, Dubai).
+                    We resolve city, town or village names for coordinates. For best accuracy, pick a suggestion or enter the full place (e.g. City, State, Country).
                   </div>
                 )}
                 <div className={styles.gunaMilanSummary}>

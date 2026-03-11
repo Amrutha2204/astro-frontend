@@ -9,6 +9,7 @@ import CalculationInfo from "@/components/common/CalculationInfo";
 import TrustNote from "@/components/common/TrustNote";
 import DatePickerField from "@/components/ui/DatePickerField";
 import TimePickerField from "@/components/ui/TimePickerField";
+import PlaceAutocomplete from "@/components/ui/PlaceAutocomplete";
 import styles from "@/styles/guestKundli.module.css";
 import formStyles from "@/styles/birthDetails.module.css";
 import dStyles from "@/styles/dashboard.module.css";
@@ -259,10 +260,14 @@ export default function GuestKundliPage() {
                 {k.planetaryPositions && Array.isArray(k.planetaryPositions) && k.planetaryPositions.length > 0 && (
                   <div className={dStyles.kundliSection}>
                     <h2 className={dStyles.sectionTitle}>Planet positions</h2>
+                    <p className={dStyles.chartLegend}>* = retrograde</p>
                     <div className={dStyles.planetsGrid}>
                       {k.planetaryPositions.map((planetData) => (
                         <div key={planetData.planet} className={dStyles.planetCard}>
-                          <div className={dStyles.planetName}>{planetData.planet}</div>
+                          <div className={dStyles.planetName}>
+                            {planetData.planet}
+                            {planetData.retrograde ? " *" : ""}
+                          </div>
                           <div className={dStyles.planetSign}>{planetData.sign}</div>
                           {typeof planetData.degree === "number" && (
                             <div className={dStyles.planetDegree}>
@@ -282,8 +287,20 @@ export default function GuestKundliPage() {
                 )}
 
                 {k.houses && Array.isArray(k.houses) && k.houses.length > 0 && (
+                  <>
                   <div className={dStyles.kundliSection}>
-                    <h2 className={dStyles.sectionTitle}>Houses</h2>
+                    <h2 className={dStyles.sectionTitle}>12 Houses &amp; Signs</h2>
+                    <div className={dStyles.housesSignsList}>
+                      {k.houses.map((h) => (
+                        <div key={h.house} className={dStyles.houseSignRow}>
+                          <span className={dStyles.houseSignNum}>House {h.house}</span>
+                          <span className={dStyles.houseSignName}>{h.sign}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className={dStyles.kundliSection}>
+                    <h2 className={dStyles.sectionTitle}>Houses (detail)</h2>
                     <div className={dStyles.housesGrid}>
                       {k.houses.map((houseData) => (
                         <div key={houseData.house} className={dStyles.houseCard}>
@@ -298,6 +315,7 @@ export default function GuestKundliPage() {
                       ))}
                     </div>
                   </div>
+                  </>
                 )}
 
                 {b.unknownTime && (
@@ -388,17 +406,15 @@ export default function GuestKundliPage() {
               <p className={formStyles.hint}>Noon (12:00) will be used — Lagna and house positions may be approximate.</p>
             )}
 
-            <label className={formStyles.label}>Birth place (city) *</label>
-            <input
-              type="text"
-              className={formStyles.input}
+            <label className={formStyles.label}>Birth place (city, town or village) *</label>
+            <PlaceAutocomplete
               value={placeOfBirth}
-              onChange={(e) => setPlaceOfBirth(e.target.value)}
-              placeholder="e.g. Mumbai, Delhi"
-              minLength={3}
+              onChange={setPlaceOfBirth}
+              placeholder="e.g. Mumbai, Maharashtra, India or town/village"
               required
+              aria-label="Birth place"
             />
-            <p className={formStyles.hint}>City name is used to fetch coordinates for accurate planetary positions.</p>
+            <p className={formStyles.hint}>Start typing for suggestions worldwide. Full place (e.g. City, State, Country) is used for accurate positions.</p>
 
             <label className={formStyles.label}>Chart type</label>
             <select
