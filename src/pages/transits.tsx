@@ -233,10 +233,10 @@ export default function TransitsPage() {
                 <h3>🔁 Retrogrades</h3>
                 <div className={styles.filters}>
                   <div className={styles.dateBox}>
-                    <input type="date" value={retroFrom} onChange={(e) => setRetroFrom(e.target.value)} />
+                    <input type="date" className="formDateInput" value={retroFrom} onChange={(e) => setRetroFrom(e.target.value)} />
                   </div>
                   <div className={styles.dateBox}>
-                    <input type="date" value={retroTo} onChange={(e) => setRetroTo(e.target.value)} />
+                    <input type="date" className="formDateInput" value={retroTo} onChange={(e) => setRetroTo(e.target.value)} />
                   </div>
                   <button className={styles.primaryButton} onClick={loadRetrogrades}>Get Retrogrades</button>
                 </div>
@@ -267,10 +267,10 @@ export default function TransitsPage() {
                 <h3>🔱 Major Transits</h3>
                 <div className={styles.filters}>
                   <div className={styles.dateBox}>
-                    <input type="date" value={majorFrom} onChange={(e) => setMajorFrom(e.target.value)} />
+                    <input type="date" className="formDateInput" value={majorFrom} onChange={(e) => setMajorFrom(e.target.value)} />
                   </div>
                   <div className={styles.dateBox}>
-                    <input type="date" value={majorTo} onChange={(e) => setMajorTo(e.target.value)} />
+                    <input type="date" className="formDateInput" value={majorTo} onChange={(e) => setMajorTo(e.target.value)} />
                   </div>
                   <button className={styles.primaryButton} onClick={loadMajor} disabled={majorLoading}>
                     {majorLoading ? "Loading…" : "Get Transits"}
@@ -315,7 +315,7 @@ export default function TransitsPage() {
                 <h3>🌘 Eclipses</h3>
                 <div className={styles.filters}>
                   <div className={styles.dateBox}>
-                    <input type="date" value={eclipseFrom} onChange={(e) => setEclipseFrom(e.target.value)} />
+                    <input type="date" className="formDateInput" value={eclipseFrom} onChange={(e) => setEclipseFrom(e.target.value)} />
                   </div>
                   <button className={styles.primaryButton} onClick={loadEclipses}>Get Eclipses</button>
                 </div>

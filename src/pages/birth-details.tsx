@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 import { getUserDetails, saveBirthDetails } from "@/services/userService";
 import { showError } from "@/utils/toast";
 import { selectToken, selectIsRehydrated } from "@/store/slices/authSlice";
+import DatePickerField from "@/components/ui/DatePickerField";
+import TimePickerField from "@/components/ui/TimePickerField";
 
 export default function BirthDetails() {
   const router = useRouter();
@@ -51,9 +53,9 @@ export default function BirthDetails() {
     <div className="max-w-md mx-auto my-16">
       <h2>Birth Details</h2>
       <label>Date of Birth</label>
-      <input type="date" value={dob} onChange={(e) => setDob(e.target.value)} />
+      <DatePickerField value={dob} onChange={setDob} placeholder="dd/mm/yyyy" aria-label="Date of birth" />
       <label>Birth Time</label>
-      <input type="time" value={birthTime} onChange={(e) => setBirthTime(e.target.value)} />
+      <TimePickerField value={birthTime} onChange={setBirthTime} placeholder="--:--" step={1} aria-label="Birth time" />
       <label>Place of Birth</label>
       <input value={placeOfBirth} onChange={(e) => setPlaceOfBirth(e.target.value)} />
       <button onClick={submit}>Save & Continue</button>

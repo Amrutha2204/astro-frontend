@@ -199,7 +199,7 @@ export default function KundliPage() {
                 <select
                   value={chartSelection}
                   onChange={(e) => handleChartChange(e.target.value)}
-                  className={styles.chartSelect}
+                  className={`formSelect formSelectInline ${styles.chartSelect}`}
                   aria-label="Select chart type"
                 >
                   {CHART_OPTIONS.map((opt) => (

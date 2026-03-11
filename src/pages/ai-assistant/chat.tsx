@@ -191,7 +191,7 @@ export default function AIChatPage() {
                   <select
                     value={context || ''}
                     onChange={(e) => setContext(e.target.value as any || undefined)}
-                    className={styles.contextSelect}
+                    className={`formSelect ${styles.contextSelect}`}
                   >
                     <option value="">None</option>
                     <option value="daily">Daily</option>

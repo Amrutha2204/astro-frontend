@@ -164,12 +164,12 @@ export default function ShareableCardPage() {
               <form onSubmit={handleSubmit}>
                 <label className={formStyles.label}>Type</label>
                 <select
-                  className={formStyles.input}
+                  className={`${formStyles.input} formSelect`}
                   value={type}
                   onChange={(e) =>
                     setType(e.target.value as "horoscope" | "kundli_summary")
                   }
-                  style={{ cursor: "pointer" }}
+                  aria-label="Card type"
                 >
                   <option value="horoscope">Horoscope</option>
                   <option value="kundli_summary">Kundli Summary</option>
@@ -185,7 +185,7 @@ export default function ShareableCardPage() {
                 <label className={formStyles.label}>Date</label>
                 <input
                   type="date"
-                  className={formStyles.input}
+                  className={`${formStyles.input} formDateInput`}
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
                 />
