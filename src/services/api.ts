@@ -45,7 +45,7 @@ export interface KundliResponse {
   pada: number;
   chandraRasi?: string;
   sooryaRasi?: string;
-  planetaryPositions: Array<{ planet: string; sign: string; degree: number; nakshatra?: string; pada?: number }>;
+  planetaryPositions: Array<{ planet: string; sign: string; degree: number; nakshatra?: string; pada?: number; retrograde?: boolean }>;
   houses: Array<{ house: number; sign: string; degree: number; meaning?: string }>;
   source: string;
 }
@@ -304,6 +304,22 @@ export const astroApi = {
     return request<KundliResponse>(ASTRO_BASE, "/api/v1/kundli/guest", { method: "POST", body });
   },
 
+  /** Resolve place name (city, town, village) to coordinates. Use for compatibility and any birth place. */
+  async getGeocode(place: string): Promise<{ lat: number; lng: number; displayName?: string }> {
+    return request<{ lat: number; lng: number; displayName?: string }>(ASTRO_BASE, "/api/v1/kundli/geocode", {
+      method: "GET",
+      params: { place: place.trim() },
+    });
+  },
+
+  /** Search places for autocomplete (fetched from server/Nominatim). Empty q returns default list. */
+  async searchPlaces(q: string, limit = 15): Promise<{ places: Array<{ displayName: string; lat: number; lng: number }> }> {
+    return request<{ places: Array<{ displayName: string; lat: number; lng: number }> }>(ASTRO_BASE, "/api/v1/kundli/places/search", {
+      method: "GET",
+      params: q.trim() ? { q: q.trim(), limit: String(limit) } : { limit: String(limit) },
+    });
+  },
+
   async getGuestCalendar(city?: string): Promise<GuestCalendarResponse> {
     return request<GuestCalendarResponse>(ASTRO_BASE, "/api/v1/astrology/calendar/today/guest", {
       method: "GET",
@@ -361,6 +377,14 @@ export const astroApi = {
   },
 
   // -------------------- Retrogrades & Major Transits & Eclipses --------------------
+  /** Which planets are retrograde on a single date (for "on this day" result). */
+  async getRetrogradesOnDate(date: string): Promise<{ date: string; planetsRetrograde: string[] }> {
+    return request<{ date: string; planetsRetrograde: string[] }>(ASTRO_BASE, "/api/v1/astrology/transits/retrogrades/on-date", {
+      method: "GET",
+      params: { date },
+    });
+  },
+
   async getRetrogrades(from: string, to: string): Promise<RetrogradesResponse> {
     return request<RetrogradesResponse>(ASTRO_BASE, "/api/v1/astrology/transits/retrogrades", {
       method: "GET",

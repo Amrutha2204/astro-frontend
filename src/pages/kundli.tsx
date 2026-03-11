@@ -177,7 +177,8 @@ export default function KundliPage() {
         <div className={styles.houseContent}>
           {planetsInHouse.map((p: any, i: number) => (
             <div key={i} className={styles.planetText}>
-              {p.planet.slice(0, 2)} {p.degree?.toFixed(0)}°
+              {p.planet.slice(0, 2)} {p.degree != null ? p.degree.toFixed(0) + "°" : ""}
+              {p.retrograde ? " *" : ""}
             </div>
           ))}
         </div>
@@ -260,7 +261,7 @@ export default function KundliPage() {
                 {kundli.planetaryPositions && Array.isArray(kundli.planetaryPositions) && (
                 <div className={styles.kundliSection}>
                  <h2 className={styles.sectionTitle}>Kundli Chart</h2>
-   
+                 <p className={styles.chartLegend}> * = retrograde (planet appears to move backward at birth)</p>
                 <div className={styles.chartWrapper}>
                  <div className={styles.kundaliChart}>
                      <div className={styles.centerWatermark}>ॐ</div>
@@ -288,8 +289,20 @@ export default function KundliPage() {
 )}
 
                 {kundli.houses && Array.isArray(kundli.houses) && kundli.houses.length > 0 && (
+                  <>
                   <div className={styles.kundliSection}>
-                    <h2 className={styles.sectionTitle}>Houses</h2>
+                    <h2 className={styles.sectionTitle}>12 Houses &amp; Signs</h2>
+                    <div className={styles.housesSignsList}>
+                      {kundli.houses.map((h) => (
+                        <div key={h.house} className={styles.houseSignRow}>
+                          <span className={styles.houseSignNum}>House {h.house}</span>
+                          <span className={styles.houseSignName}>{h.sign}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className={styles.kundliSection}>
+                    <h2 className={styles.sectionTitle}>Houses (detail)</h2>
                     <div className={styles.housesGrid}>
                       {kundli.houses.map((houseData) => (
                       <div key={houseData.house} className={styles.houseCard}>
@@ -310,6 +323,7 @@ export default function KundliPage() {
             ))}
                     </div>
                   </div>
+                  </>
                 )}
 
                 <div className={styles.sourceInfo}>

@@ -258,6 +258,12 @@
   min-width: 70px;
 }
 
+.profileMetaValue {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  min-width: 0;
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;

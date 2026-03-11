@@ -6,6 +6,7 @@ import { showError } from "@/utils/toast";
 import { selectToken, selectIsRehydrated } from "@/store/slices/authSlice";
 import DatePickerField from "@/components/ui/DatePickerField";
 import TimePickerField from "@/components/ui/TimePickerField";
+import PlaceAutocomplete from "@/components/ui/PlaceAutocomplete";
 
 export default function BirthDetails() {
   const router = useRouter();
@@ -57,7 +58,7 @@ export default function BirthDetails() {
       <label>Birth Time</label>
       <TimePickerField value={birthTime} onChange={setBirthTime} placeholder="--:--" step={1} aria-label="Birth time" />
       <label>Place of Birth</label>
-      <input value={placeOfBirth} onChange={(e) => setPlaceOfBirth(e.target.value)} />
+      <PlaceAutocomplete value={placeOfBirth} onChange={setPlaceOfBirth} placeholder="e.g. Mumbai, Maharashtra, India or town/village" aria-label="Place of birth" />
       <button onClick={submit}>Save & Continue</button>
     </div>
   );
