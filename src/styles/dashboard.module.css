@@ -611,27 +611,33 @@
 }
 
 .kundliContent {
-  background: #f1e5c9;
-  border-radius: 14px;
-  padding: 32px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  background: linear-gradient(135deg, #fffbf5 0%, #fdf6eb 100%);
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0 8px 32px rgba(107, 68, 35, 0.15);
   animation: fadeIn 0.3s ease-out;
+  border: 1px solid #e4cfa6;
 }
 
 .pageTitle {
-  font-size: 32px;
-  font-weight: bold;
-  color: #1f2937;
-  margin: 0 0 30px 0;
+  font-size: 36px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #8b5e34 0%, #6b4423 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 32px 0;
+  letter-spacing: -0.01em;
 }
 
 .kundliSection {
-  background: #f1dfc7;
-  padding: 24px;
-  border-radius: 12px;
-  border-color: #000;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  background: linear-gradient(135deg, rgba(255, 251, 245, 0.8) 0%, rgba(253, 246, 235, 0.9) 100%);
+  padding: 28px 32px;
+  border-radius: 14px;
+  border: 1.5px solid #e4cfa6;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 16px rgba(107, 68, 35, 0.08);
+  backdrop-filter: blur(8px);
 }
 
 .kundliSection:last-child {
@@ -639,37 +645,40 @@
 }
 
 .sectionTitle {
-  font-size: 24px;
-  font-weight: 600;
+  font-size: 26px;
+  font-weight: 700;
   color: #6b4423;
-  margin: 0 0 20px 0;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #b1aaa2;
+  margin: 0 0 24px 0;
+  padding-bottom: 14px;
+  border-bottom: 2px solid #d4a574;
+  letter-spacing: -0.01em;
 }
 
 .infoGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 16px;
-  margin-top: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
 }
 
 .infoItem {
-  padding: 16px;
+  padding: 18px 20px;
   border-radius: 12px;
-  color: #b88c8c;
+  background: linear-gradient(135deg, rgba(180, 123, 69, 0.1) 0%, rgba(212, 165, 116, 0.08) 100%);
+  border: 1.5px solid rgba(180, 123, 69, 0.3);
   position: relative;
   overflow: hidden;
-  background-size: cover;
-  background-position: center;
-  min-height: 90px;
+  transition: all 0.3s ease;
+}
+
+.infoItem:hover {
+  background: linear-gradient(135deg, rgba(180, 123, 69, 0.15) 0%, rgba(212, 165, 116, 0.12) 100%);
+  border-color: rgba(180, 123, 69, 0.5);
+  transform: translateY(-2px);
 }
 
 .infoItem::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
+  display: none;
 }
 
 .infoItem span {
@@ -698,20 +707,23 @@
 }
 
 .infoLabel {
-  font-size: 14px;
-  margin-bottom: 4px;
-  color: #f3f4f5
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+  color: #8b5e34;
 }
 
 .infoContent {
   font-size: 18px;
-  font-weight: 600;
-  color: #fffdfa;
+  font-weight: 700;
+  color: #2d2a26;
 }
 .infoValue {
-  font-size: 18px;
-  font-weight: 600;
-  color: #6f4502;
+  font-size: 20px;
+  font-weight: 700;
+  color: #6b4423;
 }
 
 .pageContainer {
@@ -835,52 +847,57 @@
 }
 
 .houseCard {
-  background: #f9fafb;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 15px;
+  background: linear-gradient(135deg, #f0f4f8 0%, #e8eef5 100%);
+  border: 1.5px solid #d4cfc4;
+  border-radius: 12px;
+  padding: 20px 16px;
   text-align: center;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-.housesGrid .houseCard:nth-child(1) { background:#bfdaed; }
-.housesGrid .houseCard:nth-child(2) { background:#eba9e1; }
-.housesGrid .houseCard:nth-child(3) { background:#e5cb8e; }
-.housesGrid .houseCard:nth-child(4) { background:#9ec0f5; }
+.housesGrid .houseCard:nth-child(1) { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-color: #93c5fd; }
+.housesGrid .houseCard:nth-child(2) { background: linear-gradient(135deg, #fbecf8 0%, #f8d7f3 100%); border-color: #f5b6f0; }
+.housesGrid .houseCard:nth-child(3) { background: linear-gradient(135deg, #fef7e0 0%, #fef3c7 100%); border-color: #fde08a; }
+.housesGrid .houseCard:nth-child(4) { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-color: #93c5fd; }
 
-.housesGrid .houseCard:nth-child(5) { background:#c0e3b0; }
-.housesGrid .houseCard:nth-child(6) { background:#eeb7b7; }
-.housesGrid .houseCard:nth-child(7) { background:#93e6ce; }
-.housesGrid .houseCard:nth-child(8) { background:#f7df90; }
+.housesGrid .houseCard:nth-child(5) { background: linear-gradient(135deg, #dbeafb 0%, #bff7d5 100%); border-color: #86efac; }
+.housesGrid .houseCard:nth-child(6) { background: linear-gradient(135deg, #fee8e8 0%, #fdddd6 100%); border-color: #fca5a5; }
+.housesGrid .houseCard:nth-child(7) { background: linear-gradient(135deg, #deeff8 0%, #ccfbf1 100%); border-color: #99f6e4; }
+.housesGrid .houseCard:nth-child(8) { background: linear-gradient(135deg, #fef9e0 0%, #fef08a 100%); border-color: #fde047; }
 
-.housesGrid .houseCard:nth-child(9) { background:#e3c9f9; }
-.housesGrid .houseCard:nth-child(10) { background:#dbb79f; }
-.housesGrid .houseCard:nth-child(11) { background:#dbf38c; }
-.housesGrid .houseCard:nth-child(12) { background:#bff0c4; }
+.housesGrid .houseCard:nth-child(9) { background: linear-gradient(135deg, #ede9fe 0%, #e9d5ff 100%); border-color: #d8b4fe; }
+.housesGrid .houseCard:nth-child(10) { background: linear-gradient(135deg, #f5e6d3 0%, #e8dcc7 100%); border-color: #d4a574; }
+.housesGrid .houseCard:nth-child(11) { background: linear-gradient(135deg, #f0fde4 0%, #dcfce7 100%); border-color: #bef264; }
+.housesGrid .houseCard:nth-child(12) { background: linear-gradient(135deg, #ccfbf1 0%, #a7f3d0 100%); border-color: #6ee7b7; }
 
 .houseCard:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(107, 68, 35, 0.15);
 }
 
 .houseTitle {
-  font-size: 15px;
-  color: #150707;
-  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #6b4423;
+  margin-bottom: 8px;
   line-height: 1.4;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .houseSign {
-  font-size: 16px;
-  font-weight: 500;
-  color: #0c0400;
-  margin-bottom: 4px;
-  font-weight: bold;
+  font-size: 18px;
+  font-weight: 800;
+  color: #2d2a26;
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
 }
 
 .houseCusp {
-  font-size: 16px;
-  color: #140901;
+  font-size: 15px;
+  font-weight: 700;
+  color: #8b5e34;
 }
 
 .sourceInfo {
