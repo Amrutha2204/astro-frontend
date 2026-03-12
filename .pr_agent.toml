@@ -1,15 +1,13 @@
 [config]
-ai_provider = "google"
-model = "gemini/gemini-1.5-pro"
-max_model_tokens = 100000
+model = "gemini/gemini-2.5-flash"
+fallback_models = ["gemini/gemini-2.5-flash-lite"]
 
 [pr_reviewer]
-max_files_to_analyze = 30        # only 30 files per run
+max_files_to_analyze = 30
 num_code_suggestions = 3
 inline_code_comments = true
 
 [ignore]
-# Skip auto-generated or unimportant files
 glob_patterns = [
     "*.lock",
     "*.min.js",
