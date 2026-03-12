@@ -1,11 +1,11 @@
 [config]
 ai_provider = "google"
-model = "gemini/gemini-2.0-flash"
+model = "gemini/gemini-1.5-pro"
+max_model_tokens = 100000
 
 [pr_reviewer]
-require_security_review = true
-require_estimate_effort_to_review = true
-num_code_suggestions = 5
+max_files_to_analyze = 30
+num_code_suggestions = 3
 inline_code_comments = true
 
 [pr_description]
@@ -15,4 +15,4 @@ generate_ai_title = true
 [github_action_config]
 auto_review = true
 auto_describe = true
-auto_improve = true
+auto_improve = false   # disable auto improve for large PRs
