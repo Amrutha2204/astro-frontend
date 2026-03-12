@@ -666,6 +666,11 @@ export default function CompatibilityPage() {
       </div>
 
       <h4>{guna.name}</h4>
+      {guna.parameterMeaning && (
+        <p className={styles.parameterMeaningHint} title={guna.parameterMeaning}>
+          {guna.parameterMeaning.slice(0, 80)}{guna.parameterMeaning.length > 80 ? "…" : ""}
+        </p>
+      )}
 
       <div className={styles.progressBar}>
         <div

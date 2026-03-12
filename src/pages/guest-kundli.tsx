@@ -376,7 +376,40 @@ console.log("Houses:", kundli.houses);
                   </div>
                 )}
 
-
+                {k.houses && Array.isArray(k.houses) && k.houses.length > 0 && (
+                  <>
+                  <div className={dStyles.kundliSection}>
+                    <h2 className={dStyles.sectionTitle}>12 Houses &amp; Signs</h2>
+                    <div className={dStyles.housesSignsList}>
+                      {k.houses.map((h) => (
+                        <div key={h.house} className={dStyles.houseSignRow}>
+                          <span className={dStyles.houseSignNum}>House {h.house}</span>
+                          <span className={dStyles.houseSignName}>{h.sign}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className={dStyles.kundliSection}>
+                    <h2 className={dStyles.sectionTitle}>Houses (detail)</h2>
+                    <div className={dStyles.housesGrid}>
+                      {k.houses.map((houseData) => (
+                        <div key={houseData.house} className={dStyles.houseCard}>
+                          <div className={dStyles.houseNumber}>House {houseData.house}{houseData.meaning ? ` – ${houseData.meaning}` : ''}</div>
+                          <div className={dStyles.houseSign}>{houseData.sign}</div>
+                          <div className={dStyles.houseCusp}>
+                            {typeof houseData.degree === "number"
+                              ? `${houseData.degree.toFixed(2)}°`
+                              : "N/A"}
+                          </div>
+                          {houseData.meaningDetail && (
+                            <p className={dStyles.houseMeaningDetail}>{houseData.meaningDetail}</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  </>
+                )}
 
                 {b.unknownTime && (
                   <p className={styles.unknownTimeNote}>Birth time was not provided; noon (12:00) was used for this chart. Lagna and house positions may be approximate.</p>

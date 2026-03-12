@@ -46,7 +46,7 @@ export interface KundliResponse {
   chandraRasi?: string;
   sooryaRasi?: string;
   planetaryPositions: Array<{ planet: string; sign: string; degree: number; nakshatra?: string; pada?: number; retrograde?: boolean }>;
-  houses: Array<{ house: number; sign: string; degree: number; meaning?: string }>;
+  houses: Array<{ house: number; sign: string; degree: number; meaning?: string; meaningDetail?: string }>;
   source: string;
 }
 

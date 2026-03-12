@@ -876,6 +876,14 @@
   box-shadow: 0 8px 20px rgba(107, 68, 35, 0.15);
 }
 
+.houseMeaningDetail {
+  font-size: 11px;
+  color: #444;
+  line-height: 1.35;
+  margin-top: 8px;
+  text-align: left;
+}
+
 .houseTitle {
   font-size: 13px;
   font-weight: 700;
@@ -3783,6 +3791,14 @@ box-shadow:0 4px 10px rgba(0,0,0,0.05);
 .parameterScore{
 font-size:18px;
 font-weight:600;
+}
+
+.parameterMeaningHint {
+  font-size: 12px;
+  color: #555;
+  line-height: 1.35;
+  margin-top: 6px;
+  margin-bottom: 0;
 }
 
 .progressBar{
