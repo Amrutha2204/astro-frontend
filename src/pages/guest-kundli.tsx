@@ -7,7 +7,6 @@ import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
 import CalculationInfo from "@/components/common/CalculationInfo";
 import TrustNote from "@/components/common/TrustNote";
-import DatePickerField from "@/components/ui/DatePickerField";
 import TimePickerField from "@/components/ui/TimePickerField";
 import PlaceAutocomplete from "@/components/ui/PlaceAutocomplete";
 import styles from "@/styles/guestKundli.module.css";
@@ -95,7 +94,54 @@ export default function GuestKundliPage() {
   const [name, setName] = useState("");
   const [gender, setGender] = useState<"male" | "female" | "">("");
   const [dob, setDob] = useState("");
+  const [day, setDay] = useState("");
+  const [month, setMonth] = useState("");
+  const [year, setYear] = useState("");
   const [birthTime, setBirthTime] = useState("");
+
+  const zodiacSigns = [
+    "Aries", "Taurus", "Gemini", "Cancer",
+    "Leo", "Virgo", "Libra", "Scorpio",
+    "Sagittarius", "Capricorn", "Aquarius", "Pisces"
+  ];
+
+  const getHouseFromSign = (sign: string, lagna: string): number | null => {
+    const lagnaIndex = zodiacSigns.indexOf(lagna);
+    const signIndex = zodiacSigns.indexOf(sign);
+
+    if (lagnaIndex === -1 || signIndex === -1) return null;
+
+    return ((signIndex - lagnaIndex + 12) % 12) + 1;
+  };
+
+  const renderHouseBox = (houseNumber: number) => {
+  if (!stored?.kundli?.planetaryPositions || !stored?.kundli?.houses) return null;
+
+  const houseSign = stored.kundli.houses.find(
+    (h: any) => h.house === houseNumber
+  )?.sign;
+
+  const planetsInHouse = stored.kundli.planetaryPositions.filter(
+    (p: any) => p.sign === houseSign
+  );
+
+  return (
+    <div className={dStyles.house}>
+      <div className={dStyles.houseNumber}>{houseNumber}</div>
+
+      <div className={dStyles.houseContent}>
+        {planetsInHouse.map((p: any, i: number) => (
+          <div key={i} className={dStyles.planetText}>
+            {p.planet.slice(0, 2)}{" "}
+            {p.degree != null ? p.degree.toFixed(0) + "°" : ""}
+            {p.retrograde ? " *" : ""}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
   const [unknownTime, setUnknownTime] = useState(false);
   const [placeOfBirth, setPlaceOfBirth] = useState("");
 
@@ -110,7 +156,13 @@ export default function GuestKundliPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!dob.trim() || !placeOfBirth.trim()) {
+    
+    // Combine day, month, year into ISO 8601 format (yyyy-mm-dd)
+    const dateOfBirth = day && month && year 
+      ? `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+      : dob;
+    
+    if (!dateOfBirth.trim() || !placeOfBirth.trim()) {
       setError("Please fill Date of Birth and Place of Birth.");
       return;
     }
@@ -122,17 +174,22 @@ export default function GuestKundliPage() {
     setLoading(true);
     try {
       const kundli = await astroApi.getGuestKundli({
-        dob: dob.trim(),
+        dob: dateOfBirth.trim(),
         birthTime: unknownTime ? undefined : birthTime.trim(),
         placeOfBirth: placeOfBirth.trim(),
         unknownTime: unknownTime || undefined,
         chart: chartSelection,
       });
+
+      console.log("Guest Kundli API Response:", kundli);
+console.log("Planetary Positions:", kundli.planetaryPositions);
+console.log("Houses:", kundli.houses);
+
       const session: GuestSession = {
         birthDetails: {
           name: name.trim() || undefined,
           gender: gender || undefined,
-          dob: dob.trim(),
+          dob: dateOfBirth.trim(),
           birthTime: unknownTime ? "12:00:00" : birthTime.trim(),
           placeOfBirth: placeOfBirth.trim(),
           unknownTime: unknownTime || undefined,
@@ -157,6 +214,9 @@ export default function GuestKundliPage() {
     setName("");
     setGender("");
     setDob("");
+    setDay("");
+    setMonth("");
+    setYear("");
     setBirthTime("");
     setUnknownTime(false);
     setPlaceOfBirth("");
@@ -259,23 +319,53 @@ export default function GuestKundliPage() {
 
                 {k.planetaryPositions && Array.isArray(k.planetaryPositions) && k.planetaryPositions.length > 0 && (
                   <div className={dStyles.kundliSection}>
+                    <h2 className={dStyles.sectionTitle}>Kundli Chart</h2>
+                    <p className={dStyles.chartLegend}>* = retrograde</p>
+                    <div className={dStyles.chartWrapper}>
+                      <div className={dStyles.kundaliChart}>
+                        <div className={dStyles.centerWatermark}>ॐ</div>
+                        {renderHouseBox(12)}
+                        {renderHouseBox(1)}
+                        {renderHouseBox(2)}
+                        {renderHouseBox(3)}
+
+                        {renderHouseBox(11)}
+                        <div></div>
+                        <div></div>
+                        {renderHouseBox(4)}
+
+                        {renderHouseBox(10)}
+                        <div></div>
+                        <div></div>
+                        {renderHouseBox(5)}
+                        {renderHouseBox(9)}
+                        {renderHouseBox(8)}
+                        {renderHouseBox(7)}
+                        {renderHouseBox(6)}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {k.planetaryPositions && Array.isArray(k.planetaryPositions) && k.planetaryPositions.length > 0 && (
+                  <div className={dStyles.kundliSection}>
                     <h2 className={dStyles.sectionTitle}>Planet positions</h2>
                     <p className={dStyles.chartLegend}>* = retrograde</p>
-                    <div className={dStyles.planetsGrid}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "12px", marginTop: "16px" }}>
                       {k.planetaryPositions.map((planetData) => (
-                        <div key={planetData.planet} className={dStyles.planetCard}>
-                          <div className={dStyles.planetName}>
+                        <div key={planetData.planet} style={{ padding: "12px", background: "linear-gradient(135deg, rgba(180, 123, 69, 0.1) 0%, rgba(212, 165, 116, 0.08) 100%)", borderRadius: "8px", border: "1px solid rgba(180, 123, 69, 0.2)" }}>
+                          <div style={{ fontSize: "14px", fontWeight: 700, color: "#6b4423" }}>
                             {planetData.planet}
                             {planetData.retrograde ? " *" : ""}
                           </div>
-                          <div className={dStyles.planetSign}>{planetData.sign}</div>
+                          <div style={{ fontSize: "13px", color: "#8b5e34", marginTop: "4px" }}>{planetData.sign}</div>
                           {typeof planetData.degree === "number" && (
-                            <div className={dStyles.planetDegree}>
+                            <div style={{ fontSize: "12px", color: "#6b5b52", marginTop: "2px" }}>
                               {planetData.degree.toFixed(2)}°
                             </div>
                           )}
                           {planetData.nakshatra && (
-                            <div className={dStyles.planetNakshatra}>
+                            <div style={{ fontSize: "12px", color: "#8b5e34", marginTop: "2px" }}>
                               {planetData.nakshatra}
                               {planetData.pada ? ` - Pada ${planetData.pada}` : ""}
                             </div>
@@ -368,13 +458,47 @@ export default function GuestKundliPage() {
             </select>
 
             <label className={formStyles.label}>Birth date *</label>
-            <DatePickerField
-              value={dob}
-              onChange={setDob}
-              placeholder="dd/mm/yyyy"
-              required
-              aria-label="Date of birth"
-            />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px", marginBottom: "16px" }}>
+              <div>
+                <label style={{ fontSize: "12px", color: "#6b5b52", fontWeight: 500, marginBottom: "4px", display: "block" }}>Day</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="31"
+                  className={formStyles.input}
+                  value={day}
+                  onChange={(e) => setDay(e.target.value)}
+                  placeholder="01"
+                  required
+                />
+              </div>
+              <div>
+                <label style={{ fontSize: "12px", color: "#6b5b52", fontWeight: 500, marginBottom: "4px", display: "block" }}>Month</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="12"
+                  className={formStyles.input}
+                  value={month}
+                  onChange={(e) => setMonth(e.target.value)}
+                  placeholder="01"
+                  required
+                />
+              </div>
+              <div>
+                <label style={{ fontSize: "12px", color: "#6b5b52", fontWeight: 500, marginBottom: "4px", display: "block" }}>Year</label>
+                <input
+                  type="number"
+                  min="1900"
+                  max={new Date().getFullYear()}
+                  className={formStyles.input}
+                  value={year}
+                  onChange={(e) => setYear(e.target.value)}
+                  placeholder="1990"
+                  required
+                />
+              </div>
+            </div>
 
             <div className={styles.timeRow}>
               <label className={`${formStyles.label} ${styles.timeRowLabel}`}>Birth time {unknownTime ? "" : "*"}</label>
