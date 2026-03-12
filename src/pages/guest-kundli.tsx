@@ -99,21 +99,6 @@ export default function GuestKundliPage() {
   const [year, setYear] = useState("");
   const [birthTime, setBirthTime] = useState("");
 
-  const zodiacSigns = [
-    "Aries", "Taurus", "Gemini", "Cancer",
-    "Leo", "Virgo", "Libra", "Scorpio",
-    "Sagittarius", "Capricorn", "Aquarius", "Pisces"
-  ];
-
-  const getHouseFromSign = (sign: string, lagna: string): number | null => {
-    const lagnaIndex = zodiacSigns.indexOf(lagna);
-    const signIndex = zodiacSigns.indexOf(sign);
-
-    if (lagnaIndex === -1 || signIndex === -1) return null;
-
-    return ((signIndex - lagnaIndex + 12) % 12) + 1;
-  };
-
   const renderHouseBox = (houseNumber: number) => {
   if (!stored?.kundli?.planetaryPositions || !stored?.kundli?.houses) return null;
 
@@ -180,11 +165,6 @@ export default function GuestKundliPage() {
         unknownTime: unknownTime || undefined,
         chart: chartSelection,
       });
-
-      console.log("Guest Kundli API Response:", kundli);
-console.log("Planetary Positions:", kundli.planetaryPositions);
-console.log("Houses:", kundli.houses);
-
       const session: GuestSession = {
         birthDetails: {
           name: name.trim() || undefined,
@@ -376,40 +356,7 @@ console.log("Houses:", kundli.houses);
                   </div>
                 )}
 
-                {k.houses && Array.isArray(k.houses) && k.houses.length > 0 && (
-                  <>
-                  <div className={dStyles.kundliSection}>
-                    <h2 className={dStyles.sectionTitle}>12 Houses &amp; Signs</h2>
-                    <div className={dStyles.housesSignsList}>
-                      {k.houses.map((h) => (
-                        <div key={h.house} className={dStyles.houseSignRow}>
-                          <span className={dStyles.houseSignNum}>House {h.house}</span>
-                          <span className={dStyles.houseSignName}>{h.sign}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className={dStyles.kundliSection}>
-                    <h2 className={dStyles.sectionTitle}>Houses (detail)</h2>
-                    <div className={dStyles.housesGrid}>
-                      {k.houses.map((houseData) => (
-                        <div key={houseData.house} className={dStyles.houseCard}>
-                          <div className={dStyles.houseNumber}>House {houseData.house}{houseData.meaning ? ` – ${houseData.meaning}` : ''}</div>
-                          <div className={dStyles.houseSign}>{houseData.sign}</div>
-                          <div className={dStyles.houseCusp}>
-                            {typeof houseData.degree === "number"
-                              ? `${houseData.degree.toFixed(2)}°`
-                              : "N/A"}
-                          </div>
-                          {houseData.meaningDetail && (
-                            <p className={dStyles.houseMeaningDetail}>{houseData.meaningDetail}</p>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  </>
-                )}
+
 
                 {b.unknownTime && (
                   <p className={styles.unknownTimeNote}>Birth time was not provided; noon (12:00) was used for this chart. Lagna and house positions may be approximate.</p>

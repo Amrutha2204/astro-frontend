@@ -148,7 +148,7 @@ export default function Dashboard() {
       id: "ai-explain",
       title: "Explain My Kundli",
       color: "#FFF5E6", 
-      image: "/images/explain.png",
+      image: "https://res.cloudinary.com/dmxmm7emu/image/upload/v1773317846/ai_v7kvzq.png",
       description: "Get AI explanation of your birth chart",
       onClick: () => router.push("/ai-assistant/explain-kundli"),
     },

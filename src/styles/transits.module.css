@@ -198,11 +198,8 @@
 .dateBox input[type="date"]::placeholder {
   color: #999;
 }
-<<<<<<< HEAD
-=======
 
 /* date input uses global .formDateInput for consistent look */
->>>>>>> f01fed2a745d2be681cfea61bc4c4b7f6c8aa65c
 
 
 /* =========================

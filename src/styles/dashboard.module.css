@@ -671,12 +671,6 @@
   transition: all 0.3s ease;
 }
 
-.infoItem:hover {
-  background: linear-gradient(135deg, rgba(180, 123, 69, 0.15) 0%, rgba(212, 165, 116, 0.12) 100%);
-  border-color: rgba(180, 123, 69, 0.5);
-  transform: translateY(-2px);
-}
-
 .infoItem::before {
   display: none;
 }
@@ -712,18 +706,18 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-bottom: 6px;
-  color: #8b5e34;
+  color: #f1eeeb;
 }
 
 .infoContent {
   font-size: 18px;
   font-weight: 700;
-  color: #2d2a26;
+  color: #f5ede1;
 }
 .infoValue {
   font-size: 20px;
   font-weight: 700;
-  color: #6b4423;
+  color: #845127;
 }
 
 .pageContainer {
