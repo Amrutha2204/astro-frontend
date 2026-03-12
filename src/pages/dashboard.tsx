@@ -8,6 +8,7 @@ import styles from "@/styles/dashboard.module.css";
 import { store } from "@/store";
 import { selectIsRehydrated, selectIsGuest, selectToken, clearToken } from "@/store/slices/authSlice";
 import { isValidJwtFormat } from "@/utils/auth";
+import { showError } from "@/utils/toast";
 import { getUserDetails } from "@/services/userService";
 
 export default function Dashboard() {
@@ -27,16 +28,11 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!rehydrated || isGuest || !token?.trim()) return;
-    getUserDetails(token)
-      .then((data: unknown) => {
-        const d = data as { dob?: string; birthPlace?: string } | null;
-        const hasBirthData = d?.dob && d?.birthPlace && String(d.dob).trim() && String(d.birthPlace).trim();
-        if (!hasBirthData) router.replace("/birth-details");
-      })
-      .catch(() => {
-        router.replace("/birth-details");
-      });
-  }, [rehydrated, isGuest, token, router]);
+    getUserDetails(token).catch((e: unknown) => {
+      const msg = e instanceof Error ? e.message : "Request failed";
+      showError(msg);
+    });
+  }, [rehydrated, isGuest, token]);
 
   useEffect(() => {
     const handlePopState = () => {
@@ -234,9 +230,7 @@ export default function Dashboard() {
   {services.map((service) => (
     <div
       key={service.id}
-      className={`${styles.serviceCard} ${
-        service.size === "large" ? styles.cardLarge : styles.cardSmall
-      }`}
+      className={styles.serviceCard}
       style={{ backgroundColor: service.color }}
       onClick={service.onClick}
     >

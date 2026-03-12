@@ -18,7 +18,7 @@ export default function Register() {
     phoneNumber: "",
     dob: "",
     birthPlace: "",
-    birthTime: ""
+    birthTime: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
