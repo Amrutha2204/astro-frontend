@@ -318,6 +318,9 @@ export default function KundliPage() {
                       ? `${houseData.degree.toFixed(2)}°`
                       : "N/A"}
                    </div>
+                    {houseData.meaningDetail && (
+                      <p className={styles.houseMeaningDetail}>{houseData.meaningDetail}</p>
+                    )}
 
               </div>
             ))}

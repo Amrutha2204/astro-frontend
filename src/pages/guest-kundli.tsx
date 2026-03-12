@@ -311,6 +311,9 @@ export default function GuestKundliPage() {
                               ? `${houseData.degree.toFixed(2)}°`
                               : "N/A"}
                           </div>
+                          {houseData.meaningDetail && (
+                            <p className={dStyles.houseMeaningDetail}>{houseData.meaningDetail}</p>
+                          )}
                         </div>
                       ))}
                     </div>
