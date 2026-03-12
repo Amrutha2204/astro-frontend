@@ -1,0 +1,26 @@
+name: PR Agent Review (Gemini)
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review]
+  issue_comment:
+    types: [created]
+
+permissions:
+  issues: write
+  pull-requests: write
+  contents: read
+
+jobs:
+  pr_agent_job:
+    runs-on: ubuntu-latest
+    name: Run PR Agent with Gemini
+    steps:
+      - name: PR Agent action
+        id: pragent
+        uses: qodo-ai/pr-agent@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CONFIG.AI_PROVIDER: "google"
+          GOOGLE_AI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CONFIG.MODEL: "gemini/gemini-2.0-flash"
