@@ -23,4 +23,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CONFIG.AI_PROVIDER: "google"
           GOOGLE_AI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          CONFIG.MODEL: "gemini/gemini-2.0-flash"
+          CONFIG.MODEL: "gemini/gemini-1.5-pro"
+          CONFIG.MAX_MODEL_TOKENS: "100000"
+          PR_REVIEWER.MAX_FILES_TO_ANALYZE: "30"
