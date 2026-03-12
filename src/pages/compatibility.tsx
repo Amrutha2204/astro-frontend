@@ -105,7 +105,12 @@ export default function CompatibilityPage() {
           () => {}
         );
       })
-      .catch(() => {});
+      .catch((e: unknown) => {
+        const msg = e instanceof Error ? e.message : "";
+        if (msg.includes("Cannot reach the server") || msg.includes("Network error")) {
+          showError(msg);
+        }
+      });
   }, [token]);
 
   const handlePartner1Change = (field: keyof PartnerFormData, value: string | number) => {

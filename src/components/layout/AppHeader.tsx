@@ -95,7 +95,7 @@ const AppHeader = () => {
           <div className={styles.currency}>
             <span className={styles.currencySymbol}>₹</span>
             <span className={styles.currencyAmount}>
-              {walletBalance === null ? "—" : walletBalance.toFixed(2)}
+              {walletBalance == null || typeof walletBalance !== "number" ? "—" : walletBalance.toFixed(2)}
             </span>
           </div>
         )}

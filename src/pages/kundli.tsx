@@ -46,14 +46,12 @@ export default function KundliPage() {
     if (!isValidJwtFormat(t)) {
       dispatch(clearToken());
       setTimeout(() => router.push("/auth/login"), REDIRECT_DELAY_MS);
-
-      // 🔥 Add this inside KundliPage component (above return)
-
       return;
     }
+    const tokenStr = t as string;
     try {
       setLoading(true);
-      const data = await astroApi.getMyKundli(t, undefined, chartSelection);
+      const data = await astroApi.getMyKundli(tokenStr, undefined, chartSelection);
       setKundli(data);
       setError(null);
     } catch (err) {
@@ -103,11 +101,12 @@ export default function KundliPage() {
       showError("Please log in to get a PDF report.");
       return;
     }
+    const tokenStr = t as string;
     setReportPaying(true);
     setReportDownload(null);
     try {
       await loadRazorpay();
-      const res = await paymentApi.createOrder(t, 99, "Kundli PDF Report");
+      const res = await paymentApi.createOrder(tokenStr, 99, "Kundli PDF Report");
       const w = window as any;
       if (!w.Razorpay) {
         showError("Payment gateway could not be loaded. Try again.");
@@ -122,8 +121,8 @@ export default function KundliPage() {
         description: "Kundli PDF Report — ₹99",
         handler: async (response: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) => {
           try {
-            await paymentApi.verify(t, response.razorpay_order_id, response.razorpay_payment_id, response.razorpay_signature);
-            const report = await reportsApi.purchaseOneTime(t, "kundli_summary");
+            await paymentApi.verify(tokenStr, response.razorpay_order_id, response.razorpay_payment_id, response.razorpay_signature);
+            const report = await reportsApi.purchaseOneTime(tokenStr, "kundli_summary");
             setReportDownload(report);
             showSuccess("Report ready! Download below.");
           } catch (e) {
@@ -217,7 +216,24 @@ export default function KundliPage() {
               <Loading text="Loading your chart..." variant="page" />
             )}
 
-            {kundli && (
+            {kundli && (() => {
+              const hasNoData = !(kundli.lagna || kundli.moonSign || kundli.sunSign);
+              if (hasNoData) {
+                return (
+                  <div className={styles.kundliContent}>
+                    <ErrorMessage
+                      message="Kundli data could not be loaded. This usually means your birth details are missing or the server could not calculate the chart. Please save your date of birth, birth time and birth place on the Birth Details page and try again."
+                    />
+                    <p style={{ marginTop: 12 }}>
+                      <a href="/birth-details" className={styles.link}>Go to Birth Details →</a>
+                    </p>
+                  </div>
+                );
+              }
+              return null;
+            })()}
+
+            {kundli && (kundli.lagna || kundli.moonSign || kundli.sunSign) && (
               <div className={styles.kundliContent}>
                 <div className={styles.kundliSection}>
                   <h2 className={styles.sectionTitle}>
