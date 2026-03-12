@@ -4,15 +4,19 @@ model = "gemini/gemini-1.5-pro"
 max_model_tokens = 100000
 
 [pr_reviewer]
-max_files_to_analyze = 30
+max_files_to_analyze = 30        # only 30 files per run
 num_code_suggestions = 3
 inline_code_comments = true
 
-[pr_description]
-publish_labels = true
-generate_ai_title = true
-
-[github_action_config]
-auto_review = true
-auto_describe = true
-auto_improve = false   # disable auto improve for large PRs
+[ignore]
+# Skip auto-generated or unimportant files
+glob_patterns = [
+    "*.lock",
+    "*.min.js",
+    "*.min.css",
+    "dist/**",
+    "build/**",
+    "node_modules/**",
+    "*.snap",
+    "*.test.*"
+]
