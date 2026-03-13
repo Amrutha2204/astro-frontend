@@ -47,18 +47,18 @@ function formatDate(dateStr: string | undefined) {
 }
 
 const planetImages: Record<string, string> = {
-  Sun: "/images/sun-transit.png",
-  Moon: "/images/moon-transit.jpg",
-  Mercury: "/images/mercury.jpg",
-  Venus: "/images/venus-transit.jpg",
-  Mars: "/images/mars-transit.jpg",
-  Jupiter: "/images/jupiter-transit.jpg",
-  Saturn: "/images/saturn-transit.jpg",
-  Uranus: "/images/uranus-transit.jpg",
-  Neptune: "/images/neptune-transit.jpg",
-  Pluto: "/images/pluto-transit.jpg",
-  Rahu: "/images/rahu-transit.jpg",
-  Ketu: "/images/ketu-transit.jpg",
+  Sun: "https://res.cloudinary.com/dmxmm7emu/image/upload/v1773319062/sun-transit_laedud.png",
+  Moon: "https://res.cloudinary.com/dmxmm7emu/image/upload/v1773319046/moon-transit_fiy8gj.jpg",
+  Mercury: "https://res.cloudinary.com/dmxmm7emu/image/upload/v1773319042/mercury_xvca9z.jpg",
+  Venus: "https://res.cloudinary.com/dmxmm7emu/image/upload/v1773318892/venus-transit_mhfkoy.jpg",
+  Mars: "https://res.cloudinary.com/dmxmm7emu/image/upload/v1773318878/mars-transit_ecotew.jpg",
+  Jupiter: "https://res.cloudinary.com/dmxmm7emu/image/upload/v1773318836/jupiter-transit_z90jz1.jpg",
+  Saturn: "https://res.cloudinary.com/dmxmm7emu/image/upload/v1773319053/saturn-transit_hh1usy.jpg",
+  Uranus: "https://res.cloudinary.com/dmxmm7emu/image/upload/v1773319062/uranus-transit_ddo89i.jpg",
+  Neptune: "https://res.cloudinary.com/dmxmm7emu/image/upload/v1773318831/neptune-transit_m3sgas.jpg",
+  Pluto: "https://res.cloudinary.com/dmxmm7emu/image/upload/v1773318832/pluto-transit_dw7fpx.jpg",
+  Rahu: "https://res.cloudinary.com/dmxmm7emu/image/upload/v1773319053/rahu-transit_cyzale.jpg",
+  Ketu: "https://res.cloudinary.com/dmxmm7emu/image/upload/v1773319041/ketu-transit_gplyfh.jpg",
 };
 
 export default function TransitsPage() {

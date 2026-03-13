@@ -316,7 +316,7 @@ const [place, setPlace] = useState<string>(
                           <div className={cal.timesCard}>
                             <div className={cal.timesCardImage}>
                               <img
-                                src="/images/calendar/sunrise/sunrise.jpg"
+                                src="https://res.cloudinary.com/dmxmm7emu/image/upload/v1773319718/sunrise_kw5rub.jpg"
                                 alt="Sunrise"
                                 onError={(e) => {
                                   e.currentTarget.style.display = 'none';
@@ -337,7 +337,7 @@ const [place, setPlace] = useState<string>(
                           <div className={cal.timesCard}>
                             <div className={cal.timesCardImage}>
                               <img
-                                src="/images/calendar/moonrise/moonrise.jpg"
+                                src="https://res.cloudinary.com/dmxmm7emu/image/upload/v1773319343/moonrise_azuvh4.jpg"
                                 alt="Moonrise"
                                 onError={(e) => {
                                   e.currentTarget.style.display = 'none';

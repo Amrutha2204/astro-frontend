@@ -24,11 +24,11 @@ export default function RemediesPage() {
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 
   const remedyCategories = [
-    { id: 'gemstone', name: 'Gemstones', emoji: '💎', color: '#9333ea', image: '/images/remedies/gemstone-card.jpg' },
-    { id: 'mantra', name: 'Mantras', emoji: '🕉️', color: '#3b82f6', image: '/images/remedies/mantra-card.jpg' },
-    { id: 'ritual', name: 'Rituals', emoji: '🕯️', color: '#ec4899', image: '/images/remedies/ritual-card.jpg' },
-    { id: 'donation', name: 'Donations', emoji: '🙏', color: '#f59e0b', image: '/images/remedies/donation-card.jpg' },
-    { id: 'fasting', name: 'Fasting', emoji: '🌙', color: '#10b981', image: '/images/remedies/fasting-card.jpg' },
+    { id: 'gemstone', name: 'Gemstones', emoji: '💎', color: '#9333ea', image: 'https://res.cloudinary.com/dmxmm7emu/image/upload/v1773319764/gemstone-card_mhfefz.jpg' },
+    { id: 'mantra', name: 'Mantras', emoji: '🕉️', color: '#3b82f6', image: 'https://res.cloudinary.com/dmxmm7emu/image/upload/v1773319765/mantra-card_rlzlef.jpg' },
+    { id: 'ritual', name: 'Rituals', emoji: '🕯️', color: '#ec4899', image: 'https://res.cloudinary.com/dmxmm7emu/image/upload/v1773319765/ritual-card_geae4r.jpg' },
+    { id: 'donation', name: 'Donations', emoji: '🙏', color: '#f59e0b', image: 'https://res.cloudinary.com/dmxmm7emu/image/upload/v1773319763/donation-card_fpyp3d.jpg' },
+    { id: 'fasting', name: 'Fasting', emoji: '🌙', color: '#10b981', image: 'https://res.cloudinary.com/dmxmm7emu/image/upload/v1773319764/fasting-card_arkw78.jpg' },
   ];
 
   const getRemedyIcon = (type: string) => {

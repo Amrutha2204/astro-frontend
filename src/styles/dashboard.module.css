@@ -681,23 +681,23 @@
 }
 
 .lagnaBg {
-  background-image: url("/images/lagna-bg2.jpg");
+  background-image: url("https://res.cloudinary.com/dmxmm7emu/image/upload/v1773319041/lagna-bg2_nw2j9b.jpg");
 }
 
 .moonBg {
-  background-image: url("/images/moon-bg3.jpg");
+  background-image: url("https://res.cloudinary.com/dmxmm7emu/image/upload/v1773318878/moon-bg3_ldnu8j.jpg");
 }
 
 .sunBg {
-  background-image: url("/images/sun-bg2.jpg");
+  background-image: url("https://res.cloudinary.com/dmxmm7emu/image/upload/v1773318832/sun-bg2_qootgt.jpg");
 }
 
 .nakshatraBg {
-  background-image: url("/images/nakshatra-bg.jpg");
+  background-image: url("https://res.cloudinary.com/dmxmm7emu/image/upload/v1773318879/nakshatra-bg_tiflyk.jpg");
 }
 
 .padaBg {
-  background-image: url("/images/pada-bg3.jpg");
+  background-image: url("https://res.cloudinary.com/dmxmm7emu/image/upload/v1773318886/pada-bg3_bs8jtx.jpg");
 }
 
 .infoLabel {
