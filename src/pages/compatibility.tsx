@@ -40,7 +40,7 @@ export default function CompatibilityPage() {
   const [calculationType, setCalculationType] = useState<'guna-milan' | 'marriage'>('guna-milan');
   const [gunaMilanResult, setGunaMilanResult] = useState<GunaMilanResponse | null>(null);
   const [marriageResult, setMarriageResult] = useState<MarriageCompatibilityResponse | null>(null);
-  const [unlocked, setUnlocked] = useState(false);
+  const [reportUnlocked, setReportUnlocked] = useState(false);
   const [leadEmail, setLeadEmail] = useState("");
   const [unlockLoading, setUnlockLoading] = useState(false);
   const [unknownTime1, setUnknownTime1] = useState(false);
@@ -100,10 +100,18 @@ export default function CompatibilityPage() {
           longitude: 77.209,
         });
         setPartner1Prefilled(true);
-        astroApi.getGeocode(birthPlace).then(
-          (res) => setPartner1((prev) => ({ ...prev, latitude: res.lat, longitude: res.lng })),
-          () => {}
-        );
+        astroApi.getGeocode(birthPlace)
+  .then((res) =>
+    setPartner1((prev) => ({
+      ...prev,
+      latitude: res.lat,
+      longitude: res.lng
+    }))
+  )
+  .catch((err) => {
+    console.error("Geocode lookup failed for Partner 1:", err);
+    showWarning("Could not detect coordinates for this location. Using default coordinates.");
+  });
       })
       .catch((e: unknown) => {
         const msg = e instanceof Error ? e.message : "";
@@ -119,10 +127,18 @@ export default function CompatibilityPage() {
       updated.latitude = 28.6139;
       updated.longitude = 77.209;
       setPartner1(updated);
-      astroApi.getGeocode(value).then(
-        (res) => setPartner1((prev) => ({ ...prev, latitude: res.lat, longitude: res.lng })),
-        () => {}
-      );
+      astroApi.getGeocode(value)
+  .then((res) =>
+    setPartner1((prev) => ({
+      ...prev,
+      latitude: res.lat,
+      longitude: res.lng
+    }))
+  )
+  .catch((err) => {
+    console.error("Geocode lookup failed for Partner 1:", err);
+    showWarning("Location could not be resolved. Default coordinates will be used.");
+  });
       return;
     }
     setPartner1(updated);
@@ -134,10 +150,18 @@ export default function CompatibilityPage() {
       updated.latitude = 28.6139;
       updated.longitude = 77.209;
       setPartner2(updated);
-      astroApi.getGeocode(value).then(
-        (res) => setPartner2((prev) => ({ ...prev, latitude: res.lat, longitude: res.lng })),
-        () => {}
-      );
+      astroApi.getGeocode(value)
+  .then((res) =>
+    setPartner2((prev) => ({
+      ...prev,
+      latitude: res.lat,
+      longitude: res.lng
+    }))
+  )
+  .catch((err) => {
+    console.error("Geocode lookup failed for Partner 2:", err);
+    showWarning("Location could not be resolved. Default coordinates will be used.");
+  });
       return;
     }
     setPartner2(updated);
@@ -180,7 +204,7 @@ export default function CompatibilityPage() {
       setGunaMilanResult(result);
       setMarriageResult(null);
       setReportDownload(null);
-      setUnlocked(!!useAuth);
+      setReportUnlocked(!!useAuth);
       showSuccess("Guna Milan calculated successfully!");
     } catch (err) {
       const error = err as { message?: string };
@@ -203,7 +227,7 @@ export default function CompatibilityPage() {
       setMarriageResult(result);
       setGunaMilanResult(null);
       setReportDownload(null);
-      setUnlocked(!!useAuth);
+      setReportUnlocked(!!useAuth);
       showSuccess("Marriage compatibility calculated successfully!");
     } catch (err) {
       const error = err as { message?: string };
@@ -230,20 +254,25 @@ export default function CompatibilityPage() {
   };
 
   const handleUnlock = () => {
-    const email = leadEmail.trim();
-    if (!email) {
-      showError("Please enter your email to unlock the full report.");
-      return;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      showError("Please enter a valid email address.");
-      return;
-    }
-    setUnlockLoading(true);
-    setUnlocked(true);
+  const email = leadEmail.trim();
+  if (!email) {
+    showError("Please enter your email to unlock the full report.");
+    return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showError("Please enter a valid email address.");
+    return;
+  }
+
+  setUnlockLoading(true);
+
+  // Simulate async unlock for frontend-only role
+  setTimeout(() => {
+    setReportUnlocked(true); // ONLY now show sensitive content
     setUnlockLoading(false);
-    showSuccess("Full report unlocked.");
-  };
+    showSuccess("Full report unlocked!");
+  }, 800); // optional small delay for UX
+};
 
   const loadRazorpay = (): Promise<void> => {
     if (typeof window === "undefined") return Promise.reject(new Error("No window"));
@@ -363,7 +392,7 @@ export default function CompatibilityPage() {
                     setCalculationType('guna-milan');
                     setGunaMilanResult(null);
                     setMarriageResult(null);
-                    setUnlocked(false);
+                    setReportUnlocked(false);
                     setUnknownTime1(false);
                     setUnknownTime2(false);
                   }}
@@ -376,7 +405,7 @@ export default function CompatibilityPage() {
                     setCalculationType('marriage');
                     setGunaMilanResult(null);
                     setMarriageResult(null);
-                    setUnlocked(false);
+                    setReportUnlocked(false);
                     setUnknownTime1(false);
                     setUnknownTime2(false);
                   }}
@@ -454,7 +483,7 @@ export default function CompatibilityPage() {
                       </div>
                     </div>
                     <div className={styles.inputGroup}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 4 }}>
+                      <div className={styles.birthTimeContainer}>
                         <label style={{ marginBottom: 0 }}>Birth Time (Optional)</label>
                         <button
                           type="button"
@@ -603,8 +632,7 @@ export default function CompatibilityPage() {
                 <button
                   onClick={calculationType === 'guna-milan' ? calculateGunaMilan : calculateMarriage}
                   disabled={loading}
-                  className={styles.loginButton}
-                  style={{ maxWidth: '400px', margin: '0 auto' }}
+                  className={'{styles.loginButton} ${styles.calculateButtonBtn}'}
                 >
                   {loading ? 'Calculating...' : `Calculate ${calculationType === 'guna-milan' ? 'Guna Milan' : 'Marriage Compatibility'}`}
                 </button>
@@ -718,7 +746,7 @@ export default function CompatibilityPage() {
         {gunaMilanResult?.gunas[selectedGunaIndex].description}
       </p>
 
-      <div style={{display:"flex",justifyContent:"space-between",marginTop:20}}>
+      <div className={styles.gunaDetailNav}>
         
         <button
           disabled={selectedGunaIndex === 0}
@@ -760,7 +788,7 @@ export default function CompatibilityPage() {
                     )}
                   </div>
                 )}
-                {!unlocked && (
+                {!reportUnlocked && (
                   <div className={styles.leadGate}>
                     <h3 className={styles.cardTitle}>Unlock full report</h3>
                     <p className={styles.leadGateText}>See detailed guna-wise breakdown and descriptions.</p>
@@ -794,10 +822,10 @@ export default function CompatibilityPage() {
                 <div className={styles.gunaMilanSummary}>
                   <div className={styles.gunaMilanCard}>
                     <h3 className={styles.cardTitle}>Guna Milan Score</h3>
-                    <p className={styles.cardValue} style={{ fontSize: '2rem' }}>
+                    <p className={`${styles.cardValue} ${styles.cardValueLarge}`}>
                       {marriageResult.gunaMilan.totalScore} / {marriageResult.gunaMilan.maxScore}
                     </p>
-                    <p className={styles.cardSubtext} style={{ fontSize: '1.25rem', fontWeight: 'bold', color: getVerdictColor(marriageResult.gunaMilan.verdict) }}>
+                    <p className={`${styles.cardSubtext} ${styles.cardSubtextLarge}`} style={{ color: getVerdictColor(marriageResult.gunaMilan.verdict) }}>
                       {marriageResult.gunaMilan.percentage}% - {marriageResult.gunaMilan.verdict}
                     </p>
                   </div>
@@ -822,7 +850,7 @@ export default function CompatibilityPage() {
                     )}
                   </div>
                 )}
-                {!unlocked && (
+                {!reportUnlocked && (
                   <div className={styles.leadGate}>
                     <h3 className={styles.cardTitle}>Unlock full report</h3>
                     <p className={styles.leadGateText}>See doshas (Manglik, Nadi, Bhakoot), strengths, challenges, remedies and overall verdict.</p>
@@ -841,7 +869,7 @@ export default function CompatibilityPage() {
                     <p className={styles.leadGatePrivacy}>We use your email only to send this report. No spam.</p>
                   </div>
                 )}
-                {unlocked && (
+                {reportUnlocked && (
                   <>
                 <div className={styles.doshaCompatibility}>
                   <h3 className={styles.cardTitle}>Dosha Compatibility</h3>

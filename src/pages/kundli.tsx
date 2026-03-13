@@ -13,6 +13,13 @@ import styles from "@/styles/dashboard.module.css";
 import ErrorMessage from "@/components/ui/ErrorMessage";
 import Loading from "@/components/ui/Loading";
 
+type PlanetPosition = {
+  planet: string;
+  sign: string;
+  degree?: number;
+  retrograde?: boolean;
+};
+
 const REDIRECT_DELAY_MS = 2000;
 
 export default function KundliPage() {
@@ -162,28 +169,46 @@ export default function KundliPage() {
   }
 
   const renderHouseBox = (houseNumber: number) => {
-    if (!kundli?.planetaryPositions) return null;
+  if (!kundli?.planetaryPositions || !Array.isArray(kundli.planetaryPositions)) {
+    return null;
+  }
 
-    const planetsInHouse = kundli.planetaryPositions.filter((p: any) => {
-      const house = getHouseFromSign(p.sign, kundli.lagna);
-      return house === houseNumber;
-    });
+  const planetsInHouse = kundli.planetaryPositions.filter((planet: PlanetPosition) => {
+    if (!planet?.sign || !kundli?.lagna) return false;
 
-    return (
-      <div className={styles.house}>
-        <div className={styles.houseNumber}>{houseNumber}</div>
+    const house = getHouseFromSign(planet.sign, kundli.lagna);
+    return house === houseNumber;
+  });
 
-        <div className={styles.houseContent}>
-          {planetsInHouse.map((p: any, i: number) => (
-            <div key={i} className={styles.planetText}>
-              {p.planet.slice(0, 2)} {p.degree != null ? p.degree.toFixed(0) + "°" : ""}
-              {p.retrograde ? " *" : ""}
+  return (
+    <div className={styles.house}>
+      <div className={styles.houseNumber}>{houseNumber}</div>
+
+      <div className={styles.houseContent}>
+        {planetsInHouse.map((planet: PlanetPosition, index: number) => {
+          if (!planet?.planet) return null;
+
+          const shortName = planet.planet.slice(0, 2);
+          const degreeText =
+            planet.degree !== undefined && planet.degree !== null
+              ? `${planet.degree.toFixed(0)}°`
+              : "";
+          const retrogradeMark = planet.retrograde ? " *" : "";
+
+          return (
+            <div
+              key={`${planet.planet}-${houseNumber}-${index}`}
+              className={styles.planetText}
+            >
+              {shortName} {degreeText}
+              {retrogradeMark}
             </div>
-          ))}
-        </div>
+          );
+        })}
       </div>
-    );
-  };
+    </div>
+  );
+};
 
   return (
     <div className={styles.dashboardContainer}>

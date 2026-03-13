@@ -466,14 +466,16 @@ export default function GuestKundliPage() {
             {!unknownTime && (
               <>
                 <TimePickerField
-                  value={birthTime}
-                  onChange={setBirthTime}
-                  placeholder="--:--"
-                  step={1}
-                  required
-                  aria-label="Birth time"
-                />
-                <p className={formStyles.hint}>Use hours and minutes; add seconds if known for better accuracy.</p>
+  value={birthTime}
+  onChange={setBirthTime}
+  placeholder="--:--:--"
+  step={1}
+  required
+  aria-label="Birth time"
+/>
+<p className={formStyles.hint}>
+  Enter birth time (HH:MM:SS). Seconds are optional but improve accuracy.
+</p>
               </>
             )}
             {unknownTime && (

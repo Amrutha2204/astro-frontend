@@ -9,7 +9,7 @@ import PlaceAutocomplete from "@/components/ui/PlaceAutocomplete";
 import styles from "@/styles/dashboard.module.css";
 import formStyles from "@/styles/birthDetails.module.css";
 import cal from "@/styles/calendar.module.css";
-
+import { showError } from "@/utils/toast";
 import {
   astroApi,
   GuestCalendarResponse,
@@ -122,7 +122,7 @@ const [place, setPlace] = useState<string>(
 
   const fetchMuhurat = async () => {
     if (!place) {
-  alert("Please enter birth place");
+  showError("Please enter birth place");
   return;
 }
     try {

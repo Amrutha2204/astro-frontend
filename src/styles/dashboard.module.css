@@ -1421,6 +1421,17 @@
 .calculateButton {
   text-align: center;
   margin-top: 20px;
+  background: #6b4423;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  width: 100%;
+
 }
 
 /* Compatibility Results Styles */
@@ -3898,4 +3909,39 @@ line-height:1.5;
   background:none;
   font-size:20px;
   cursor:pointer;
+}
+
+.calculateButtonBtn {
+  margin-top: 20px;
+  padding: 12px 24px;
+  background: #6b4423;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.birthTimeContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.gunaDetailNav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.cardValueLarge {
+  font-size: 2rem;
+}
+
+.cardSubtextLarge {
+  font-size: 1.25rem;
+  font-weight: bold;
 }
