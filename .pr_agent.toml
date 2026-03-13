@@ -1,0 +1,20 @@
+[config]
+model = "gemini/gemini-2.5-flash"
+fallback_models = ["gemini/gemini-2.5-flash-lite"]
+
+[pr_reviewer]
+max_files_to_analyze = 30
+num_code_suggestions = 3
+inline_code_comments = true
+
+[ignore]
+glob_patterns = [
+    "*.lock",
+    "*.min.js",
+    "*.min.css",
+    "dist/**",
+    "build/**",
+    "node_modules/**",
+    "*.snap",
+    "*.test.*"
+]
