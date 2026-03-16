@@ -117,9 +117,9 @@ export default function NatalChartPage() {
   </p>
 
   {natalChart.sunSign && (
-    <p style={{ marginTop: "8px", opacity: 0.85 }}>
-      {sunSignMeaning[natalChart.sunSign] || ""}
-    </p>
+    <p className="mt-2 opacity-85">
+  {sunSignMeaning[natalChart.sunSign] || ""}
+</p>
   )}
 </div>
                   <div className={styles.infoCard}>
@@ -133,7 +133,7 @@ export default function NatalChartPage() {
                 </div>
 
                 {natalChart.planetSignList && natalChart.planetSignList.length > 0 && (
-                  <div style={{ marginTop: "30px" }}>
+                  <div className="mt-8">
                     <h2 className={styles.sectionTitle}>Planetary Positions</h2>
                     <div className={styles.planetsGrid}>
                       {natalChart.planetSignList.map((planet: any, index: number) => (

@@ -43,7 +43,6 @@ if (horoscopeType === "daily") {
 }
 
 setHoroscope(data);
-      setHoroscope(data);
       setError(null);
     } catch (err) {
       const e = err as { message?: string };
@@ -121,22 +120,20 @@ setHoroscope(data);
               </div>
             ) : horoscope ? (
               <>
-                <p className={styles.dailyPredictionsSubtitle} style={{ marginTop: 12, marginBottom: 0 }}>
+                <p className={`${styles.dailyPredictionsSubtitle} mt-3 mb-0`}>
                   Based on your chart and current transits
                 </p>
                 <div className={styles.todayHeroCard}>
                   <div
-                    className={styles.todayHeroAccent}
-                    style={{
-                      background:
-                        horoscope.dayType === "Good"
-                          ? "linear-gradient(180deg, #4ade80, #22c55e)"
-                          : horoscope.dayType === "Challenging"
-                            ? "linear-gradient(180deg, #fb923c, #ef4444)"
-                            : "linear-gradient(180deg, #a8b3c0, #64748b)",
-                    }}
-                    aria-hidden
-                  />
+  className={`${styles.todayHeroAccent} ${
+    horoscope.dayType === "Good"
+      ? "bg-gradient-to-b from-green-400 to-green-500"
+      : horoscope.dayType === "Challenging"
+        ? "bg-gradient-to-b from-orange-400 to-red-500"
+        : "bg-gradient-to-b from-slate-400 to-slate-500"
+  }`}
+  aria-hidden
+/>
                   <div className={styles.todayHeroBody}>
                     <div className={styles.todayHeroHeader}>
                       <span className={styles.todayHeroDate}>

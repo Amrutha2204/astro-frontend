@@ -22,19 +22,39 @@
   gap: 15px;
 }
 
-.closeButton {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: none;
-  width: 24px;
-  height: 24px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
+.closeButton{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:none;
+  cursor:pointer;
+  font-size:20px;
+  flex-shrink:0;
+  color:#fff;
+}
+
+.remedyDetailSection{
+  margin-top:8px;
+  padding-top:16px;
+  border-top:1px solid rgba(107,68,35,0.1);
+}
+
+.remedyDetailHeading{
+  font-size:12px;
+  font-weight:600;
+  color:#6b4423;
+  margin-bottom:8px;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+}
+
+.remedyDetailText{
+  font-size:14px;
+  color:#4b5563;
+  line-height:1.6;
 }
 
 .closeButton:hover {
@@ -3944,4 +3964,57 @@ line-height:1.5;
 .cardSubtextLarge {
   font-size: 1.25rem;
   font-weight: bold;
+}
+
+/* Admin Layout Helpers */
+
+.adminFlexRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.adminFlexRowSmall {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.adminNoMargin {
+  margin-bottom: 0;
+}
+
+.adminToggleWrap {
+  margin-bottom: 16px;
+}
+
+.adminCheckboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.adminColumnGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.adminLabelText {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.adminTextarea {
+  width: 100%;
+  max-width: 600px;
+}
+
+.remedyDescription{
+  color:#6b7280;
+  margin-bottom:30px;
 }

@@ -492,7 +492,7 @@ const [showSubscribeModal, setShowSubscribeModal] = useState(false);
                       <p><strong>Reason:</strong> {selectedMemberData.dailyHoroscope.reason}</p>
                     </div>
                   ) : (
-                    <p className={styles.modalBody} style={{ marginBottom: 0 }}>No horoscope available.</p>
+                    <p className={'${styles.modalBody} mb-0'}>No horoscope available.</p>
                   )}
                 </div>
               </div>

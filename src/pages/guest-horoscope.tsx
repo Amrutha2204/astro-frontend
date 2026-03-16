@@ -87,7 +87,7 @@ export default function GuestHoroscopePage() {
                 </div>
                 <div className={styles.sevenDayPreviewCta}>
                   <p>Sign up or log in to see your personalized week ahead</p>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "center" }}>
+                  <div className="flex flex-col gap-2 items-center">
                     <button type="button" onClick={() => router.push("/auth/register")}>
                       Sign up free
                     </button>

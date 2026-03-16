@@ -217,9 +217,11 @@ export default function KundliPage() {
         <AppSidebar />
         <main className={styles.mainContent}>
           <div className={styles.kundliContainer}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12, marginBottom: 16 }}>
+            <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
               <h1 className={styles.pageTitle}>My Kundli</h1>
-              <label className={styles.infoLabel} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <label
+  className={`${styles.infoLabel} flex items-center gap-2`}
+>
                 <span>Chart:</span>
                 <select
                   value={chartSelection}
@@ -249,7 +251,7 @@ export default function KundliPage() {
                     <ErrorMessage
                       message="Kundli data could not be loaded. This usually means your birth details are missing or the server could not calculate the chart. Please save your date of birth, birth time and birth place on the Birth Details page and try again."
                     />
-                    <p style={{ marginTop: 12 }}>
+                    <p className="mt-3">
                       <a href="/birth-details" className={styles.link}>Go to Birth Details →</a>
                     </p>
                   </div>

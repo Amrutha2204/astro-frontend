@@ -133,7 +133,8 @@ export default function DoshaPage() {
                 <div className={styles.doshaSummary}>
                   <div className={styles.doshaSummaryCard}>
                     <h3 className={styles.cardTitle}>Total Doshas</h3>
-                    <p className={styles.cardValue} style={{ fontSize: '2.5rem', color: dosha.totalDoshas > 0 ? totalNonZeroColor : totalZeroColor }}>
+                    <p className={'${styles.cardValue} text-4x1'}
+                       style={{color: dosha.totalDoshas > 0 ? totalNonZeroColor : totalZeroColor }}>
                       {dosha.totalDoshas}
                     </p>
                     <p className={styles.cardSubtext}>
@@ -145,20 +146,13 @@ export default function DoshaPage() {
                 {dosha.totalDoshas > 0 ? (
                   <div className={styles.infoGrid}>
                     {dosha.manglik.hasDosha && (
-                      <div className={styles.doshaCard} style={{ borderLeft: `4px solid ${getSeverityColor(dosha.manglik.severity)}` }}>
-                        <div className={styles.doshaHeader}>
+                      <div className={'${styles.doshaCard} border-1-4'}
+                      style={{ borderColor: getSeverityColor(dosha.manglik.severity) }}>                        <div className={styles.doshaHeader}>
                           <h3 className={styles.cardTitle}>Manglik Dosha</h3>
                           <span
-                            className={styles.doshaBadge}
-                            style={{
-                              background: getSeverityColor(dosha.manglik.severity),
-                              color: 'white',
-                              padding: '4px 12px',
-                              borderRadius: '12px',
-                              fontSize: '0.875rem',
-                              fontWeight: '600'
-                            }}
-                          >
+  className={`${styles.doshaBadge} text-white px-3 py-1 rounded-full text-sm font-semibold`}
+  style={{ background: getSeverityColor(dosha.manglik.severity) }}
+>
                             {dosha.manglik.severity || 'Present'}
                           </span>
                         </div>
@@ -166,19 +160,15 @@ export default function DoshaPage() {
                       </div>
                     )}
                     {dosha.nadi.hasDosha && (
-                      <div className={styles.doshaCard} style={{ borderLeft: `4px solid ${presentColor}` }}>
+                      <div
+  className={`${styles.doshaCard} border-l-4`}
+  style={{ borderColor: presentColor }}
+>
                         <div className={styles.doshaHeader}>
                           <h3 className={styles.cardTitle}>Nadi Dosha</h3>
                           <span
-                            className={styles.doshaBadge}
-                            style={{
-                              background: presentColor,
-                              color: 'white',
-                              padding: '4px 12px',
-                              borderRadius: '12px',
-                              fontSize: '0.875rem',
-                              fontWeight: '600'
-                            }}
+                            className={`${styles.doshaBadge} text-white px-3 py-1 rounded-full text-sm font-semibold`}
+style={{ background: presentColor }}
                           >
                             Present
                           </span>
@@ -187,20 +177,16 @@ export default function DoshaPage() {
                       </div>
                     )}
                     {dosha.bhakoot.hasDosha && (
-                      <div className={styles.doshaCard} style={{ borderLeft: `4px solid ${presentColor}` }}>
+                      <div
+  className={`${styles.doshaCard} border-l-4`}
+  style={{ borderColor: presentColor }}
+>
                         <div className={styles.doshaHeader}>
                           <h3 className={styles.cardTitle}>Bhakoot Dosha</h3>
-                          <span
-                            className={styles.doshaBadge}
-                            style={{
-                              background: presentColor,
-                              color: 'white',
-                              padding: '4px 12px',
-                              borderRadius: '12px',
-                              fontSize: '0.875rem',
-                              fontWeight: '600'
-                            }}
-                          >
+                         <span
+  className={`${styles.doshaBadge} text-white px-3 py-1 rounded-full text-sm font-semibold`}
+  style={{ background: presentColor }}
+>
                             Present
                           </span>
                         </div>
@@ -209,7 +195,9 @@ export default function DoshaPage() {
                     )}
                   </div>
                 ) : (
-                  <p className={styles.cardSubtext} style={{ marginTop: '1rem' }}>No doshas detected. All checked parameters (Manglik, Nadi, Bhakoot) are clear.</p>
+                  <p className={styles.cardSubtext}>
+                    No doshas detected. All checked parameters (Manglik, Nadi, Bhakoot) are clear.
+                  </p>
                 )}
                 <CalculationInfo showDasha={false} showAyanamsa={true} />
                 <TrustNote variant="loggedIn" />

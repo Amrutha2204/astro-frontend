@@ -589,7 +589,7 @@ export default function CompatibilityPage() {
                       </div>
                     </div>
                     <div className={styles.inputGroup}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 4 }}>
+                      <div className="flex items-center gap-2 flex-wrap mb-1">
                         <label style={{ marginBottom: 0 }}>Birth Time (Optional)</label>
                         <button
                           type="button"
@@ -632,7 +632,7 @@ export default function CompatibilityPage() {
                 <button
                   onClick={calculationType === 'guna-milan' ? calculateGunaMilan : calculateMarriage}
                   disabled={loading}
-                  className={'{styles.loginButton} ${styles.calculateButtonBtn}'}
+                  className={`${styles.loginButton} ${styles.calculateButtonBtn}`}
                 >
                   {loading ? 'Calculating...' : `Calculate ${calculationType === 'guna-milan' ? 'Guna Milan' : 'Marriage Compatibility'}`}
                 </button>
@@ -731,13 +731,13 @@ export default function CompatibilityPage() {
 
       <h2>{gunaMilanResult?.gunas[selectedGunaIndex].name}</h2>
 
-      <p style={{fontWeight:"bold"}}>
+      <p className="font-bold">
         Score: {gunaMilanResult?.gunas[selectedGunaIndex].score}/
         {gunaMilanResult?.gunas[selectedGunaIndex].maxScore}
       </p>
 
       {gunaMilanResult?.gunas[selectedGunaIndex].parameterMeaning && (
-        <p className={styles.cardDescription} style={{ marginBottom: 12 }}>
+        <p className={`${styles.cardDescription} mb-3`}>
           {gunaMilanResult.gunas[selectedGunaIndex].parameterMeaning}
         </p>
       )}
@@ -907,7 +907,7 @@ export default function CompatibilityPage() {
 
                 {marriageResult.strengths.length > 0 && (
                   <div className={styles.strengthsChallenges}>
-                    <h3 className={styles.cardTitle} style={{ color: '#10b981' }}>Strengths</h3>
+                    <h3 className={`${styles.cardTitle} text-green-500`}>Strengths</h3>
                     <ul className={styles.strengthsList}>
                       {marriageResult.strengths.map((strength, index) => (
                         <li key={index}>{strength}</li>
@@ -917,7 +917,7 @@ export default function CompatibilityPage() {
                 )}
                 {marriageResult.challenges.length > 0 && (
                   <div className={styles.strengthsChallenges}>
-                    <h3 className={styles.cardTitle} style={{ color: '#dc2626' }}>Challenges</h3>
+                    <h3 className={`${styles.cardTitle} text-red-500`}>Challenges</h3>
                     <ul className={styles.challengesList}>
                       {marriageResult.challenges.map((challenge, index) => (
                         <li key={index}>{challenge}</li>

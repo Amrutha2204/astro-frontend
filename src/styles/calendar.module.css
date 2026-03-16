@@ -613,3 +613,18 @@
     transform: translateY(0);
   }
 }
+
+.locationInputWrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.inlineLabel {
+  margin-bottom: 0;
+}
+
+.sourceText {
+  margin-top: 16px;
+  font-size: 12px;
+  color: #6b7280;
+}

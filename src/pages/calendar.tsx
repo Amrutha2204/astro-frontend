@@ -230,7 +230,7 @@ const [place, setPlace] = useState<string>(
             <div className={cal.wrapper}>
             <div className={cal.locationCard}>
               <div className={cal.locationIcon} aria-hidden>📍</div>
-              <div style={{ flex: 1, minWidth: 0 }}>
+              <div className={cal.locationInputWrap}>
                 <div className={cal.locationLabel}>Birth place</div>
                 {storedUser?.birthPlace ? (
                   <div className={cal.locationValue}>{place}</div>
@@ -435,7 +435,7 @@ const [place, setPlace] = useState<string>(
             {activeTab === "muhurat" && (
               <>
                 <div className={cal.filterBar}>
-                  <label style={{ marginBottom: 0 }}>Date</label>
+                  <label className={cal.inlineLabel}>Date</label>
                   <input
                     type="date"
                     className="formDateInput formDateInputInline"
@@ -475,7 +475,7 @@ const [place, setPlace] = useState<string>(
             {activeTab === "auspicious" && (
               <>
                 <div className={cal.filterBar}>
-                  <label style={{ marginBottom: 0 }}>Date</label>
+                  <label className={cal.inlineLabel}>Date</label>
                   <input
                     type="date"
                     className="formDateInput formDateInputInline"
@@ -517,7 +517,7 @@ const [place, setPlace] = useState<string>(
             {activeTab === "rahu" && (
               <>
                 <div className={cal.filterBar}>
-                  <label style={{ marginBottom: 0 }}>Date</label>
+                  <label className={cal.inlineLabel}>Date</label>
                   <input
                     type="date"
                     className="formDateInput formDateInputInline"
@@ -525,7 +525,7 @@ const [place, setPlace] = useState<string>(
                     onChange={(e) => setRahuDate(e.target.value)}
                     aria-label="Date"
                   />
-                  <label style={{ marginBottom: 0 }}>Birth place</label>
+                  <label className={cal.inlineLabel}>Birth place</label>
                   <PlaceAutocomplete
                     value={place}
                     onChange={setPlace}
@@ -574,7 +574,7 @@ const [place, setPlace] = useState<string>(
                       )}
                     </div>
                     {rahuData.source && (
-                      <p style={{ marginTop: 16, fontSize: 12, color: "#6b7280" }}>Source: {rahuData.source}</p>
+                      <p className={cal.sourceText}>Source: {rahuData.source}</p>
                     )}
                   </div>
                 )}

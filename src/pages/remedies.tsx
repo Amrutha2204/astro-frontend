@@ -158,7 +158,7 @@ export default function RemediesPage() {
               disableRefresh={loading}
             />
             <h1 className={styles.sectionTitle}>Astrological Remedies</h1>
-            <p style={{ color: '#6b7280', marginBottom: '30px' }}>
+            <p className={styles.remedyDescription}>
               Personalized remedies based on your birth chart details to enhance positive energies and mitigate challenges.
             </p>
             {error && <ErrorMessage message={error} />}
@@ -273,24 +273,11 @@ export default function RemediesPage() {
                             {selectedRemedy.emoji} {selectedRemedy.name}
                           </h3>
                           <button
-                            className={styles.closeButton}
-                            onClick={() => setSelectedRemedy(null)}
-                            aria-label="Close details"
-                            style={{
-                              background: getRemedyColor(selectedRemedy.type),
-                              width: '40px',
-                              height: '40px',
-                              borderRadius: '50%',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              border: 'none',
-                              cursor: 'pointer',
-                              fontSize: '20px',
-                              flexShrink: 0,
-                              color: '#fff'
-                            }}
-                          >
+  className={styles.closeButton}
+  onClick={() => setSelectedRemedy(null)}
+  aria-label="Close details"
+  style={{ background: getRemedyColor(selectedRemedy.type) }}
+>
                             ✕
                           </button>
                         </div>
@@ -345,11 +332,11 @@ export default function RemediesPage() {
                           )}
 
                           {selectedRemedy.type === 'gemstone' && selectedRemedy.descriptions && (
-                            <div style={{ marginTop: '8px', paddingTop: '16px', borderTop: '1px solid rgba(107, 68, 35, 0.1)' }}>
-                              <p style={{ fontSize: '12px', fontWeight: '600', color: '#6b4423', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                            <div className={styles.remedyDetailSection}>
+                              <p className={styles.remedyDetailHeading}>
                                 💎 Gemstone Properties
                               </p>
-                              <p style={{ fontSize: '14px', color: '#4b5563', lineHeight: '1.6' }}>
+                              <p className={styles.remedyDetailText}>
                                 {selectedRemedy.descriptions}
                               </p>
                             </div>

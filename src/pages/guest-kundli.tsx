@@ -240,13 +240,15 @@ export default function GuestKundliPage() {
               Enter different details
             </button>
             <div className={dStyles.kundliContainer}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12, marginBottom: 16 }}>
+              <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
                 <h1 className={dStyles.pageTitle}>
                   {b.name
                     ? `Kundli for ${b.name}${b.gender ? ` (${b.gender === "male" ? "Male" : "Female"})` : ""}`
                     : "Your Kundli"}
                 </h1>
-                <label className={dStyles.infoLabel} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <label
+  className={`${dStyles.infoLabel} flex items-center gap-2`}
+>
                   <span>Chart:</span>
                   <select
                     value={currentChartSelection}
@@ -331,21 +333,24 @@ export default function GuestKundliPage() {
                   <div className={dStyles.kundliSection}>
                     <h2 className={dStyles.sectionTitle}>Planet positions</h2>
                     <p className={dStyles.chartLegend}>* = retrograde</p>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "12px", marginTop: "16px" }}>
+                    <div className="grid gap-3 mt-4 [grid-template-columns:repeat(auto-fill,minmax(200px,1fr))]">
                       {k.planetaryPositions.map((planetData) => (
-                        <div key={planetData.planet} style={{ padding: "12px", background: "linear-gradient(135deg, rgba(180, 123, 69, 0.1) 0%, rgba(212, 165, 116, 0.08) 100%)", borderRadius: "8px", border: "1px solid rgba(180, 123, 69, 0.2)" }}>
-                          <div style={{ fontSize: "14px", fontWeight: 700, color: "#6b4423" }}>
+                        <div
+  key={planetData.planet}
+  className="p-3 rounded-lg border border-[rgba(180,123,69,0.2)] bg-[linear-gradient(135deg,rgba(180,123,69,0.1)_0%,rgba(212,165,116,0.08)_100%)]"
+>
+                          <div className="text-sm font-bold text-[#6b4423]">
                             {planetData.planet}
                             {planetData.retrograde ? " *" : ""}
                           </div>
-                          <div style={{ fontSize: "13px", color: "#8b5e34", marginTop: "4px" }}>{planetData.sign}</div>
+                          <div className="text-[13px] text-[#8b5e34] mt-1">{planetData.sign}</div>
                           {typeof planetData.degree === "number" && (
-                            <div style={{ fontSize: "12px", color: "#6b5b52", marginTop: "2px" }}>
+                            <div className="text-xs text-[#6b5b52] mt-[2px]">
                               {planetData.degree.toFixed(2)}°
                             </div>
                           )}
                           {planetData.nakshatra && (
-                            <div style={{ fontSize: "12px", color: "#8b5e34", marginTop: "2px" }}>
+                            <div className="text-xs text-[#8b5e34] mt-[2px]">
                               {planetData.nakshatra}
                               {planetData.pada ? ` - Pada ${planetData.pada}` : ""}
                             </div>
@@ -405,7 +410,7 @@ export default function GuestKundliPage() {
             </select>
 
             <label className={formStyles.label}>Birth date *</label>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px", marginBottom: "16px" }}>
+            <div className="grid grid-cols-3 gap-3 mb-4">
               <div>
                 <label style={{ fontSize: "12px", color: "#6b5b52", fontWeight: 500, marginBottom: "4px", display: "block" }}>Day</label>
                 <input
@@ -420,7 +425,7 @@ export default function GuestKundliPage() {
                 />
               </div>
               <div>
-                <label style={{ fontSize: "12px", color: "#6b5b52", fontWeight: 500, marginBottom: "4px", display: "block" }}>Month</label>
+                <label className="text-xs text-[#6b5b52] font-medium mb-1 block">Month</label>
                 <input
                   type="number"
                   min="1"
@@ -510,7 +515,7 @@ export default function GuestKundliPage() {
 
             <button type="submit" className={formStyles.button} disabled={loading}>
               {loading ? (
-                <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                <span className="inline-flex items-center justify-center gap-2">
                   <span className={`${dStyles.loadingSpinner} ${dStyles.loadingSpinnerSm}`} aria-hidden />
                   Calculating…
                 </span>

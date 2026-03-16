@@ -11,7 +11,6 @@ import {
   AdminContent,
 } from "@/services/api";
 import { selectToken, selectIsRehydrated, selectRoleId, ADMIN_ROLE_ID } from "@/store/slices/authSlice";
-import dashboardStyles from "@/styles/dashboard.module.css";
 import styles from "@/styles/dashboard.module.css";
 
 type AdminTab = "overview" | "transactions" | "reports" | "content";
@@ -161,11 +160,11 @@ export default function AdminPage() {
 
   if (!rehydrated || !token) {
     return (
-      <div className={dashboardStyles.dashboardContainer}>
+      <div className={styles.dashboardContainer}>
         <AppHeader />
-        <div className={dashboardStyles.dashboardContent}>
+        <div className={styles.dashboardContent}>
           <AppSidebar />
-          <main className={dashboardStyles.mainContent}>
+          <main className={styles.mainContent}>
             <p>Please log in to access this page.</p>
           </main>
         </div>
@@ -175,11 +174,11 @@ export default function AdminPage() {
 
   if (roleId !== undefined && roleId !== ADMIN_ROLE_ID) {
     return (
-      <div className={dashboardStyles.dashboardContainer}>
+      <div className={styles.dashboardContainer}>
         <AppHeader />
-        <div className={dashboardStyles.dashboardContent}>
+        <div className={styles.dashboardContent}>
           <AppSidebar />
-          <main className={dashboardStyles.mainContent}>
+          <main className={styles.mainContent}>
             <p>Redirecting…</p>
           </main>
         </div>
@@ -191,11 +190,11 @@ export default function AdminPage() {
   const formatRupees = (paise: string) => `₹${(Number(paise) / 100).toFixed(2)}`;
 
   return (
-    <div className={dashboardStyles.dashboardContainer}>
+    <div className={styles.dashboardContainer}>
       <AppHeader />
-      <div className={dashboardStyles.dashboardContent}>
+      <div className={styles.dashboardContent}>
         <AppSidebar />
-        <main className={dashboardStyles.mainContent}>
+        <main className={styles.mainContent}>
           <h1 className={styles.pageTitle}>Admin</h1>
 
           <div className={styles.adminTabs}>
@@ -219,7 +218,7 @@ export default function AdminPage() {
 
           {activeTab === "overview" && (
             <>
-              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+              <div className={styles.adminFlexRow}>
                 <button
                   type="button"
                   onClick={() => fetchStats()}
@@ -259,8 +258,8 @@ export default function AdminPage() {
 
           {activeTab === "transactions" && (
             <div className={styles.adminSection}>
-              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-                <h2 className={styles.adminSectionTitle} style={{ marginBottom: 0 }}>Recent transactions ({transactionsTotal})</h2>
+              <div className={styles.adminFlexRowSmall}>
+                <h2 className={`${styles.adminSectionTitle} ${styles.adminNoMargin}`}></h2>
                 <button type="button" onClick={() => fetchTransactions()} disabled={loadingTx} className={styles.retryButton}>
                   {loadingTx ? "Loading…" : "Refresh"}
                 </button>
@@ -304,8 +303,8 @@ export default function AdminPage() {
 
           {activeTab === "reports" && (
             <div className={styles.adminSection}>
-              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-                <h2 className={styles.adminSectionTitle} style={{ marginBottom: 0 }}>Recent reports ({reportsTotal})</h2>
+              <div className={styles.adminFlexRowSmall}>
+                <h2 className={`${styles.adminSectionTitle} ${styles.adminNoMargin}`}>Recent reports ({reportsTotal})</h2>
                 <button type="button" onClick={() => fetchReports()} disabled={loadingReports} className={styles.retryButton}>
                   {loadingReports ? "Loading…" : "Refresh"}
                 </button>
@@ -345,7 +344,7 @@ export default function AdminPage() {
 
           {activeTab === "content" && (
             <div className={styles.adminSection}>
-              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+              <div className={styles.adminFlexRowSmall}>
                 <h2 className={styles.adminSectionTitle} style={{ marginBottom: 0 }}>Content & AI</h2>
                 <button type="button" onClick={() => fetchContent()} disabled={loadingContent} className={styles.retryButton}>
                   {loadingContent ? "Loading…" : "Refresh"}
@@ -355,8 +354,8 @@ export default function AdminPage() {
                 <p>Loading…</p>
               ) : (
                 <>
-                  <div style={{ marginBottom: 16 }}>
-                    <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
+                  <div className={styles.adminToggleWrap}>
+                    <label className={styles.adminCheckboxLabel}>
                       <input
                         type="checkbox"
                         checked={aiEnabled}
@@ -365,19 +364,18 @@ export default function AdminPage() {
                       <span>AI assistant enabled</span>
                     </label>
                   </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 16 }}>
+                  <div className={styles.adminColumnGroup}>
                     <label>
-                      <span style={{ display: "block", marginBottom: 4 }}>Sun sign meanings</span>
+                      <span className={styles.adminLabelText}>Sun sign meanings</span>
                       <textarea
                         value={content.sunSignMeanings ?? ""}
                         onChange={(e) => setContent((c) => ({ ...c, sunSignMeanings: e.target.value }))}
                         rows={4}
-                        className={styles.adminTable}
-                        style={{ width: "100%", maxWidth: 600 }}
+                        className={'${styles.adminTable} $ {styles.adminTextarea}'}
                       />
                     </label>
                     <label>
-                      <span style={{ display: "block", marginBottom: 4 }}>Planet meanings</span>
+                      <span className={styles.adminLabelText}>Planet meanings</span>
                       <textarea
                         value={content.planetMeanings ?? ""}
                         onChange={(e) => setContent((c) => ({ ...c, planetMeanings: e.target.value }))}
@@ -387,7 +385,7 @@ export default function AdminPage() {
                       />
                     </label>
                     <label>
-                      <span style={{ display: "block", marginBottom: 4 }}>Transit interpretations</span>
+                      <span className={styles.adminLabelText}>Transit interpretations</span>
                       <textarea
                         value={content.transitInterpretations ?? ""}
                         onChange={(e) => setContent((c) => ({ ...c, transitInterpretations: e.target.value }))}

@@ -62,14 +62,18 @@ export default function SuggestionsPage() {
     return '✨';
   };
 
-  const getCategoryColor = (category: string) => {
-    const normalized = category.toLowerCase();
-    if (normalized.includes('relationship')) return '#ec4899';
-    if (normalized.includes('career')) return '#3b82f6';
-    if (normalized.includes('wellness') || normalized.includes('health')) return '#10b981';
-    if (normalized.includes('finance') || normalized.includes('money')) return '#f59e0b';
-    return '#9333ea';
-  };
+  const getCategoryColorClass = (category: string) => {
+  const normalized = category.toLowerCase();
+
+  if (normalized.includes("relationship")) return "border-pink-500 text-pink-500";
+  if (normalized.includes("career")) return "border-blue-500 text-blue-500";
+  if (normalized.includes("wellness") || normalized.includes("health"))
+    return "border-green-500 text-green-500";
+  if (normalized.includes("finance") || normalized.includes("money"))
+    return "border-yellow-500 text-yellow-500";
+
+  return "border-purple-600 text-purple-600";
+};
 
   const formatDate = (dateString: string) => {
     try {
@@ -159,17 +163,15 @@ export default function SuggestionsPage() {
                 <div className={styles.suggestionsList}>
                   {suggestions.suggestions.map((suggestion, index) => (
                     <div
-                      key={index}
-                      className={styles.suggestionCard}
-                      style={{ borderLeftColor: getCategoryColor(suggestion.category) }}
-                    >
+  key={index}
+  className={`${styles.suggestionCard} border-l-4 ${getCategoryColorClass(suggestion.category)}`}
+>
                       <div className={styles.suggestionHeader}>
                         <div className={styles.suggestionCategory}>
                           <span className={styles.categoryIcon}>{getCategoryIcon(suggestion.category)}</span>
                           <span
-                            className={styles.categoryName}
-                            style={{ color: getCategoryColor(suggestion.category) }}
-                          >
+  className={`${styles.categoryName} ${getCategoryColorClass(suggestion.category).split(" ")[1]}`}
+>
                             {suggestion.category.charAt(0).toUpperCase() + suggestion.category.slice(1)}
                           </span>
                         </div>

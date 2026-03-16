@@ -138,14 +138,14 @@ export default function PaymentPage() {
             {loading ? (
               <p>Loading balance…</p>
             ) : balance !== null ? (
-              <div style={{ marginBottom: "1.5rem" }}>
+              <div className="mb-6">
                 <p className={styles.explanationLine}>
                   <strong>Wallet balance:</strong> ₹{balance.balanceRupees.toFixed(2)}
                 </p>
               </div>
             ) : null}
-            <div style={{ maxWidth: 360 }}>
-              <h2 style={{ fontSize: "1rem", marginBottom: "0.5rem" }}>Add money</h2>
+            <div className="max-w-[360px]">
+              <h2 className="text-base mb-2">Add money</h2>
               <form onSubmit={handleCreateOrder}>
                 <input
                   type="number"
@@ -154,18 +154,18 @@ export default function PaymentPage() {
                   placeholder="Amount (₹)"
                   value={amountRupees}
                   onChange={(e) => setAmountRupees(e.target.value)}
-                  style={{ marginBottom: "0.75rem", width: "100%", padding: "8px 12px", borderRadius: 6, border: "1px solid #ccc" }}
+                  className="mb-3 w-full px-3 py-2 rounded-md border border-gray-300"
                 />
                 <button type="submit" disabled={creating} className={styles.chatNowButton}>
                   {creating ? "Creating…" : "Pay with Razorpay"}
                 </button>
               </form>
-              <p style={{ fontSize: "0.85rem", color: "#666", marginTop: "0.5rem" }}>
+              <p className="text-sm text-gray-500 mt-2">
                 If Razorpay is not loaded, you will be redirected to plans page. Load the Razorpay script on your site for in-page checkout.
               </p>
             </div>
 
-            <div style={{ marginTop: "2rem" }}>
+            <div className="mt-8">
               <h2 className={styles.adminSectionTitle}>Transaction history ({transactionsTotal})</h2>
               {loadingTx ? (
                 <p>Loading…</p>

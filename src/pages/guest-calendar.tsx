@@ -36,23 +36,16 @@ export default function GuestCalendarPage() {
 
         <main className={styles.mainContent}>
           {/* 🌸 HEADER */}
-          <div style={{ marginBottom: "24px" }}>
+          <div className="mb-6">
             <button
-              onClick={() => router.back()}
-              style={{
-                background: "transparent",
-                border: "none",
-                color: "#8b5a2b",
-                cursor: "pointer",
-                marginBottom: "10px",
-                fontSize: "14px",
-              }}
-            >
+  onClick={() => router.back()}
+  className="bg-transparent border-none text-[#8b5a2b] cursor-pointer mb-2 text-sm"
+>
               ← Back to Home
             </button>
 
-            <h1 style={{ fontSize: "26px" }}>🪔 Today’s Panchang</h1>
-            <p style={{ opacity: 0.6 }}>
+            <h1 className="text-[26px]">🪔 Today’s Panchang</h1>
+            <p className="opacity-60">
               Sacred Vedic calendar · Guest View
             </p>
           </div>
@@ -76,13 +69,7 @@ export default function GuestCalendarPage() {
 
           {/* 🌞 PANCHANG */}
           {!loading && calendar && (
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-                gap: "18px",
-              }}
-            >
+            <div className="grid gap-[18px] grid-cols-[repeat(auto-fit,minmax(220px,1fr))]">
               <DivineCard title="📅 Date" value={calendar.date} />
               <DivineCard title="🌕 Moon Phase" value={calendar.moonPhase} />
               <DivineCard title="🌙 Tithi" value={calendar.tithi} />
@@ -108,17 +95,9 @@ export default function GuestCalendarPage() {
 /* 🌺 DIVINE CARD */
 function DivineCard({ title, value }: { title: string; value: string }) {
   return (
-    <div
-      style={{
-        padding: "18px",
-        borderRadius: "14px",
-        background: "linear-gradient(135deg, #fffaf0, #ffffff)",
-        border: "1px solid #f0e6d8",
-        boxShadow: "0 6px 14px rgba(0,0,0,0.06)",
-      }}
-    >
-      <h3 style={{ fontSize: "15px", marginBottom: "6px" }}>{title}</h3>
-      <p style={{ fontSize: "14px", fontWeight: 500 }}>{value}</p>
+    <div className="p-[18px] rounded-[14px] bg-gradient-to-br from-[#fffaf0] to-white border border-[#f0e6d8] shadow-[0_6px_14px_rgba(0,0,0,0.06)]">
+      <h3 className="text-[15px] mb-[6px]">{title}</h3>
+      <p className="text-sm font-medium">{value}</p>
     </div>
   );
 }

@@ -96,15 +96,15 @@ export default function NotificationsSettingsPage() {
         <main className={styles.mainContent}>
           <div className={styles.kundliContainer}>
             <h1 className={styles.sectionTitle}>Notification Settings</h1>
-            <p className={styles.explanationLine} style={{ marginBottom: "1rem" }}>
+            <p className={`${styles.explanationLine} mb-4`}>
               Choose when to receive your daily horoscope push notification.
             </p>
             {error && <p className={styles.errorText}>{error}</p>}
             {loading ? (
               <p>Loading…</p>
             ) : (
-              <form onSubmit={handleSave} style={{ maxWidth: 400 }}>
-                <label className={formStyles.label} style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
+              <form onSubmit={handleSave} className="max-w-[400px]">
+                <label className={`${formStyles.label} flex items-center gap-2 mb-2`}>
                   <input
                     type="checkbox"
                     checked={dailyEnabled}
@@ -114,28 +114,26 @@ export default function NotificationsSettingsPage() {
                 </label>
                 <label className={formStyles.label}>Preferred time (your timezone)</label>
                 <input
-                  type="time"
-                  className={formStyles.input}
-                  value={preferredTime}
-                  onChange={(e) => setPreferredTime(e.target.value)}
-                  style={{ marginBottom: "0.75rem" }}
-                />
+  type="time"
+  className={`${formStyles.input} mb-3`}
+  value={preferredTime}
+  onChange={(e) => setPreferredTime(e.target.value)}
+/>
                 <label className={formStyles.label}>Timezone (e.g. Asia/Kolkata)</label>
                 <input
-                  type="text"
-                  className={formStyles.input}
-                  value={timezone}
-                  onChange={(e) => setTimezone(e.target.value)}
-                  placeholder="Asia/Kolkata"
-                  style={{ marginBottom: "1rem" }}
-                />
+  type="text"
+  className={`${formStyles.input} mb-4`}
+  value={timezone}
+  onChange={(e) => setTimezone(e.target.value)}
+  placeholder="Asia/Kolkata"
+/>
                 <button type="submit" disabled={saving} className={styles.chatNowButton}>
                   {saving ? "Saving…" : "Save preferences"}
                 </button>
               </form>
             )}
             {prefs?.deviceRegistered === false && (
-              <p style={{ marginTop: "1rem", fontSize: "0.9rem", color: "#666" }}>
+              <p className="mt-4 text-sm text-gray-600">
                 To receive push notifications, register your device from the app when prompted.
               </p>
             )}

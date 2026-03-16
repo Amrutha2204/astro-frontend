@@ -95,7 +95,7 @@ export default function SubscriptionPlansPage() {
           <div className={styles.kundliContainer}>
             <h1 className={styles.sectionTitle}>Subscription Plans</h1>
             {mySubscription?.isActive && mySubscription.plan && (
-              <p className={styles.explanationLine} style={{ marginBottom: "1rem" }}>
+              <p className={`${styles.explanationLine} mb-4`}>
                 Your plan: <strong>{mySubscription.plan.name}</strong>
                 {mySubscription.subscription?.endAt && (
                   <> (valid till {new Date(mySubscription.subscription.endAt).toLocaleDateString()})</>
@@ -103,7 +103,7 @@ export default function SubscriptionPlansPage() {
               </p>
             )}
             {error && (
-              <div className={styles.errorContainer} style={{ marginBottom: "1rem" }}>
+              <div className={`${styles.errorContainer} mb-4`}>
                 <p className={styles.errorText}>{error}</p>
                 <button type="button" className={styles.retryButton} onClick={fetchData}>
                   Retry
@@ -113,26 +113,20 @@ export default function SubscriptionPlansPage() {
             {loading ? (
               <p>Loading plans…</p>
             ) : (
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
+              <div className="flex flex-wrap gap-4">
                 {plans.map((plan) => {
                   const isCurrent = mySubscription?.plan?.slug === plan.slug;
                   const priceRupees = Number(plan.pricePaise) / 100;
                   return (
                     <div
-                      key={plan.id}
-                      style={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 8,
-                        padding: "1.25rem",
-                        minWidth: 200,
-                        maxWidth: 280,
-                      }}
-                    >
-                      <h3 style={{ marginBottom: "0.25rem" }}>{plan.name}</h3>
-                      <p style={{ fontSize: "0.9rem", color: "#666", marginBottom: "0.5rem" }}>
+  key={plan.id}
+  className="border border-gray-200 rounded-lg p-5 min-w-[200px] max-w-[280px]"
+>
+                      <h3 className="mb-1">{plan.name}</h3>
+                      <p className="text-sm text-gray-600 mb-2">
                         {plan.description || ""}
                       </p>
-                      <p style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "0.5rem" }}>
+                      <p className="text-xl font-semibold mb-2">
                         {priceRupees === 0 ? "Free" : `₹${priceRupees}`}
                         {plan.billingPeriod === "year" && priceRupees > 0 && "/year"}
                         {plan.billingPeriod === "month" && priceRupees > 0 && "/month"}
@@ -147,7 +141,7 @@ export default function SubscriptionPlansPage() {
                           {subscribing === plan.slug ? "Subscribing…" : plan.slug === "free" ? "Current" : "Subscribe"}
                         </button>
                       )}
-                      {isCurrent && <p style={{ color: "#2e7d32", fontWeight: 600 }}>Active</p>}
+                      <p className="text-green-700 font-semibold">Active</p>
                     </div>
                   );
                 })}

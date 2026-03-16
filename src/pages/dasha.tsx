@@ -174,20 +174,19 @@ export default function DashaPage() {
               </>
             )}
 
-            {!showTimeline && (
-              <div style={{ marginTop: '20px', textAlign: 'center' }}>
-                <button
-                  onClick={fetchTimeline}
-                  className={styles.loginButton}
-                  style={{ maxWidth: '300px' }}
-                >
-                  View 10-Year Timeline
-                </button>
-              </div>
-            )}
+           {!showTimeline && (
+  <div className="mt-5 text-center">
+    <button
+      onClick={fetchTimeline}
+      className="loginButton max-w-xs mx-auto"
+    >
+      View 10-Year Timeline
+    </button>
+  </div>
+)}
 
             {timeline && showTimeline && (
-              <div style={{ marginTop: '30px' }}>
+              <div className="mt-8">
                 <h2 className={styles.sectionTitle}>What’s next (next 10 years)</h2>
                 <div className={styles.timelineContainer}>
                   {(() => {
