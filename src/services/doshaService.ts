@@ -2,7 +2,11 @@ import { request, ASTRO_BASE } from "./fetcher";
 import { isValidJwtFormat } from "@/utils/auth";
 
 export interface DoshaResponse {
-  manglik: { hasDosha: boolean; description: string; severity?: "High" | "Medium" | "Low" | "None" };
+  manglik: {
+    hasDosha: boolean;
+    description: string;
+    severity?: "High" | "Medium" | "Low" | "None";
+  };
   nadi: { hasDosha: boolean; description: string };
   bhakoot: { hasDosha: boolean; description: string };
   totalDoshas: number;

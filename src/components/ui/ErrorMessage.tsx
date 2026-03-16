@@ -3,9 +3,5 @@ export default function ErrorMessage({
 }: {
   message?: string;
 }) {
-  return (
-    <div className="error-box">
-      ⚠️ {message}
-    </div>
-  );
+  return <div className="error-box">⚠️ {message}</div>;
 }

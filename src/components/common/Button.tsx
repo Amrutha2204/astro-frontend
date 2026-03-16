@@ -4,17 +4,9 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: "primary" | "secondary";
 };
 
-const Button: FC<ButtonProps> = ({
-  children,
-  className = "",
-  variant = "primary",
-  ...props
-}) => {
+const Button: FC<ButtonProps> = ({ children, className = "", variant = "primary", ...props }) => {
   return (
-    <button
-      className={`btn btn-${variant} ${className}`}
-      {...props}
-    >
+    <button className={`btn btn-${variant} ${className}`} {...props}>
       {children}
     </button>
   );

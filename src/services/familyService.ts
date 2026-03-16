@@ -1,13 +1,8 @@
 import { request, ASTRO_BASE } from "./fetcher";
 import { isValidJwtFormat } from "@/utils/auth";
-import {
-  FamilyProfile,
-  CreateFamilyProfilePayload,
-} from "@/data/family";
+import { FamilyProfile, CreateFamilyProfilePayload } from "@/data/family";
 
-export const fetchFamilyProfiles = async (
-  token: string
-): Promise<FamilyProfile[]> => {
+export const fetchFamilyProfiles = async (token: string): Promise<FamilyProfile[]> => {
   if (!isValidJwtFormat(token)) throw new Error("Invalid token. Please login again.");
   return request<FamilyProfile[]>(ASTRO_BASE, "/api/v1/family-profiles", {
     method: "GET",
@@ -17,7 +12,7 @@ export const fetchFamilyProfiles = async (
 
 export const createFamilyProfile = async (
   data: CreateFamilyProfilePayload,
-  token: string
+  token: string,
 ): Promise<FamilyProfile> => {
   if (!isValidJwtFormat(token)) throw new Error("Invalid token. Please login again.");
   return request<FamilyProfile>(ASTRO_BASE, "/api/v1/family-profiles", {
@@ -30,7 +25,7 @@ export const createFamilyProfile = async (
 export const updateFamilyProfile = async (
   id: string,
   data: CreateFamilyProfilePayload,
-  token: string
+  token: string,
 ): Promise<FamilyProfile> => {
   if (!isValidJwtFormat(token)) throw new Error("Invalid token. Please login again.");
   return request<FamilyProfile>(ASTRO_BASE, `/api/v1/family-profiles/${id}`, {
@@ -40,10 +35,7 @@ export const updateFamilyProfile = async (
   });
 };
 
-export const deleteFamilyProfile = async (
-  id: string,
-  token: string
-): Promise<void> => {
+export const deleteFamilyProfile = async (id: string, token: string): Promise<void> => {
   if (!isValidJwtFormat(token)) throw new Error("Invalid token. Please login again.");
   return request<void>(ASTRO_BASE, `/api/v1/family-profiles/${id}`, {
     method: "DELETE",

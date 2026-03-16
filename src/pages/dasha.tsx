@@ -9,7 +9,6 @@ import TrustNote from "@/components/common/TrustNote";
 import { dashaApi, DashaResponse, DashaTimelineResponse } from "@/services/dashaService";
 import { showError } from "@/utils/toast";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
-import styles from "@/styles/dashboard.module.css";
 import ErrorMessage from "@/components/ui/ErrorMessage";
 import Loading from "@/components/ui/Loading";
 
@@ -25,6 +24,18 @@ export default function DashaPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showTimeline, setShowTimeline] = useState(false);
+  const pageClass = "min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]";
+  const contentClass = "flex w-full";
+  const mainClass =
+    "ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]";
+  const containerClass = "relative mx-auto max-w-[1200px]";
+  const sectionTitleClass =
+    "mb-6 border-b-[2px] border-b-[#d4a574] pb-[14px] text-[26px] font-bold tracking-[-0.01em] text-[#6b4423]";
+  const infoGridClass = "mt-4 grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-[14px]";
+  const infoCardClass =
+    "rounded-[12px] border border-[#e8ddd0] bg-white p-5 shadow-[0_2px_8px_rgba(0,0,0,0.08)]";
+  const activeCardClass =
+    "bg-[linear-gradient(135deg,#fdf8f3_0%,#f5ebe0_100%)] border-l-[4px] border-l-[#6b4423]";
 
   const fetchDasha = useCallback(async () => {
     const t = token?.trim();
@@ -73,10 +84,10 @@ export default function DashaPage() {
 
   const formatDate = (dateString: string) => {
     try {
-      return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
+      return new Date(dateString).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
       });
     } catch {
       return dateString;
@@ -85,12 +96,12 @@ export default function DashaPage() {
 
   if (loading) {
     return (
-      <div className={styles.dashboardContainer}>
+      <div className={pageClass}>
         <AppHeader />
-        <div className={styles.dashboardContent}>
+        <div className={contentClass}>
           <AppSidebar />
-          <main className={styles.mainContent}>
-           <Loading text="Loading your period..."/> 
+          <main className={mainClass}>
+            <Loading text="Loading your period..." />
           </main>
         </div>
       </div>
@@ -99,18 +110,24 @@ export default function DashaPage() {
 
   if (error) {
     return (
-      <div className={styles.dashboardContainer}>
+      <div className={pageClass}>
         <AppHeader />
-        <div className={styles.dashboardContent}>
+        <div className={contentClass}>
           <AppSidebar />
-          <main className={styles.mainContent}>
-            <div className={styles.errorContainer}>
+          <main className={mainClass}>
+            <div className="flex min-h-[400px] flex-col items-center justify-center gap-5">
               <ErrorMessage message={error} />
-              <div className={styles.buttonGroup}>
-                <button onClick={fetchDasha} className={styles.backButton}>
+              <div className="flex gap-[10px]">
+                <button
+                  onClick={fetchDasha}
+                  className="flex items-center gap-[6px] rounded-[6px] bg-[#6b4423] px-4 py-2 text-[14px] font-medium text-white transition-all duration-200 hover:-translate-x-[2px] hover:bg-[#5c3a1f]"
+                >
                   🔄 Retry
                 </button>
-                <button onClick={() => router.push("/auth/login")} className={styles.backButton}>
+                <button
+                  onClick={() => router.push("/auth/login")}
+                  className="flex items-center gap-[6px] rounded-[6px] bg-[#6b4423] px-4 py-2 text-[14px] font-medium text-white transition-all duration-200 hover:-translate-x-[2px] hover:bg-[#5c3a1f]"
+                >
                   Go to Login
                 </button>
               </div>
@@ -122,12 +139,12 @@ export default function DashaPage() {
   }
 
   return (
-    <div className={styles.dashboardContainer}>
+    <div className={pageClass}>
       <AppHeader />
-      <div className={styles.dashboardContent}>
+      <div className={contentClass}>
         <AppSidebar />
-        <main className={styles.mainContent}>
-          <div className={styles.kundliContainer}>
+        <main className={mainClass}>
+          <div className={containerClass}>
             <PageHeader
               title="Your period (Dasha)"
               onTitleClick={fetchDasha}
@@ -136,37 +153,56 @@ export default function DashaPage() {
               refreshAriaLabel="Refresh Dasha"
               disableRefresh={loading}
             />
-            <h1 className={styles.sectionTitle}>Your period (Dasha)</h1>
+            <h1 className={sectionTitleClass}>Your period (Dasha)</h1>
 
             {currentDasha && (
               <>
-                <span className={styles.youAreHereBadge}>You are here</span>
-                <p className={styles.explanationLine}>You’re in this period because your birth chart places you in {currentDasha.mahadasha} from {formatDate(currentDasha.startDate)}.</p>
-                <div className={styles.infoGrid}>
-                  <div className={`${styles.infoCard} ${styles.cardActive}`}>
-                    <h3 className={styles.cardTitle}>Current Mahadasha</h3>
-                    <p className={styles.cardValue}>{currentDasha.mahadasha}</p>
-                    <p className={styles.cardSubtext}>Planet: {currentDasha.planet}</p>
+                <span className="inline-flex rounded-[999px] bg-[#6b4423] px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.05em] text-white">
+                  You are here
+                </span>
+                <p className="mt-2 rounded-[6px] border-l-[3px] border-l-[#6b4423] bg-[#faf8f5] px-3 py-2 text-[14px] italic text-[#5c4033]">
+                  You’re in this period because your birth chart places you in{" "}
+                  {currentDasha.mahadasha} from {formatDate(currentDasha.startDate)}.
+                </p>
+                <div className={infoGridClass}>
+                  <div className={`${infoCardClass} ${activeCardClass}`}>
+                    <h3 className="mb-2 text-[16px] font-semibold text-[#1f2937]">
+                      Current Mahadasha
+                    </h3>
+                    <p className="text-[20px] font-bold text-[#845127]">{currentDasha.mahadasha}</p>
+                    <p className="mt-2 text-[14px] text-[#6b7280]">Planet: {currentDasha.planet}</p>
                   </div>
 
-                  <div className={`${styles.infoCard} ${styles.cardActive}`}>
-                    <h3 className={styles.cardTitle}>Current Antardasha</h3>
-                    <p className={styles.cardValue}>{currentDasha.antardasha}</p>
+                  <div className={`${infoCardClass} ${activeCardClass}`}>
+                    <h3 className="mb-2 text-[16px] font-semibold text-[#1f2937]">
+                      Current Antardasha
+                    </h3>
+                    <p className="text-[20px] font-bold text-[#845127]">
+                      {currentDasha.antardasha}
+                    </p>
                     {currentDasha.pratyantardasha && (
-                      <p className={styles.cardSubtext}>Pratyantardasha: {currentDasha.pratyantardasha}</p>
+                      <p className="mt-2 text-[14px] text-[#6b7280]">
+                        Pratyantardasha: {currentDasha.pratyantardasha}
+                      </p>
                     )}
                   </div>
 
-                  <div className={styles.infoCard}>
-                    <h3 className={styles.cardTitle}>Period</h3>
-                    <p className={styles.cardValue}>{formatDate(currentDasha.startDate)}</p>
-                    <p className={styles.cardSubtext}>to {formatDate(currentDasha.endDate)}</p>
+                  <div className={infoCardClass}>
+                    <h3 className="mb-2 text-[16px] font-semibold text-[#1f2937]">Period</h3>
+                    <p className="text-[20px] font-bold text-[#845127]">
+                      {formatDate(currentDasha.startDate)}
+                    </p>
+                    <p className="mt-2 text-[14px] text-[#6b7280]">
+                      to {formatDate(currentDasha.endDate)}
+                    </p>
                   </div>
 
-                  <div className={styles.infoCard}>
-                    <h3 className={styles.cardTitle}>Time left</h3>
-                    <p className={styles.cardValue}>{currentDasha.remainingDays}</p>
-                    <p className={styles.cardSubtext}>days in this period</p>
+                  <div className={infoCardClass}>
+                    <h3 className="mb-2 text-[16px] font-semibold text-[#1f2937]">Time left</h3>
+                    <p className="text-[20px] font-bold text-[#845127]">
+                      {currentDasha.remainingDays}
+                    </p>
+                    <p className="mt-2 text-[14px] text-[#6b7280]">days in this period</p>
                   </div>
                 </div>
                 <CalculationInfo showDasha={true} showAyanamsa={true} />
@@ -175,11 +211,10 @@ export default function DashaPage() {
             )}
 
             {!showTimeline && (
-              <div style={{ marginTop: '20px', textAlign: 'center' }}>
+              <div className="mt-5 text-center">
                 <button
                   onClick={fetchTimeline}
-                  className={styles.loginButton}
-                  style={{ maxWidth: '300px' }}
+                  className="mx-auto block w-full max-w-[300px] rounded-[8px] bg-[#6b4423] px-6 py-[14px] text-[16px] font-semibold text-white transition-all duration-200 hover:-translate-y-px hover:bg-[#5c3a1f] hover:shadow-[0_4px_12px_rgba(107,68,35,0.25)]"
                 >
                   View 10-Year Timeline
                 </button>
@@ -187,45 +222,60 @@ export default function DashaPage() {
             )}
 
             {timeline && showTimeline && (
-              <div style={{ marginTop: '30px' }}>
-                <h2 className={styles.sectionTitle}>What’s next (next 10 years)</h2>
-                <div className={styles.timelineContainer}>
+              <div className="mt-[30px]">
+                <h2 className={sectionTitleClass}>What’s next (next 10 years)</h2>
+                <div className="mt-5 flex flex-col gap-[15px]">
                   {(() => {
                     const now = new Date();
                     const currentIdx = timeline.timeline.findIndex((p) => {
-                      const s = new Date(p.startDate), e = new Date(p.endDate);
+                      const s = new Date(p.startDate),
+                        e = new Date(p.endDate);
                       return s <= now && e >= now;
                     });
                     return timeline.timeline.map((period, index) => {
-                      const start = new Date(period.startDate), end = new Date(period.endDate);
+                      const start = new Date(period.startDate),
+                        end = new Date(period.endDate);
                       const isPast = end < now;
                       const isCurrent = start <= now && end >= now;
                       const isNext = currentIdx >= 0 && index === currentIdx + 1;
                       return (
                         <div
                           key={index}
-                          className={`${styles.timelineItem} ${isCurrent ? styles.timelineItemActive : ""} ${isPast ? styles.timelineItemPast : ""}`}
+                          className={`rounded-[8px] border-l-[4px] border-l-[#6b4423] bg-[#f9fafb] p-5 transition-all duration-200 hover:translate-x-1 hover:shadow-[0_2px_8px_rgba(0,0,0,0.1)] ${isCurrent ? "bg-[linear-gradient(135deg,#fdf8f3_0%,#f5ebe0_100%)]" : ""} ${isPast ? "opacity-70" : ""}`}
                         >
                           {(isCurrent || isNext) && (
-                            <span className={isCurrent ? styles.youAreHereBadge : styles.upNextBadge}>
+                            <span
+                              className={
+                                isCurrent
+                                  ? "mb-3 inline-flex rounded-[999px] bg-[#6b4423] px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.05em] text-white"
+                                  : "mb-3 inline-flex rounded-[999px] bg-[#f5ebe0] px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.05em] text-[#6b4423]"
+                              }
+                            >
                               {isCurrent ? "You are here" : "Up next"}
                             </span>
                           )}
-                          <div className={styles.timelineDate}>
+                          <div className="mb-[10px] text-[14px] text-[#6b7280]">
                             <strong>{formatDate(period.startDate)}</strong>
                             <span> to </span>
                             <strong>{formatDate(period.endDate)}</strong>
                           </div>
-                          <div className={styles.timelineContent}>
-                            <div className={styles.timelinePlanet}>{period.planet}</div>
-                            <div className={styles.timelineDasha}>
-                              <span className={styles.timelineMahadasha}>{period.dasha}</span>
-                              <span className={styles.timelineAntardasha}> / {period.antardasha}</span>
+                          <div className="flex flex-wrap items-center gap-[15px]">
+                            <div className="min-w-20 rounded-[6px] bg-[#6b4423] px-3 py-[6px] text-center text-[14px] font-semibold text-white">
+                              {period.planet}
+                            </div>
+                            <div className="flex-1 text-[16px] font-semibold text-[#1f2937]">
+                              <span className="text-[#6b4423]">{period.dasha}</span>
+                              <span className="text-[#5c4033]"> / {period.antardasha}</span>
                               {period.pratyantardasha && (
-                                <span className={styles.timelinePratyantardasha}> / {period.pratyantardasha}</span>
+                                <span className="text-[14px] text-[#6b4423]">
+                                  {" "}
+                                  / {period.pratyantardasha}
+                                </span>
                               )}
                             </div>
-                            <div className={styles.timelineDuration}>{period.duration} years</div>
+                            <div className="text-[14px] font-medium text-[#6b7280]">
+                              {period.duration} years
+                            </div>
                           </div>
                         </div>
                       );

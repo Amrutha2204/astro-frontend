@@ -2,7 +2,6 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { useCallback } from "react";
-import styles from "@/styles/dashboard.module.css";
 import { selectIsGuest, selectRoleId, clearToken, ADMIN_ROLE_ID } from "@/store/slices/authSlice";
 
 type NavItem = { id: string; label: string; href: string };
@@ -60,13 +59,17 @@ const AppSidebar = () => {
   const homeHref = isGuest ? "/" : "/dashboard";
   const sidebarTitle = isGuest ? "Jyotishya Darshan" : "My Kundli";
   const sidebarTitleAria = isGuest ? "Go to home" : "Go to dashboard";
+  const menuButtonBase =
+    "flex w-full items-center gap-[10px] px-5 py-3 text-left text-[14px] text-white transition-colors duration-200";
+  const menuButtonState = (active: boolean) =>
+    `${menuButtonBase} ${active ? "bg-white/15 font-semibold" : "bg-transparent hover:bg-white/10"}`;
 
   return (
-    <aside className={styles.sidebar}>
-      <div className={styles.sidebarHeader}>
+    <aside className="fixed left-0 top-[50px] flex h-[calc(100vh-50px)] w-[260px] shrink-0 flex-col overflow-hidden bg-[var(--accent)] text-white shadow-[2px_0_4px_rgba(0,0,0,0.1)] max-[768px]:w-[200px]">
+      <div className="shrink-0 border-b border-white/20 p-5">
         <Link
           href={homeHref}
-          className={styles.sidebarTitleLink}
+          className="mt-0 block rounded-[8px] px-3 py-2 text-[18px] font-semibold text-white no-underline transition-colors duration-200 hover:bg-white/15 active:bg-white/20"
           aria-label={sidebarTitleAria}
           title={sidebarTitleAria}
         >
@@ -74,34 +77,41 @@ const AppSidebar = () => {
         </Link>
       </div>
 
-      <nav className={styles.sidebarNav}>
-        <ul className={styles.menuList}>
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden px-0 py-[10px]">
+        <ul className="m-0 list-none p-0">
           {menuItems.map((item) => (
-            <li key={item.id} className={styles.menuItem}>
-              <Link
-                href={item.href}
-                className={`${styles.menuButton} ${router.pathname === item.href ? styles.menuButtonActive : ""}`}
-              >
-                <span className={styles.menuLabel}>{item.label}</span>
+            <li key={item.id} className="m-0">
+              <Link href={item.href} className={menuButtonState(router.pathname === item.href)}>
+                <span className="flex-1">{item.label}</span>
               </Link>
             </li>
           ))}
         </ul>
       </nav>
 
-      <div className={styles.sidebarFooter}>
+      <div className="mt-auto border-t border-white/20 px-0 py-[10px]">
         {isGuest ? (
           <>
-            <Link href="/auth/login" className={`${styles.menuButton} ${router.pathname === "/auth/login" ? styles.menuButtonActive : ""} no-underline`}>
-              <span className={styles.menuLabel}>Login</span>
+            <Link
+              href="/auth/login"
+              className={`${menuButtonState(router.pathname === "/auth/login")} no-underline`}
+            >
+              <span className="flex-1">Login</span>
             </Link>
-            <Link href="/auth/register" className={`${styles.menuButton} ${router.pathname === "/auth/register" ? styles.menuButtonActive : ""} no-underline mt-1`}>
-              <span className={styles.menuLabel}>Register</span>
+            <Link
+              href="/auth/register"
+              className={`${menuButtonState(router.pathname === "/auth/register")} mt-1 no-underline`}
+            >
+              <span className="flex-1">Register</span>
             </Link>
           </>
         ) : (
-          <button className={styles.logoutButton} onClick={handleLogout} aria-label="Logout">
-            <span className={styles.menuLabel}>Logout</span>
+          <button
+            className={`${menuButtonBase} bg-transparent hover:bg-white/15 active:bg-white/20`}
+            onClick={handleLogout}
+            aria-label="Logout"
+          >
+            <span className="flex-1">Logout</span>
           </button>
         )}
       </div>

@@ -34,13 +34,17 @@ function buildHeaders(token?: string | null, hasBody?: boolean): Record<string, 
 export async function request<T>(
   baseUrl: string,
   path: string,
-  options: FetcherOptions & { noThrow: true }
+  options: FetcherOptions & { noThrow: true },
 ): Promise<{ status: number; data: T }>;
-export async function request<T>(baseUrl: string, path: string, options?: FetcherOptions): Promise<T>;
 export async function request<T>(
   baseUrl: string,
   path: string,
-  options: FetcherOptions = {}
+  options?: FetcherOptions,
+): Promise<T>;
+export async function request<T>(
+  baseUrl: string,
+  path: string,
+  options: FetcherOptions = {},
 ): Promise<T | { status: number; data: T }> {
   const { method = "GET", body, token, params, noThrow = false } = options;
   const url = buildUrl(baseUrl, path, params);

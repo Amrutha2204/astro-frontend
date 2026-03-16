@@ -7,8 +7,6 @@ import PageHeader from "@/components/layout/PageHeader";
 import { selectIsRehydrated, selectToken, clearToken } from "@/store/slices/authSlice";
 import { isValidJwtFormat } from "@/utils/auth";
 import { getUserDetails } from "@/services/userService";
-import styles from "@/styles/dashboard.module.css";
-import profileStyles from "@/styles/profile.module.css";
 import Loading from "@/components/ui/Loading";
 import ErrorMessage from "@/components/ui/ErrorMessage";
 
@@ -112,7 +110,7 @@ const ProfilePage = () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await getUserDetails(t!) as ApiUserDetails;
+      const data = (await getUserDetails(t!)) as ApiUserDetails;
       setProfile(normalizeProfile(data));
     } catch (e) {
       const err = e as { message?: string };
@@ -129,11 +127,11 @@ const ProfilePage = () => {
 
   if (!rehydrated || (loading && !profile && !error)) {
     return (
-      <div className={styles.dashboardContainer}>
+      <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]">
         <AppHeader />
-        <div className={styles.dashboardContent}>
+        <div className="flex w-full">
           <AppSidebar />
-          <main className={styles.mainContent}>
+          <main className="ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]">
             <Loading text="Loading your profile..." />
           </main>
         </div>
@@ -142,12 +140,12 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className={styles.dashboardContainer}>
+    <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]">
       <AppHeader />
-      <div className={styles.dashboardContent}>
+      <div className="flex w-full">
         <AppSidebar />
-        <main className={styles.mainContent}>
-          <div className={styles.kundliContainer}>
+        <main className="ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]">
+          <div className="relative mx-auto max-w-[1200px]">
             <PageHeader
               title="Profile"
               onBack={() => router.push("/dashboard")}
@@ -159,80 +157,148 @@ const ProfilePage = () => {
               disableRefresh={loading}
             />
 
-            <h1 className={profileStyles.pageTitle}>Profile</h1>
+            <h1 className="mb-6 text-[28px] font-bold text-[#2d2a26]">Profile</h1>
 
             {error && <ErrorMessage message={error} />}
 
             {profile && (
-              <div className={profileStyles.wrapper}>
-                <div className={profileStyles.profileHero}>
-                  <div className={profileStyles.profileAvatarWrap}>
-                    <div className={profileStyles.profileAvatar}>
+              <div className="mx-auto max-w-[720px]">
+                <div className="mb-6 flex flex-wrap items-center gap-6 rounded-[20px] bg-[linear-gradient(145deg,#2d2438_0%,#1a1625_50%,#15121c_100%)] px-9 py-8 text-white shadow-[0_12px_40px_rgba(0,0,0,0.2)]">
+                  <div className="shrink-0">
+                    <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-[20px] border-[2px] border-[rgba(255,255,255,0.2)] bg-[linear-gradient(135deg,rgba(255,255,255,0.15)_0%,rgba(255,255,255,0.08)_100%)] text-[32px] font-bold text-white">
                       {profile.profilePic ? (
-                        <img src={profile.profilePic} alt="" />
+                        <img
+                          src={profile.profilePic}
+                          alt=""
+                          className="h-full w-full object-cover"
+                        />
                       ) : (
                         getInitial(profile.name)
                       )}
                     </div>
                   </div>
-                  <div className={profileStyles.profileHeroInfo}>
-                    <div className={profileStyles.profileHeroName}>{profile.name}</div>
-                    <div className={profileStyles.profileHeroEmail}>{profile.email}</div>
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-1 text-[24px] font-bold text-white">{profile.name}</div>
+                    <div className="text-[15px] text-[#e8e4dc] opacity-90">{profile.email}</div>
                   </div>
                 </div>
 
-                <section className={profileStyles.section} aria-labelledby="account-heading">
-                  <h2 id="account-heading" className={profileStyles.sectionTitle}>Account</h2>
-                  <div className={profileStyles.infoList}>
-                    <div className={profileStyles.infoRow}>
-                      <span className={profileStyles.infoLabel}>Name</span>
-                      <span className={profileStyles.infoValue}>{profile.name}</span>
+                <section
+                  className="mb-5 rounded-[16px] border border-[#e8dfd2] bg-white px-7 py-6 shadow-[0_2px_12px_rgba(0,0,0,0.05)]"
+                  aria-labelledby="account-heading"
+                >
+                  <h2
+                    id="account-heading"
+                    className="mb-[18px] border-b border-b-[#f0ebe3] pb-[10px] text-[16px] font-semibold text-[#6b4423]"
+                  >
+                    Account
+                  </h2>
+                  <div className="flex flex-col gap-[14px]">
+                    <div className="flex flex-wrap items-start justify-between gap-4">
+                      <span className="min-w-[120px] text-[13px] font-semibold text-[#6b5b52]">
+                        Name
+                      </span>
+                      <span className="break-words text-right text-[15px] text-[#2d2a26]">
+                        {profile.name}
+                      </span>
                     </div>
-                    <div className={profileStyles.infoRow}>
-                      <span className={profileStyles.infoLabel}>Email</span>
-                      <span className={profileStyles.infoValue}>{profile.email}</span>
+                    <div className="flex flex-wrap items-start justify-between gap-4">
+                      <span className="min-w-[120px] text-[13px] font-semibold text-[#6b5b52]">
+                        Email
+                      </span>
+                      <span className="break-words text-right text-[15px] text-[#2d2a26]">
+                        {profile.email}
+                      </span>
                     </div>
-                    <div className={profileStyles.infoRow}>
-                      <span className={profileStyles.infoLabel}>Phone</span>
-                      <span className={profile.phoneNumber === "—" ? profileStyles.infoValueEmpty : profileStyles.infoValue}>
+                    <div className="flex flex-wrap items-start justify-between gap-4">
+                      <span className="min-w-[120px] text-[13px] font-semibold text-[#6b5b52]">
+                        Phone
+                      </span>
+                      <span
+                        className={
+                          profile.phoneNumber === "—"
+                            ? "break-words text-right text-[15px] italic text-[#9c8b73]"
+                            : "break-words text-right text-[15px] text-[#2d2a26]"
+                        }
+                      >
                         {profile.phoneNumber}
                       </span>
                     </div>
-                    <div className={profileStyles.infoRow}>
-                      <span className={profileStyles.infoLabel}>Time zone</span>
-                      <span className={profileStyles.infoValue}>{profile.timezone}</span>
+                    <div className="flex flex-wrap items-start justify-between gap-4">
+                      <span className="min-w-[120px] text-[13px] font-semibold text-[#6b5b52]">
+                        Time zone
+                      </span>
+                      <span className="break-words text-right text-[15px] text-[#2d2a26]">
+                        {profile.timezone}
+                      </span>
                     </div>
                   </div>
                 </section>
 
-                <section className={profileStyles.section} aria-labelledby="birth-heading">
-                  <h2 id="birth-heading" className={profileStyles.sectionTitle}>Birth details</h2>
-                  <div className={profileStyles.infoList}>
-                    <div className={profileStyles.infoRow}>
-                      <span className={profileStyles.infoLabel}>Date of birth</span>
-                      <span className={profileStyles.infoValue}>{profile.dob}</span>
+                <section
+                  className="mb-5 rounded-[16px] border border-[#e8dfd2] bg-white px-7 py-6 shadow-[0_2px_12px_rgba(0,0,0,0.05)]"
+                  aria-labelledby="birth-heading"
+                >
+                  <h2
+                    id="birth-heading"
+                    className="mb-[18px] border-b border-b-[#f0ebe3] pb-[10px] text-[16px] font-semibold text-[#6b4423]"
+                  >
+                    Birth details
+                  </h2>
+                  <div className="flex flex-col gap-[14px]">
+                    <div className="flex flex-wrap items-start justify-between gap-4">
+                      <span className="min-w-[120px] text-[13px] font-semibold text-[#6b5b52]">
+                        Date of birth
+                      </span>
+                      <span className="break-words text-right text-[15px] text-[#2d2a26]">
+                        {profile.dob}
+                      </span>
                     </div>
-                    <div className={profileStyles.infoRow}>
-                      <span className={profileStyles.infoLabel}>Birth place</span>
-                      <span className={profileStyles.infoValue}>{profile.birthPlace}</span>
+                    <div className="flex flex-wrap items-start justify-between gap-4">
+                      <span className="min-w-[120px] text-[13px] font-semibold text-[#6b5b52]">
+                        Birth place
+                      </span>
+                      <span className="break-words text-right text-[15px] text-[#2d2a26]">
+                        {profile.birthPlace}
+                      </span>
                     </div>
-                    <div className={profileStyles.infoRow}>
-                      <span className={profileStyles.infoLabel}>Birth time</span>
-                      <span className={profileStyles.infoValue}>{profile.birthTime}</span>
+                    <div className="flex flex-wrap items-start justify-between gap-4">
+                      <span className="min-w-[120px] text-[13px] font-semibold text-[#6b5b52]">
+                        Birth time
+                      </span>
+                      <span className="break-words text-right text-[15px] text-[#2d2a26]">
+                        {profile.birthTime}
+                      </span>
                     </div>
                   </div>
                 </section>
 
-                <section className={profileStyles.section} aria-labelledby="meta-heading">
-                  <h2 id="meta-heading" className={profileStyles.sectionTitle}>Account info</h2>
-                  <div className={profileStyles.infoList}>
-                    <div className={profileStyles.infoRow}>
-                      <span className={profileStyles.infoLabel}>Member since</span>
-                      <span className={profileStyles.infoValue}>{profile.createdAt}</span>
+                <section
+                  className="mb-5 rounded-[16px] border border-[#e8dfd2] bg-white px-7 py-6 shadow-[0_2px_12px_rgba(0,0,0,0.05)]"
+                  aria-labelledby="meta-heading"
+                >
+                  <h2
+                    id="meta-heading"
+                    className="mb-[18px] border-b border-b-[#f0ebe3] pb-[10px] text-[16px] font-semibold text-[#6b4423]"
+                  >
+                    Account info
+                  </h2>
+                  <div className="flex flex-col gap-[14px]">
+                    <div className="flex flex-wrap items-start justify-between gap-4">
+                      <span className="min-w-[120px] text-[13px] font-semibold text-[#6b5b52]">
+                        Member since
+                      </span>
+                      <span className="break-words text-right text-[15px] text-[#2d2a26]">
+                        {profile.createdAt}
+                      </span>
                     </div>
-                    <div className={profileStyles.infoRow}>
-                      <span className={profileStyles.infoLabel}>Last updated</span>
-                      <span className={profileStyles.infoValue}>{profile.updatedAt}</span>
+                    <div className="flex flex-wrap items-start justify-between gap-4">
+                      <span className="min-w-[120px] text-[13px] font-semibold text-[#6b5b52]">
+                        Last updated
+                      </span>
+                      <span className="break-words text-right text-[15px] text-[#2d2a26]">
+                        {profile.updatedAt}
+                      </span>
                     </div>
                   </div>
                 </section>

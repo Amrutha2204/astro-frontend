@@ -14,7 +14,12 @@ export interface WalletBalanceResponse {
 }
 
 export const paymentApi = {
-  async createOrder(token: string, amountRupees: number, description?: string, receipt?: string): Promise<CreateOrderResponse> {
+  async createOrder(
+    token: string,
+    amountRupees: number,
+    description?: string,
+    receipt?: string,
+  ): Promise<CreateOrderResponse> {
     const t = token?.trim();
     if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
     return request<CreateOrderResponse>(ASTRO_BASE, "/api/v1/payment/create-order", {
@@ -24,14 +29,23 @@ export const paymentApi = {
     });
   },
 
-  async verify(token: string, orderId: string, paymentId: string, signature: string): Promise<{ status: string; transactionId: string }> {
+  async verify(
+    token: string,
+    orderId: string,
+    paymentId: string,
+    signature: string,
+  ): Promise<{ status: string; transactionId: string }> {
     const t = token?.trim();
     if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
-    return request<{ status: string; transactionId: string }>(ASTRO_BASE, "/api/v1/payment/verify", {
-      method: "POST",
-      token: t,
-      body: { orderId, paymentId, signature },
-    });
+    return request<{ status: string; transactionId: string }>(
+      ASTRO_BASE,
+      "/api/v1/payment/verify",
+      {
+        method: "POST",
+        token: t,
+        body: { orderId, paymentId, signature },
+      },
+    );
   },
 
   async getBalance(token: string): Promise<WalletBalanceResponse> {
@@ -46,7 +60,7 @@ export const paymentApi = {
   async getMyTransactions(
     token: string,
     limit?: number,
-    offset?: number
+    offset?: number,
   ): Promise<{ items: UserTransaction[]; total: number }> {
     const t = token?.trim();
     if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
@@ -60,7 +74,7 @@ export const paymentApi = {
         method: "GET",
         token: t,
         params: Object.keys(params).length ? params : undefined,
-      }
+      },
     );
   },
 };

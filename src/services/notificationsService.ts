@@ -24,7 +24,10 @@ export const notificationsApi = {
     });
   },
 
-  async updatePreferences(token: string, body: UpdatePreferencesBody): Promise<NotificationPreferences> {
+  async updatePreferences(
+    token: string,
+    body: UpdatePreferencesBody,
+  ): Promise<NotificationPreferences> {
     const t = token?.trim();
     if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
     return request<NotificationPreferences>(ASTRO_BASE, "/api/v1/notifications/preferences", {

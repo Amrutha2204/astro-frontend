@@ -12,7 +12,33 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "coverage/**",
+    "dist/**",
   ]),
+  {
+    files: ["**/*.{js,jsx,ts,tsx,mjs,cjs}"],
+    rules: {
+      curly: ["error", "all"],
+      eqeqeq: ["error", "always"],
+      "no-console": ["warn", { allow: ["warn", "error"] }],
+      "@typescript-eslint/consistent-type-imports": [
+        "warn",
+        {
+          prefer: "type-imports",
+          fixStyle: "inline-type-imports",
+        },
+      ],
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
+    },
+  },
 ]);
 
 export default eslintConfig;

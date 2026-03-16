@@ -44,7 +44,9 @@ body {
   background: var(--bg-main);
   color: var(--text-main);
   font-family: Arial, Helvetica, sans-serif;
-  transition: background 0.25s ease, color 0.25s ease;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease;
 }
 
 /* UI helpers */
@@ -86,9 +88,13 @@ body {
   color: var(--text-main);
   font-size: 15px;
   font-weight: 500;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
   box-sizing: border-box;
-  box-shadow: 0 1px 2px rgba(107, 68, 35, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  box-shadow:
+    0 1px 2px rgba(107, 68, 35, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
 .formSelect {
@@ -104,14 +110,19 @@ body {
 .formDateInput:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(107, 68, 35, 0.2), 0 1px 3px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  box-shadow:
+    0 0 0 3px rgba(107, 68, 35, 0.2),
+    0 1px 3px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
   background: #fffefc;
 }
 
 .formSelect:hover,
 .formDateInput:hover {
   border-color: #b8a078;
-  box-shadow: 0 2px 6px rgba(107, 68, 35, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  box-shadow:
+    0 2px 6px rgba(107, 68, 35, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
 .formDateInput {

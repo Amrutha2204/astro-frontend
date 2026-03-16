@@ -6,9 +6,30 @@ import AppSidebar from "@/components/layout/AppSidebar";
 import { paymentApi, WalletBalanceResponse, UserTransaction } from "@/services/paymentService";
 import { showError, showSuccess } from "@/utils/toast";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
-import styles from "@/styles/dashboard.module.css";
 
 const REDIRECT_DELAY_MS = 2000;
+
+type RazorpayHandlerPayload = {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+};
+
+type RazorpayOptions = {
+  key: string;
+  amount: number;
+  currency: string;
+  order_id: string;
+  name: string;
+  description: string;
+  handler: (response: RazorpayHandlerPayload) => Promise<void>;
+};
+
+declare global {
+  interface Window {
+    Razorpay?: new (options: RazorpayOptions) => { open: () => void };
+  }
+}
 
 export default function PaymentPage() {
   const router = useRouter();
@@ -83,7 +104,7 @@ export default function PaymentPage() {
     try {
       const res = await paymentApi.createOrder(t, amount, "Wallet top-up");
       showSuccess("Order created. Complete payment on the next screen.");
-      if (typeof window !== "undefined" && (window as any).Razorpay) {
+      if (typeof window !== "undefined" && window.Razorpay) {
         const options = {
           key: res.keyId,
           amount: res.amount * 100,
@@ -91,9 +112,14 @@ export default function PaymentPage() {
           order_id: res.orderId,
           name: "Astro",
           description: "Wallet top-up",
-          handler: async (response: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) => {
+          handler: async (response: RazorpayHandlerPayload) => {
             try {
-              await paymentApi.verify(t, response.razorpay_order_id, response.razorpay_payment_id, response.razorpay_signature);
+              await paymentApi.verify(
+                t,
+                response.razorpay_order_id,
+                response.razorpay_payment_id,
+                response.razorpay_signature,
+              );
               showSuccess("Payment successful. Wallet updated.");
               fetchBalance();
               fetchTransactions();
@@ -102,7 +128,7 @@ export default function PaymentPage() {
             }
           },
         };
-        const rzp = new (window as any).Razorpay(options);
+        const rzp = new window.Razorpay(options);
         rzp.open();
       } else {
         router.push(`/subscription/plans?orderId=${res.orderId}&amount=${res.amount}`);
@@ -116,36 +142,40 @@ export default function PaymentPage() {
 
   if (!rehydrated || !token?.trim()) {
     return (
-      <div className={styles.dashboardContainer}>
+      <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]">
         <AppHeader />
-        <div className={styles.dashboardContent}>
+        <div className="flex w-full">
           <AppSidebar />
-          <main className={styles.mainContent}><p>Loading…</p></main>
+          <main className="ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]">
+            <p>Loading…</p>
+          </main>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={styles.dashboardContainer}>
+    <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]">
       <AppHeader />
-      <div className={styles.dashboardContent}>
+      <div className="flex w-full">
         <AppSidebar />
-        <main className={styles.mainContent}>
-          <div className={styles.kundliContainer}>
-            <h1 className={styles.sectionTitle}>Wallet &amp; Payment</h1>
-            {error && <p className={styles.errorText}>{error}</p>}
+        <main className="ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]">
+          <div className="relative mx-auto max-w-[1200px]">
+            <h1 className="mb-6 border-b-[2px] border-b-[#d4a574] pb-[14px] text-[26px] font-bold tracking-[-0.01em] text-[#6b4423]">
+              Wallet &amp; Payment
+            </h1>
+            {error && <p className="text-[18px] font-semibold text-[#6b4423]">{error}</p>}
             {loading ? (
               <p>Loading balance…</p>
             ) : balance !== null ? (
-              <div style={{ marginBottom: "1.5rem" }}>
-                <p className={styles.explanationLine}>
+              <div className="mb-6">
+                <p className="mt-2 rounded-[6px] border-l-[3px] border-l-[#6b4423] bg-[#faf8f5] px-3 py-2 text-[14px] italic text-[#5c4033]">
                   <strong>Wallet balance:</strong> ₹{balance.balanceRupees.toFixed(2)}
                 </p>
               </div>
             ) : null}
-            <div style={{ maxWidth: 360 }}>
-              <h2 style={{ fontSize: "1rem", marginBottom: "0.5rem" }}>Add money</h2>
+            <div className="max-w-[360px]">
+              <h2 className="mb-2 text-[1rem]">Add money</h2>
               <form onSubmit={handleCreateOrder}>
                 <input
                   type="number"
@@ -154,43 +184,65 @@ export default function PaymentPage() {
                   placeholder="Amount (₹)"
                   value={amountRupees}
                   onChange={(e) => setAmountRupees(e.target.value)}
-                  style={{ marginBottom: "0.75rem", width: "100%", padding: "8px 12px", borderRadius: 6, border: "1px solid #ccc" }}
+                  className="mb-3 w-full rounded-[6px] border border-[#ccc] px-3 py-2"
                 />
-                <button type="submit" disabled={creating} className={styles.chatNowButton}>
+                <button
+                  type="submit"
+                  disabled={creating}
+                  className="inline-flex items-center justify-center rounded-[12px] border-none bg-[#6b4423] px-[28px] py-3 text-[16px] font-bold text-white shadow-[0_4px_14px_rgba(139,94,52,0.25)] transition-colors duration-200 hover:bg-[#5c3a1f] disabled:cursor-not-allowed disabled:opacity-60"
+                >
                   {creating ? "Creating…" : "Pay with Razorpay"}
                 </button>
               </form>
-              <p style={{ fontSize: "0.85rem", color: "#666", marginTop: "0.5rem" }}>
-                If Razorpay is not loaded, you will be redirected to plans page. Load the Razorpay script on your site for in-page checkout.
+              <p className="mt-2 text-[0.85rem] text-[#666]">
+                If Razorpay is not loaded, you will be redirected to plans page. Load the Razorpay
+                script on your site for in-page checkout.
               </p>
             </div>
 
-            <div style={{ marginTop: "2rem" }}>
-              <h2 className={styles.adminSectionTitle}>Transaction history ({transactionsTotal})</h2>
+            <div className="mt-8">
+              <h2 className="mb-4 text-[24px] font-bold text-[#6b4423]">
+                Transaction history ({transactionsTotal})
+              </h2>
               {loadingTx ? (
                 <p>Loading…</p>
               ) : transactions.length === 0 ? (
-                <p className={styles.explanationLine}>No transactions yet.</p>
+                <p className="mt-2 rounded-[6px] border-l-[3px] border-l-[#6b4423] bg-[#faf8f5] px-3 py-2 text-[14px] italic text-[#5c4033]">
+                  No transactions yet.
+                </p>
               ) : (
-                <div className={styles.adminTableWrap}>
-                  <table className={styles.adminTable}>
+                <div className="overflow-x-auto rounded-[12px] border border-[#e5e7eb] bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
+                  <table className="min-w-full border-collapse text-left text-[14px]">
                     <thead>
-                      <tr>
-                        <th>Date</th>
-                        <th>Type</th>
-                        <th>Status</th>
-                        <th>Amount</th>
-                        <th>Description</th>
+                      <tr className="bg-[#f9fafb] text-[#6b4423]">
+                        <th className="border-b border-[#e5e7eb] px-4 py-3 font-semibold">Date</th>
+                        <th className="border-b border-[#e5e7eb] px-4 py-3 font-semibold">Type</th>
+                        <th className="border-b border-[#e5e7eb] px-4 py-3 font-semibold">
+                          Status
+                        </th>
+                        <th className="border-b border-[#e5e7eb] px-4 py-3 font-semibold">
+                          Amount
+                        </th>
+                        <th className="border-b border-[#e5e7eb] px-4 py-3 font-semibold">
+                          Description
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
                       {transactions.map((tx) => (
-                        <tr key={tx.id}>
-                          <td>{new Date(tx.createdAt).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })}</td>
-                          <td>{tx.type}</td>
-                          <td>{tx.status}</td>
-                          <td>₹{(Number(tx.amountPaise) / 100).toFixed(2)}</td>
-                          <td>{tx.description || "—"}</td>
+                        <tr key={tx.id} className="border-b border-[#f1f5f9] last:border-b-0">
+                          <td className="px-4 py-3">
+                            {new Date(tx.createdAt).toLocaleString(undefined, {
+                              dateStyle: "short",
+                              timeStyle: "short",
+                            })}
+                          </td>
+                          <td className="px-4 py-3">{tx.type}</td>
+                          <td className="px-4 py-3">{tx.status}</td>
+                          <td className="px-4 py-3">
+                            ₹{(Number(tx.amountPaise) / 100).toFixed(2)}
+                          </td>
+                          <td className="px-4 py-3">{tx.description || "—"}</td>
                         </tr>
                       ))}
                     </tbody>

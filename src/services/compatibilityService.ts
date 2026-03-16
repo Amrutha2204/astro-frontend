@@ -22,7 +22,13 @@ export interface GunaMilanResponse {
   maxScore: number;
   percentage: number;
   verdict: "Excellent" | "Good" | "Average" | "Below Average";
-  gunas: Array<{ name: string; score: number; maxScore: number; description: string; parameterMeaning?: string }>;
+  gunas: Array<{
+    name: string;
+    score: number;
+    maxScore: number;
+    description: string;
+    parameterMeaning?: string;
+  }>;
   source: string;
 }
 
@@ -66,11 +72,17 @@ export const compatibilityApi = {
     });
   },
 
-  calculateMarriageCompatibilityGuest(data: CompatibilityRequest): Promise<MarriageCompatibilityResponse> {
-    return request<MarriageCompatibilityResponse>(ASTRO_BASE, "/api/v1/compatibility/marriage/guest", {
-      method: "POST",
-      body: toBody(data),
-    });
+  calculateMarriageCompatibilityGuest(
+    data: CompatibilityRequest,
+  ): Promise<MarriageCompatibilityResponse> {
+    return request<MarriageCompatibilityResponse>(
+      ASTRO_BASE,
+      "/api/v1/compatibility/marriage/guest",
+      {
+        method: "POST",
+        body: toBody(data),
+      },
+    );
   },
 
   calculateGunaMilan(token: string, data: CompatibilityRequest): Promise<GunaMilanResponse> {
@@ -83,7 +95,10 @@ export const compatibilityApi = {
     });
   },
 
-  calculateMarriageCompatibility(token: string, data: CompatibilityRequest): Promise<MarriageCompatibilityResponse> {
+  calculateMarriageCompatibility(
+    token: string,
+    data: CompatibilityRequest,
+  ): Promise<MarriageCompatibilityResponse> {
     const t = token?.trim();
     if (!isValidJwtFormat(t)) throw new Error("Invalid token format. Please login again.");
     return request<MarriageCompatibilityResponse>(ASTRO_BASE, "/api/v1/compatibility/marriage", {

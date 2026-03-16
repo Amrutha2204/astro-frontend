@@ -1,5 +1,4 @@
 import { useRouter } from "next/router";
-import styles from "@/styles/dashboard.module.css";
 
 interface PageHeaderProps {
   onBack?: () => void;
@@ -39,36 +38,35 @@ export default function PageHeader({
   };
 
   return (
-    <div className={styles.pageHeader}>
+    <div className="mb-6 flex items-center justify-between border-b border-b-[#e5e7eb] pb-4">
       <button
         type="button"
         onClick={handleBack}
-        className={styles.backButton}
+        className="flex items-center gap-[6px] rounded-[6px] bg-[#6b4423] px-4 py-2 text-[14px] font-medium text-white transition-all duration-200 hover:-translate-x-[2px] hover:bg-[#5c3a1f] active:translate-x-0"
         aria-label={backAriaLabel}
       >
         ← {backLabel}
       </button>
 
-      {title && (
-        onTitleClick ? (
+      {title &&
+        (onTitleClick ? (
           <button
             type="button"
-            className={styles.pageTitleButton}
+            className="rounded-[6px] bg-transparent px-2 py-1 text-[18px] font-semibold text-[#1f2937] transition-[background,color] duration-150 ease-in-out hover:bg-[#f5ebe0] hover:text-[#6b4423]"
             onClick={onTitleClick}
           >
             {title}
           </button>
         ) : (
-          <span className={styles.pageTitleLabel}>{title}</span>
-        )
-      )}
+          <span className="text-[18px] font-semibold text-[#1f2937]">{title}</span>
+        ))}
 
       {onRefresh && (
-        <div className={styles.headerActions}>
+        <div className="flex items-center gap-[10px]">
           <button
             type="button"
             onClick={onRefresh}
-            className={styles.refreshButton}
+            className="flex items-center gap-[6px] rounded-[6px] border border-[#6b4423] bg-white px-4 py-2 text-[14px] font-medium text-[#6b4423] transition-all duration-200 hover:bg-[#6b4423] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
             aria-label={refreshAriaLabel}
             disabled={disableRefresh}
           >
@@ -79,4 +77,3 @@ export default function PageHeader({
     </div>
   );
 }
-

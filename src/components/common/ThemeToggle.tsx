@@ -29,11 +29,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     document.documentElement.setAttribute("data-theme", newTheme);
   };
 
-  return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={{ theme, toggleTheme }}>{children}</ThemeContext.Provider>;
 };
 
 // hook
@@ -47,11 +43,7 @@ export const useTheme = () => {
 const ThemeToggle = () => {
   const { theme, toggleTheme } = useTheme();
 
-  return (
-    <button onClick={toggleTheme}>
-      {theme === "dark" ? "☀ Light" : "🌙 Dark"}
-    </button>
-  );
+  return <button onClick={toggleTheme}>{theme === "dark" ? "☀ Light" : "🌙 Dark"}</button>;
 };
 
 export default ThemeToggle;
