@@ -27,16 +27,14 @@ export default class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       if (this.props.fallback) return this.props.fallback;
       return (
-        <div className="min-h-[60vh] flex flex-col items-center justify-center p-6 text-center font-sans">
-          <h1 className="text-xl mb-2">Something went wrong</h1>
-          <p className="text-gray-500 mb-4">
-            We couldn’t load this page. Please try again.
-          </p>
+        <div className="flex min-h-[60vh] flex-col items-center justify-center p-6 text-center font-[system-ui,sans-serif]">
+          <h1 className="mb-2 text-[20px]">Something went wrong</h1>
+          <p className="mb-4 text-[#6b7280]">We couldn’t load this page. Please try again.</p>
           <button
-  type="button"
-  onClick={() => this.setState({ hasError: false })}
-  className="px-5 py-2.5 bg-[#6b4423] text-white rounded-lg font-semibold cursor-pointer hover:opacity-90 transition"
->
+            type="button"
+            onClick={() => this.setState({ hasError: false })}
+            className="rounded-[8px] bg-[#6b4423] px-5 py-[10px] font-semibold text-white"
+          >
             Try again
           </button>
         </div>

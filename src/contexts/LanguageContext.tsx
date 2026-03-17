@@ -24,7 +24,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const stored = (typeof window !== "undefined" && window.localStorage.getItem(STORAGE_KEY)) as Locale | null;
+    const stored = (typeof window !== "undefined" &&
+      window.localStorage.getItem(STORAGE_KEY)) as Locale | null;
     if (stored === "hi" || stored === "en") setLocaleState(stored);
     setMounted(true);
   }, []);
@@ -38,11 +39,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   const value: LanguageContextType = mounted ? { locale, setLocale, t } : defaultContext;
 
-  return (
-    <LanguageContext.Provider value={value}>
-      {children}
-    </LanguageContext.Provider>
-  );
+  return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 }
 
 export function useLanguage() {

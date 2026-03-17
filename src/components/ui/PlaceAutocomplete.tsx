@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from "react";
 import { astroApi } from "@/services/api";
-import styles from "@/styles/placeAutocomplete.module.css";
 
 type Props = {
   value: string;
@@ -122,7 +121,7 @@ export default function PlaceAutocomplete({
   };
 
   return (
-    <div ref={wrapRef} className={`${styles.wrap} ${className}`}>
+    <div ref={wrapRef} className={`relative mb-4 w-full ${className}`}>
       <input
         type="text"
         id={id}
@@ -141,31 +140,39 @@ export default function PlaceAutocomplete({
         aria-autocomplete="list"
         aria-expanded={showList}
         aria-controls={showList ? "place-list" : undefined}
-        aria-activedescendant={showList && suggestions[focusedIndex] ? `place-option-${focusedIndex}` : undefined}
-        className={styles.input}
+        aria-activedescendant={
+          showList && suggestions[focusedIndex] ? `place-option-${focusedIndex}` : undefined
+        }
+        className="min-h-[46px] w-full rounded-[14px] border border-[#d4c4a8] bg-[linear-gradient(to_bottom,#fffefc_0%,#faf8f4_100%)] px-[14px] py-[11px] text-[15px] font-medium text-[var(--text-main)] shadow-[0_1px_2px_rgba(107,68,35,0.06),inset_0_1px_0_rgba(255,255,255,0.6)] transition-[border-color,box-shadow] duration-200 ease-in-out hover:border-[#b8a078] hover:shadow-[0_2px_6px_rgba(107,68,35,0.1),inset_0_1px_0_rgba(255,255,255,0.6)] focus:border-[var(--accent)] focus:bg-[#fffefc] focus:outline-none focus:shadow-[0_0_0_3px_rgba(107,68,35,0.2),0_1px_3px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.6)]"
       />
       {showList && (
         <ul
           id="place-list"
           ref={listRef}
           role="listbox"
-          className={styles.list}
+          className="absolute left-0 right-0 top-[calc(100%+4px)] z-[1000] max-h-80 overflow-y-auto rounded-[14px] border border-[#d4c4a8] bg-[#fffefc] py-2 shadow-[0_10px_40px_rgba(107,68,35,0.15),0_2px_12px_rgba(0,0,0,0.08)]"
           aria-label="Place suggestions"
         >
           {loading && suggestions.length === 0 ? (
-            <li className={styles.empty} role="option">
+            <li className="px-4 py-3 text-[14px] text-[#6b5b52]" role="option">
               Searching…
             </li>
           ) : suggestions.length === 0 ? (
-            <li className={styles.empty} role="option">
-              Type a city, town or village name. You can use the place as-is; we’ll use it for coordinates.
+            <li className="px-4 py-3 text-[14px] text-[#6b5b52]" role="option">
+              Type a city, town or village name. You can use the place as-is; we’ll use it for
+              coordinates.
             </li>
           ) : (
             suggestions.map((place, i) => (
-              <li key={`${i}-${place}`} role="option" id={`place-option-${i}`} aria-selected={i === focusedIndex}>
+              <li
+                key={`${i}-${place}`}
+                role="option"
+                id={`place-option-${i}`}
+                aria-selected={i === focusedIndex}
+              >
                 <button
                   type="button"
-                  className={`${styles.item} ${i === focusedIndex ? styles.itemFocused : ""}`}
+                  className={`block w-full break-words whitespace-normal bg-transparent px-4 py-[10px] text-left text-[14px] leading-[1.4] text-[#2d2a26] transition-colors duration-150 ${i === focusedIndex ? "bg-[#f5f0e8] text-[#6b4423]" : "hover:bg-[#f5f0e8] hover:text-[#6b4423]"}`}
                   onMouseEnter={() => setFocusedIndex(i)}
                   onClick={() => handleSelect(place)}
                   title={place}

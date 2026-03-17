@@ -16,7 +16,10 @@ export interface GenerateReportResponse {
 }
 
 export const reportsApi = {
-  async generate(token: string, reportType: "kundli_summary" | "compatibility_summary"): Promise<GenerateReportResponse> {
+  async generate(
+    token: string,
+    reportType: "kundli_summary" | "compatibility_summary",
+  ): Promise<GenerateReportResponse> {
     const t = token?.trim();
     if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
     return request<GenerateReportResponse>(ASTRO_BASE, "/api/v1/reports/generate", {
@@ -40,13 +43,31 @@ export const reportsApi = {
     token: string,
     reportType: "kundli_summary" | "compatibility_summary",
     compatibilityPartners?: {
-      partner1: { year: number; month: number; day: number; hour?: number; minute?: number; latitude: number; longitude: number };
-      partner2: { year: number; month: number; day: number; hour?: number; minute?: number; latitude: number; longitude: number };
+      partner1: {
+        year: number;
+        month: number;
+        day: number;
+        hour?: number;
+        minute?: number;
+        latitude: number;
+        longitude: number;
+      };
+      partner2: {
+        year: number;
+        month: number;
+        day: number;
+        hour?: number;
+        minute?: number;
+        latitude: number;
+        longitude: number;
+      };
     },
   ): Promise<GenerateReportResponse> {
     const t = token?.trim();
     if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
-    const body: { reportType: string; compatibilityPartners?: typeof compatibilityPartners } = { reportType };
+    const body: { reportType: string; compatibilityPartners?: typeof compatibilityPartners } = {
+      reportType,
+    };
     if (reportType === "compatibility_summary" && compatibilityPartners) {
       body.compatibilityPartners = compatibilityPartners;
     }

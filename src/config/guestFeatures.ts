@@ -32,10 +32,7 @@ export type FeatureId =
   | "birth-details";
 
 /** Features that guests must NOT see (Astro Talk, AI Assistant chat, etc.) */
-export const GUEST_EXCLUDED_FEATURES: FeatureId[] = [
-  "astro-talk",
-  "ai-assistant",
-];
+export const GUEST_EXCLUDED_FEATURES: FeatureId[] = ["astro-talk", "ai-assistant"];
 
 /** Route paths that map to excluded features (for redirect/hiding) */
 export const GUEST_EXCLUDED_PATHS: string[] = [
@@ -103,7 +100,5 @@ export function isGuestAllowedPath(path: string): boolean {
 /** Check if a path is explicitly excluded for guests (Astro Talk, AI Assistant) */
 export function isGuestExcludedPath(path: string): boolean {
   const p = (path || "/").replace(/\?.*$/, "").replace(/\/$/, "") || "/";
-  return GUEST_EXCLUDED_PATHS.some(
-    (excluded) => p === excluded || p.startsWith(excluded + "/")
-  );
+  return GUEST_EXCLUDED_PATHS.some((excluded) => p === excluded || p.startsWith(excluded + "/"));
 }

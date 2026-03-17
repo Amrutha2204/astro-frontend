@@ -11,10 +11,13 @@ export const translations: Record<Locale, Record<string, string>> = {
     login: "Login",
     register: "Register",
     whatToExplore: "What would you like to explore?",
-    chooseService: "Choose a service below. No login needed to try Horoscope, Match, Calendar, Transits, Dasha and Dosha.",
-    disclaimer: "For guidance purposes only. Astrology does not replace personal judgment or professional advice.",
+    chooseService:
+      "Choose a service below. No login needed to try Horoscope, Match, Calendar, Transits, Dasha and Dosha.",
+    disclaimer:
+      "For guidance purposes only. Astrology does not replace personal judgment or professional advice.",
     freeKundli: "Free Kundli",
-    freeKundliDesc: "Birth chart with Lagna, Rashi, Nakshatra — optional \"I don't know\" birth time",
+    freeKundliDesc:
+      'Birth chart with Lagna, Rashi, Nakshatra — optional "I don\'t know" birth time',
     todaysHoroscope: "Today's Horoscope",
     todaysHoroscopeDesc: "Daily prediction for your zodiac sign",
     matchCompatibility: "Match / Compatibility",
@@ -38,10 +41,12 @@ export const translations: Record<Locale, Record<string, string>> = {
     login: "लॉगिन",
     register: "रजिस्टर",
     whatToExplore: "आप क्या देखना चाहेंगे?",
-    chooseService: "नीचे से सेवा चुनें। राशिफल, मिलान, कैलेंडर, ट्रांजिट, दशा और दोष बिना लॉगिन आज़माएं।",
-    disclaimer: "केवल मार्गदर्शन के लिए। ज्योतिष व्यक्तिगत निर्णय या विशेषज्ञ सलाह का विकल्प नहीं है।",
+    chooseService:
+      "नीचे से सेवा चुनें। राशिफल, मिलान, कैलेंडर, ट्रांजिट, दशा और दोष बिना लॉगिन आज़माएं।",
+    disclaimer:
+      "केवल मार्गदर्शन के लिए। ज्योतिष व्यक्तिगत निर्णय या विशेषज्ञ सलाह का विकल्प नहीं है।",
     freeKundli: "मुफ्त कुंडली",
-    freeKundliDesc: "लग्न, राशि, नक्षत्र — वैकल्पिक \"मुझे जन्म समय नहीं पता\"",
+    freeKundliDesc: 'लग्न, राशि, नक्षत्र — वैकल्पिक "मुझे जन्म समय नहीं पता"',
     todaysHoroscope: "आज का राशिफल",
     todaysHoroscopeDesc: "आपकी राशि के लिए दैनिक भविष्यवाणी",
     matchCompatibility: "मिलान / अनुकूलता",

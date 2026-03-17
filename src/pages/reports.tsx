@@ -8,7 +8,6 @@ import { reportsApi, ReportItem } from "@/services/reportsService";
 import { subscriptionApi } from "@/services/subscriptionService";
 import { showError, showSuccess } from "@/utils/toast";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
-import styles from "@/styles/dashboard.module.css";
 
 const REDIRECT_DELAY_MS = 2000;
 
@@ -22,6 +21,11 @@ export default function ReportsPage() {
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const pageClass = "min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]";
+  const contentClass = "flex w-full";
+  const mainClass =
+    "h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 ml-[250px]";
+  const containerClass = "relative mx-auto max-w-[1200px]";
 
   const fetchData = useCallback(async () => {
     const t = token?.trim();
@@ -36,7 +40,9 @@ export default function ReportsPage() {
         subscriptionApi.getMySubscription(t),
         reportsApi.listMy(t),
       ]);
-      setCanAccess(!!(sub.isActive && sub.plan && (sub.plan.features || "").includes("premium_reports")));
+      setCanAccess(
+        !!(sub.isActive && sub.plan && (sub.plan.features || "").includes("premium_reports")),
+      );
       setReports(list);
       setError(null);
     } catch (err) {
@@ -74,11 +80,13 @@ export default function ReportsPage() {
 
   if (!rehydrated || !token?.trim()) {
     return (
-      <div className={styles.dashboardContainer}>
+      <div className={pageClass}>
         <AppHeader />
-        <div className={styles.dashboardContent}>
+        <div className={contentClass}>
           <AppSidebar />
-          <main className={styles.mainContent}><p>Loading…</p></main>
+          <main className={mainClass}>
+            <p>Loading…</p>
+          </main>
         </div>
       </div>
     );
@@ -86,11 +94,13 @@ export default function ReportsPage() {
 
   if (loading && canAccess === null) {
     return (
-      <div className={styles.dashboardContainer}>
+      <div className={pageClass}>
         <AppHeader />
-        <div className={styles.dashboardContent}>
+        <div className={contentClass}>
           <AppSidebar />
-          <main className={styles.mainContent}><p>Loading…</p></main>
+          <main className={mainClass}>
+            <p>Loading…</p>
+          </main>
         </div>
       </div>
     );
@@ -98,13 +108,15 @@ export default function ReportsPage() {
 
   if (canAccess === false) {
     return (
-      <div className={styles.dashboardContainer}>
+      <div className={pageClass}>
         <AppHeader />
-        <div className={styles.dashboardContent}>
+        <div className={contentClass}>
           <AppSidebar />
-          <main className={styles.mainContent}>
-            <div className={styles.kundliContainer}>
-              <h1 className={styles.sectionTitle}>Premium Reports</h1>
+          <main className={mainClass}>
+            <div className={containerClass}>
+              <h1 className="mb-6 text-[26px] font-bold tracking-[-0.01em] text-[#6b4423]">
+                Premium Reports
+              </h1>
               <UpgradePrompt featureName="Premium PDF reports (Kundli summary)" />
             </div>
           </main>
@@ -114,33 +126,35 @@ export default function ReportsPage() {
   }
 
   return (
-    <div className={styles.dashboardContainer}>
+    <div className={pageClass}>
       <AppHeader />
-      <div className={styles.dashboardContent}>
+      <div className={contentClass}>
         <AppSidebar />
-        <main className={styles.mainContent}>
-          <div className={styles.kundliContainer}>
-            <h1 className={styles.sectionTitle}>Premium Reports</h1>
-            {error && <p className={styles.errorText}>{error}</p>}
-            <p className={styles.explanationLine} style={{ marginBottom: "1rem" }}>
+        <main className={mainClass}>
+          <div className={containerClass}>
+            <h1 className="mb-6 text-[26px] font-bold tracking-[-0.01em] text-[#6b4423]">
+              Premium Reports
+            </h1>
+            {error && <p className="mt-[10px] text-[14px] text-[#d32f2f]">{error}</p>}
+            <p className="mb-4 mt-2 rounded-[6px] border-l-[3px] border-l-[#6b4423] bg-[#faf8f5] px-3 py-2 text-[14px] italic text-[#5c4033]">
               Generate and download your Kundli summary PDF.
             </p>
             <button
               type="button"
-              className={styles.chatNowButton}
+              className="mt-[14px] rounded-[12px] bg-[linear-gradient(135deg,#8b5e34_0%,#6b4423_100%)] px-[20px] py-4 text-[16px] font-bold text-white shadow-[0_8px_24px_rgba(107,68,35,0.3)] transition-all duration-300 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-[2px] hover:bg-[linear-gradient(135deg,#a67a4a_0%,#7d5a3c_100%)] hover:shadow-[0_12px_36px_rgba(107,68,35,0.4)] disabled:cursor-not-allowed disabled:opacity-60"
               disabled={generating}
               onClick={handleGenerate}
             >
               {generating ? "Generating…" : "Generate Kundli Summary PDF"}
             </button>
             {reports.length > 0 && (
-              <div style={{ marginTop: "1.5rem" }}>
-                <h2 style={{ fontSize: "1rem", marginBottom: "0.5rem" }}>Your reports</h2>
-                <ul style={{ listStyle: "none", padding: 0 }}>
+              <div className="mt-6">
+                <h2 className="mb-2 text-[1rem]">Your reports</h2>
+                <ul className="list-none p-0">
                   {reports.map((r) => (
-                    <li key={r.id} style={{ marginBottom: "0.5rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <li key={r.id} className="mb-2 flex items-center gap-2">
                       <span>{r.reportType}</span>
-                      <span style={{ color: "#666", fontSize: "0.9rem" }}>
+                      <span className="text-[0.9rem] text-[#666666]">
                         {new Date(r.createdAt).toLocaleString()}
                       </span>
                       <a
@@ -148,8 +162,7 @@ export default function ReportsPage() {
                         download
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={styles.retryButton}
-                        style={{ padding: "4px 12px", fontSize: "0.85rem", textDecoration: "none", color: "#fff" }}
+                        className="rounded-[8px] bg-[#6b4423] px-3 py-1 text-[0.85rem] text-white no-underline transition-colors duration-200 hover:bg-[#5c3a1f]"
                       >
                         Download
                       </a>

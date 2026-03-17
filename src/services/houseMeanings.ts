@@ -10,7 +10,7 @@ const houseMeanings: Record<number, string> = {
   9: "Luck, Wisdom",
   10: "Career, Reputation",
   11: "Network, Friends",
-  12: "Spirituality, Isolation"
+  12: "Spirituality, Isolation",
 };
 
 export default houseMeanings;

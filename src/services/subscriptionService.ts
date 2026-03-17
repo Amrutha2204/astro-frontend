@@ -14,7 +14,13 @@ export interface SubscriptionPlan {
 
 export interface UserSubscriptionResponse {
   plan: SubscriptionPlan | null;
-  subscription: { id: string; planSlug: string; startAt: string; endAt: string; status: string } | null;
+  subscription: {
+    id: string;
+    planSlug: string;
+    startAt: string;
+    endAt: string;
+    status: string;
+  } | null;
   isActive: boolean;
 }
 

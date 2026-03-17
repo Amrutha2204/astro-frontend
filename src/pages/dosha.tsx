@@ -9,7 +9,6 @@ import TrustNote from "@/components/common/TrustNote";
 import { doshaApi, DoshaResponse } from "@/services/doshaService";
 import { showError } from "@/utils/toast";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
-import styles from "@/styles/dashboard.module.css";
 import ErrorMessage from "@/components/ui/ErrorMessage";
 import Loading from "@/components/ui/Loading";
 
@@ -56,31 +55,39 @@ export default function DoshaPage() {
     fetchDosha();
   }, [rehydrated, token, dispatch, router, fetchDosha]);
 
-  const getSeverityColor = (severity?: string) => {
+  const getSeverityBorderClass = (severity?: string) => {
     switch (severity) {
-      case 'High':
-        return '#9c4a3d';
-      case 'Medium':
-        return '#a67c00';
-      case 'Low':
-        return '#8b7b4a';
+      case "High":
+        return "border-l-[#9c4a3d]";
+      case "Medium":
+        return "border-l-[#a67c00]";
+      case "Low":
+        return "border-l-[#8b7b4a]";
       default:
-        return '#5c4033';
+        return "border-l-[#5c4033]";
     }
   };
 
-  const notPresentStyle = { background: '#e8f0e8', color: '#3d6b4f' };
-  const presentColor = '#9c4a3d';
-  const totalZeroColor = '#5c4033';
-  const totalNonZeroColor = '#9c4a3d';
+  const getSeverityBadgeClass = (severity?: string) => {
+    switch (severity) {
+      case "High":
+        return "bg-[#9c4a3d]";
+      case "Medium":
+        return "bg-[#a67c00]";
+      case "Low":
+        return "bg-[#8b7b4a]";
+      default:
+        return "bg-[#5c4033]";
+    }
+  };
 
   if (loading) {
     return (
-      <div className={styles.dashboardContainer}>
+      <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]">
         <AppHeader />
-        <div className={styles.dashboardContent}>
+        <div className="flex w-full">
           <AppSidebar />
-          <main className={styles.mainContent}>
+          <main className="ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]">
             <Loading text="Loading your Dosha Check..." />
           </main>
         </div>
@@ -90,18 +97,24 @@ export default function DoshaPage() {
 
   if (error) {
     return (
-      <div className={styles.dashboardContainer}>
+      <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]">
         <AppHeader />
-        <div className={styles.dashboardContent}>
+        <div className="flex w-full">
           <AppSidebar />
-          <main className={styles.mainContent}>
-            <div className={styles.errorContainer}>
+          <main className="ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]">
+            <div className="flex min-h-[400px] flex-col items-center justify-center gap-5">
               {error && <ErrorMessage message={error} />}
-              <div className={styles.buttonGroup}>
-                <button onClick={fetchDosha} className={styles.backButton}>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <button
+                  onClick={fetchDosha}
+                  className="flex items-center gap-[6px] rounded-[6px] bg-[#6b4423] px-4 py-2 text-[14px] font-medium text-white transition-all duration-200 hover:-translate-x-[2px] hover:bg-[#5c3a1f]"
+                >
                   🔄 Retry
                 </button>
-                <button onClick={() => router.push("/auth/login")} className={styles.backButton}>
+                <button
+                  onClick={() => router.push("/auth/login")}
+                  className="flex items-center gap-[6px] rounded-[6px] bg-[#6b4423] px-4 py-2 text-[14px] font-medium text-white transition-all duration-200 hover:-translate-x-[2px] hover:bg-[#5c3a1f]"
+                >
                   Go to Login
                 </button>
               </div>
@@ -113,89 +126,91 @@ export default function DoshaPage() {
   }
 
   return (
-    <div className={styles.dashboardContainer}>
+    <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]">
       <AppHeader />
-      <div className={styles.dashboardContent}>
+      <div className="flex w-full">
         <AppSidebar />
-        <main className={styles.mainContent}>
-          <div className={styles.kundliContainer}>
+        <main className="ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]">
+          <div className="relative mx-auto max-w-[1200px]">
             <PageHeader
               onBack={() => router.back()}
               onRefresh={fetchDosha}
               refreshAriaLabel="Refresh dosha"
               disableRefresh={loading}
             />
-            <h1 className={styles.sectionTitle}>Your dosha check</h1>
+            <h1 className="mb-6 border-b-[2px] border-b-[#d4a574] pb-[14px] text-[26px] font-bold tracking-[-0.01em] text-[#6b4423]">
+              Your dosha check
+            </h1>
 
             {dosha && (
               <>
-                <p className={styles.explanationLine}>These results are based on your birth chart’s planetary positions.</p>
-                <div className={styles.doshaSummary}>
-                  <div className={styles.doshaSummaryCard}>
-                    <h3 className={styles.cardTitle}>Total Doshas</h3>
-                    <p className={'${styles.cardValue} text-4x1'}
-                       style={{color: dosha.totalDoshas > 0 ? totalNonZeroColor : totalZeroColor }}>
+                <p className="mt-2 rounded-[6px] border-l-[3px] border-l-[#6b4423] bg-[#faf8f5] px-3 py-2 text-[14px] italic text-[#5c4033]">
+                  These results are based on your birth chart’s planetary positions.
+                </p>
+                <div className="mb-[30px]">
+                  <div className="mx-auto max-w-[400px] rounded-[12px] border border-[#e8ddd0] bg-[linear-gradient(135deg,#f5ebe0_0%,#ede4d8_100%)] p-[30px] text-center">
+                    <h3 className="text-[20px] font-bold text-[#6b4423]">Total Doshas</h3>
+                    <p
+                      className={`my-[10px] text-[2.5rem] font-semibold ${dosha.totalDoshas > 0 ? "text-[#9c4a3d]" : "text-[#5c4033]"}`}
+                    >
                       {dosha.totalDoshas}
                     </p>
-                    <p className={styles.cardSubtext}>
-                      {dosha.totalDoshas === 0 ? 'No doshas detected' : `${dosha.totalDoshas} dosha(s) found`}
+                    <p className="m-0 text-[0.875rem] text-[#6b7280]">
+                      {dosha.totalDoshas === 0
+                        ? "No doshas detected"
+                        : `${dosha.totalDoshas} dosha(s) found`}
                     </p>
                   </div>
                 </div>
 
                 {dosha.totalDoshas > 0 ? (
-                  <div className={styles.infoGrid}>
+                  <div className="mt-4 grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-[14px]">
                     {dosha.manglik.hasDosha && (
-                      <div className={'${styles.doshaCard} border-1-4'}
-                      style={{ borderColor: getSeverityColor(dosha.manglik.severity) }}>                        <div className={styles.doshaHeader}>
-                          <h3 className={styles.cardTitle}>Manglik Dosha</h3>
+                      <div
+                        className={`rounded-[8px] border-l-[4px] bg-white p-5 shadow-[0_2px_4px_rgba(0,0,0,0.1)] ${getSeverityBorderClass(dosha.manglik.severity)}`}
+                      >
+                        <div className="mb-3 flex items-center justify-between">
+                          <h3 className="text-[20px] font-bold text-[#6b4423]">Manglik Dosha</h3>
                           <span
-  className={`${styles.doshaBadge} text-white px-3 py-1 rounded-full text-sm font-semibold`}
-  style={{ background: getSeverityColor(dosha.manglik.severity) }}
->
-                            {dosha.manglik.severity || 'Present'}
+                            className={`rounded-[12px] px-3 py-1 text-[0.875rem] font-semibold text-white ${getSeverityBadgeClass(dosha.manglik.severity)}`}
+                          >
+                            {dosha.manglik.severity || "Present"}
                           </span>
                         </div>
-                        <p className={styles.cardDescription}>{dosha.manglik.description}</p>
+                        <p className="m-0 text-[14px] leading-[1.6] text-[#6b7280]">
+                          {dosha.manglik.description}
+                        </p>
                       </div>
                     )}
                     {dosha.nadi.hasDosha && (
-                      <div
-  className={`${styles.doshaCard} border-l-4`}
-  style={{ borderColor: presentColor }}
->
-                        <div className={styles.doshaHeader}>
-                          <h3 className={styles.cardTitle}>Nadi Dosha</h3>
-                          <span
-                            className={`${styles.doshaBadge} text-white px-3 py-1 rounded-full text-sm font-semibold`}
-style={{ background: presentColor }}
-                          >
+                      <div className="rounded-[8px] border-l-[4px] border-l-[#9c4a3d] bg-white p-5 shadow-[0_2px_4px_rgba(0,0,0,0.1)]">
+                        <div className="mb-3 flex items-center justify-between">
+                          <h3 className="text-[20px] font-bold text-[#6b4423]">Nadi Dosha</h3>
+                          <span className="rounded-[12px] bg-[#9c4a3d] px-3 py-1 text-[0.875rem] font-semibold text-white">
                             Present
                           </span>
                         </div>
-                        <p className={styles.cardDescription}>{dosha.nadi.description}</p>
+                        <p className="m-0 text-[14px] leading-[1.6] text-[#6b7280]">
+                          {dosha.nadi.description}
+                        </p>
                       </div>
                     )}
                     {dosha.bhakoot.hasDosha && (
-                      <div
-  className={`${styles.doshaCard} border-l-4`}
-  style={{ borderColor: presentColor }}
->
-                        <div className={styles.doshaHeader}>
-                          <h3 className={styles.cardTitle}>Bhakoot Dosha</h3>
-                         <span
-  className={`${styles.doshaBadge} text-white px-3 py-1 rounded-full text-sm font-semibold`}
-  style={{ background: presentColor }}
->
+                      <div className="rounded-[8px] border-l-[4px] border-l-[#9c4a3d] bg-white p-5 shadow-[0_2px_4px_rgba(0,0,0,0.1)]">
+                        <div className="mb-3 flex items-center justify-between">
+                          <h3 className="text-[20px] font-bold text-[#6b4423]">Bhakoot Dosha</h3>
+                          <span className="rounded-[12px] bg-[#9c4a3d] px-3 py-1 text-[0.875rem] font-semibold text-white">
                             Present
                           </span>
                         </div>
-                        <p className={styles.cardDescription}>{dosha.bhakoot.description}</p>
+                        <p className="m-0 text-[14px] leading-[1.6] text-[#6b7280]">
+                          {dosha.bhakoot.description}
+                        </p>
                       </div>
                     )}
                   </div>
                 ) : (
-                  <p className={styles.cardSubtext}>
+                  <p className="mt-4 text-[0.875rem] text-[#6b7280]">
                     No doshas detected. All checked parameters (Manglik, Nadi, Bhakoot) are clear.
                   </p>
                 )}

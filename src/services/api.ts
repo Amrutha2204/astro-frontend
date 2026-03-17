@@ -21,12 +21,12 @@ export interface LoginRequest {
 
 export interface LoginResponse {
   accessToken: string;
-  user: { 
-    id: string; 
-    name: string; 
+  user: {
+    id: string;
+    name: string;
     roleId: number;
-    birthPlace?:string;
-   };
+    birthPlace?: string;
+  };
 }
 
 export interface SignUpResponse {
@@ -45,8 +45,21 @@ export interface KundliResponse {
   pada: number;
   chandraRasi?: string;
   sooryaRasi?: string;
-  planetaryPositions: Array<{ planet: string; sign: string; degree: number; nakshatra?: string; pada?: number; retrograde?: boolean }>;
-  houses: Array<{ house: number; sign: string; degree: number; meaning?: string; meaningDetail?: string }>;
+  planetaryPositions: Array<{
+    planet: string;
+    sign: string;
+    degree: number;
+    nakshatra?: string;
+    pada?: number;
+    retrograde?: boolean;
+  }>;
+  houses: Array<{
+    house: number;
+    sign: string;
+    degree: number;
+    meaning?: string;
+    meaningDetail?: string;
+  }>;
   source: string;
 }
 
@@ -71,7 +84,10 @@ export interface TransitResponse {
 }
 
 export interface TransitsTodayResponse {
-  currentPlanetPositions?: Record<string, { name: string; sign: { name: string }; degree?: number }>;
+  currentPlanetPositions?: Record<
+    string,
+    { name: string; sign: { name: string }; degree?: number }
+  >;
   majorActiveTransits?: Array<{ planet: string; sign: string; description?: string }>;
   date: string;
   source: string;
@@ -258,7 +274,9 @@ export const astroApi = {
   },
 
   async getTransitsToday(): Promise<TransitsTodayResponse> {
-    return request<TransitsTodayResponse>(ASTRO_BASE, "/api/v1/astrology/transits/today", { method: "GET" });
+    return request<TransitsTodayResponse>(ASTRO_BASE, "/api/v1/astrology/transits/today", {
+      method: "GET",
+    });
   },
 
   // -------------------- Calendar --------------------
@@ -306,18 +324,29 @@ export const astroApi = {
 
   /** Resolve place name (city, town, village) to coordinates. Use for compatibility and any birth place. */
   async getGeocode(place: string): Promise<{ lat: number; lng: number; displayName?: string }> {
-    return request<{ lat: number; lng: number; displayName?: string }>(ASTRO_BASE, "/api/v1/kundli/geocode", {
-      method: "GET",
-      params: { place: place.trim() },
-    });
+    return request<{ lat: number; lng: number; displayName?: string }>(
+      ASTRO_BASE,
+      "/api/v1/kundli/geocode",
+      {
+        method: "GET",
+        params: { place: place.trim() },
+      },
+    );
   },
 
   /** Search places for autocomplete (fetched from server/Nominatim). Empty q returns default list. */
-  async searchPlaces(q: string, limit = 15): Promise<{ places: Array<{ displayName: string; lat: number; lng: number }> }> {
-    return request<{ places: Array<{ displayName: string; lat: number; lng: number }> }>(ASTRO_BASE, "/api/v1/kundli/places/search", {
-      method: "GET",
-      params: q.trim() ? { q: q.trim(), limit: String(limit) } : { limit: String(limit) },
-    });
+  async searchPlaces(
+    q: string,
+    limit = 15,
+  ): Promise<{ places: Array<{ displayName: string; lat: number; lng: number }> }> {
+    return request<{ places: Array<{ displayName: string; lat: number; lng: number }> }>(
+      ASTRO_BASE,
+      "/api/v1/kundli/places/search",
+      {
+        method: "GET",
+        params: q.trim() ? { q: q.trim(), limit: String(limit) } : { limit: String(limit) },
+      },
+    );
   },
 
   async getGuestCalendar(city?: string): Promise<GuestCalendarResponse> {
@@ -349,14 +378,21 @@ export const astroApi = {
   },
 
   async getRahuYamagandam(date: string, placeOfBirth?: string): Promise<RahuYamagandamResponse> {
-    return request<RahuYamagandamResponse>(ASTRO_BASE, "/api/v1/astrology/calendar/rahu-yamagandam", {
-      method: "GET",
-      params: placeOfBirth?.trim() ? { date, placeOfBirth: placeOfBirth.trim() } : { date },
-    });
+    return request<RahuYamagandamResponse>(
+      ASTRO_BASE,
+      "/api/v1/astrology/calendar/rahu-yamagandam",
+      {
+        method: "GET",
+        params: placeOfBirth?.trim() ? { date, placeOfBirth: placeOfBirth.trim() } : { date },
+      },
+    );
   },
 
   // -------------------- Shareable Cards --------------------
-  async createShareableCard(token: string, dto: CreateShareableCardDto): Promise<StoredCardResponse> {
+  async createShareableCard(
+    token: string,
+    dto: CreateShareableCardDto,
+  ): Promise<StoredCardResponse> {
     const t = token?.trim();
     if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
     return request<StoredCardResponse>(ASTRO_BASE, "/api/v1/shareable-card", {
@@ -366,23 +402,35 @@ export const astroApi = {
     });
   },
 
-  async getShareLinks(token: string, url: string, title?: string): Promise<{ whatsapp: string; twitter: string; telegram: string }> {
+  async getShareLinks(
+    token: string,
+    url: string,
+    title?: string,
+  ): Promise<{ whatsapp: string; twitter: string; telegram: string }> {
     const t = token?.trim();
     if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
-    return request<{ whatsapp: string; twitter: string; telegram: string }>(ASTRO_BASE, "/api/v1/shareable-card/share-links", {
-      method: "POST",
-      token: t,
-      body: { url, title },
-    });
+    return request<{ whatsapp: string; twitter: string; telegram: string }>(
+      ASTRO_BASE,
+      "/api/v1/shareable-card/share-links",
+      {
+        method: "POST",
+        token: t,
+        body: { url, title },
+      },
+    );
   },
 
   // -------------------- Retrogrades & Major Transits & Eclipses --------------------
   /** Which planets are retrograde on a single date (for "on this day" result). */
   async getRetrogradesOnDate(date: string): Promise<{ date: string; planetsRetrograde: string[] }> {
-    return request<{ date: string; planetsRetrograde: string[] }>(ASTRO_BASE, "/api/v1/astrology/transits/retrogrades/on-date", {
-      method: "GET",
-      params: { date },
-    });
+    return request<{ date: string; planetsRetrograde: string[] }>(
+      ASTRO_BASE,
+      "/api/v1/astrology/transits/retrogrades/on-date",
+      {
+        method: "GET",
+        params: { date },
+      },
+    );
   },
 
   async getRetrogrades(from: string, to: string): Promise<RetrogradesResponse> {
@@ -400,10 +448,14 @@ export const astroApi = {
   },
 
   async getEclipses(from: string): Promise<{ solar: Eclipse[]; lunar: Eclipse[] }> {
-    return request<{ solar: Eclipse[]; lunar: Eclipse[] }>(ASTRO_BASE, "/api/v1/astrology/transits/eclipses", {
-      method: "GET",
-      params: { fromDate: from },
-    });
+    return request<{ solar: Eclipse[]; lunar: Eclipse[] }>(
+      ASTRO_BASE,
+      "/api/v1/astrology/transits/eclipses",
+      {
+        method: "GET",
+        params: { fromDate: from },
+      },
+    );
   },
 };
 
@@ -449,20 +501,32 @@ export const adminApi = {
     });
   },
 
-  async getTransactions(token: string, limit?: number, offset?: number): Promise<{ items: AdminTransaction[]; total: number }> {
+  async getTransactions(
+    token: string,
+    limit?: number,
+    offset?: number,
+  ): Promise<{ items: AdminTransaction[]; total: number }> {
     const t = token?.trim();
     if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
     const params: Record<string, string> = {};
     if (limit != null) params.limit = String(limit);
     if (offset != null) params.offset = String(offset);
-    return request<{ items: AdminTransaction[]; total: number }>(ASTRO_BASE, "/api/v1/admin/transactions", {
-      method: "GET",
-      token: t,
-      params: Object.keys(params).length ? params : undefined,
-    });
+    return request<{ items: AdminTransaction[]; total: number }>(
+      ASTRO_BASE,
+      "/api/v1/admin/transactions",
+      {
+        method: "GET",
+        token: t,
+        params: Object.keys(params).length ? params : undefined,
+      },
+    );
   },
 
-  async getReports(token: string, limit?: number, offset?: number): Promise<{ items: AdminReport[]; total: number }> {
+  async getReports(
+    token: string,
+    limit?: number,
+    offset?: number,
+  ): Promise<{ items: AdminReport[]; total: number }> {
     const t = token?.trim();
     if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
     const params: Record<string, string> = {};
@@ -494,7 +558,10 @@ export const adminApi = {
   async getAiEnabled(token: string): Promise<{ enabled: boolean }> {
     const t = token?.trim();
     if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
-    return request<{ enabled: boolean }>(ASTRO_BASE, "/api/v1/admin/ai-enabled", { method: "GET", token: t });
+    return request<{ enabled: boolean }>(ASTRO_BASE, "/api/v1/admin/ai-enabled", {
+      method: "GET",
+      token: t,
+    });
   },
 
   async setAiEnabled(token: string, enabled: boolean): Promise<void> {
@@ -514,7 +581,8 @@ export const careerApi = {
    */
   async getCareerGuidance(token: string): Promise<CareerGuidanceResponse> {
     const t = token?.trim();
-    if (!t || t.split(".").length !== 3) throw new Error("Invalid token format. Please login again.");
+    if (!t || t.split(".").length !== 3)
+      throw new Error("Invalid token format. Please login again.");
 
     return request<CareerGuidanceResponse>(
       "http://localhost:8002", // replace if API is deployed elsewhere
@@ -523,7 +591,7 @@ export const careerApi = {
         method: "POST",
         token: t,
         body: {},
-      }
+      },
     );
   },
 };

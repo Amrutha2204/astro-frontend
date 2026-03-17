@@ -3,15 +3,13 @@ import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
+import { adminApi, AdminStats, AdminTransaction, AdminReport, AdminContent } from "@/services/api";
 import {
-  adminApi,
-  AdminStats,
-  AdminTransaction,
-  AdminReport,
-  AdminContent,
-} from "@/services/api";
-import { selectToken, selectIsRehydrated, selectRoleId, ADMIN_ROLE_ID } from "@/store/slices/authSlice";
-import styles from "@/styles/dashboard.module.css";
+  selectToken,
+  selectIsRehydrated,
+  selectRoleId,
+  ADMIN_ROLE_ID,
+} from "@/store/slices/authSlice";
 
 type AdminTab = "overview" | "transactions" | "reports" | "content";
 
@@ -49,7 +47,9 @@ export default function AdminPage() {
       setStats(data);
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Failed to load stats.";
-      setError(msg.includes("403") || msg.toLowerCase().includes("admin") ? "Admin access required." : msg);
+      setError(
+        msg.includes("403") || msg.toLowerCase().includes("admin") ? "Admin access required." : msg,
+      );
       setStats(null);
     } finally {
       setLoading(false);
@@ -121,17 +121,20 @@ export default function AdminPage() {
     }
   }, [token, content]);
 
-  const saveAiEnabled = useCallback(async (enabled: boolean) => {
-    const t = token?.trim();
-    if (!t) return;
-    try {
-      await adminApi.setAiEnabled(t, enabled);
-      setAiEnabled(enabled);
-      setError(null);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to update AI setting.");
-    }
-  }, [token]);
+  const saveAiEnabled = useCallback(
+    async (enabled: boolean) => {
+      const t = token?.trim();
+      if (!t) return;
+      try {
+        await adminApi.setAiEnabled(t, enabled);
+        setAiEnabled(enabled);
+        setError(null);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Failed to update AI setting.");
+      }
+    },
+    [token],
+  );
 
   useEffect(() => {
     if (!rehydrated) return;
@@ -160,11 +163,11 @@ export default function AdminPage() {
 
   if (!rehydrated || !token) {
     return (
-      <div className={styles.dashboardContainer}>
+      <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]">
         <AppHeader />
-        <div className={styles.dashboardContent}>
+        <div className="flex w-full">
           <AppSidebar />
-          <main className={styles.mainContent}>
+          <main className="ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]">
             <p>Please log in to access this page.</p>
           </main>
         </div>
@@ -174,11 +177,11 @@ export default function AdminPage() {
 
   if (roleId !== undefined && roleId !== ADMIN_ROLE_ID) {
     return (
-      <div className={styles.dashboardContainer}>
+      <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]">
         <AppHeader />
-        <div className={styles.dashboardContent}>
+        <div className="flex w-full">
           <AppSidebar />
-          <main className={styles.mainContent}>
+          <main className="ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]">
             <p>Redirecting…</p>
           </main>
         </div>
@@ -186,70 +189,91 @@ export default function AdminPage() {
     );
   }
 
-  const formatDate = (s: string) => new Date(s).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" });
+  const formatDate = (s: string) =>
+    new Date(s).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" });
   const formatRupees = (paise: string) => `₹${(Number(paise) / 100).toFixed(2)}`;
 
   return (
-    <div className={styles.dashboardContainer}>
+    <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]">
       <AppHeader />
-      <div className={styles.dashboardContent}>
+      <div className="flex w-full">
         <AppSidebar />
-        <main className={styles.mainContent}>
-          <h1 className={styles.pageTitle}>Admin</h1>
+        <main className="ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]">
+          <h1 className="m-0 mb-8 bg-[linear-gradient(135deg,#8b5e34_0%,#6b4423_100%)] bg-clip-text text-[36px] font-extrabold tracking-[-0.01em] text-transparent">
+            Admin
+          </h1>
 
-          <div className={styles.adminTabs}>
+          <div className="mb-6 flex gap-2">
             {(["overview", "transactions", "reports", "content"] as const).map((tab) => (
               <button
                 key={tab}
                 type="button"
                 onClick={() => setActiveTab(tab)}
-                className={activeTab === tab ? styles.activeTab : styles.tab}
+                className={
+                  activeTab === tab
+                    ? "cursor-pointer border-b-[3px] border-b-[#6b4423] bg-transparent px-6 py-3 text-[16px] font-semibold text-[#6b4423]"
+                    : "cursor-pointer border-b-[3px] border-b-transparent bg-transparent px-6 py-3 text-[16px] font-semibold text-[#6b7280] transition-colors duration-200 hover:text-[#6b4423]"
+                }
               >
-                {tab === "overview" ? "Overview" : tab === "transactions" ? "Transactions" : tab === "reports" ? "Reports" : "Content"}
+                {tab === "overview"
+                  ? "Overview"
+                  : tab === "transactions"
+                    ? "Transactions"
+                    : tab === "reports"
+                      ? "Reports"
+                      : "Content"}
               </button>
             ))}
           </div>
 
           {error && (
-            <div className={styles.errorContainer}>
-              <p className={styles.errorText}>{error}</p>
+            <div className="flex min-h-[140px] flex-col items-center justify-center gap-5">
+              <p className="text-[18px] font-semibold text-[#6b4423]">{error}</p>
             </div>
           )}
 
           {activeTab === "overview" && (
             <>
-              <div className={styles.adminFlexRow}>
+              <div className="mb-4 flex items-center gap-3">
                 <button
                   type="button"
                   onClick={() => fetchStats()}
                   disabled={loading}
-                  className={styles.retryButton}
+                  className="rounded-[8px] bg-[#6b4423] px-[30px] py-3 text-[16px] font-semibold text-white transition-colors duration-200 hover:bg-[#5c3a1f]"
                 >
                   {loading ? "Loading…" : "Refresh stats"}
                 </button>
               </div>
               {loading && !stats && <p>Loading…</p>}
               {!loading && stats && (
-                <div className={styles.adminStatsGrid}>
-                  <div className={styles.adminStatCard}>
+                <div className="mt-5 grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-5">
+                  <div className="rounded-[12px] border border-[#e5e7eb] bg-[#f9fafb] p-6">
                     <h3>Total revenue</h3>
-                    <p className={styles.adminStatValue}>{formatRupees(String(stats.totalRevenuePaise))}</p>
+                    <p className="m-0 text-[28px] font-bold text-[#1f2937]">
+                      {formatRupees(String(stats.totalRevenuePaise))}
+                    </p>
                   </div>
-                  <div className={styles.adminStatCard}>
+                  <div className="rounded-[12px] border border-[#e5e7eb] bg-[#f9fafb] p-6">
                     <h3>Reports generated</h3>
-                    <p className={styles.adminStatValue}>{stats.reportCount}</p>
+                    <p className="m-0 text-[28px] font-bold text-[#1f2937]">{stats.reportCount}</p>
                   </div>
-                  <div className={styles.adminStatCard}>
+                  <div className="rounded-[12px] border border-[#e5e7eb] bg-[#f9fafb] p-6">
                     <h3>Total transactions</h3>
-                    <p className={styles.adminStatValue}>{stats.transactionCount}</p>
+                    <p className="m-0 text-[28px] font-bold text-[#1f2937]">
+                      {stats.transactionCount}
+                    </p>
                   </div>
-                  <div className={styles.adminStatCard}>
+                  <div className="rounded-[12px] border border-[#e5e7eb] bg-[#f9fafb] p-6">
                     <h3>Successful payments</h3>
-                    <p className={styles.adminStatValue}>{stats.successPaymentCount}</p>
+                    <p className="m-0 text-[28px] font-bold text-[#1f2937]">
+                      {stats.successPaymentCount}
+                    </p>
                   </div>
-                  <div className={styles.adminStatCard}>
+                  <div className="rounded-[12px] border border-[#e5e7eb] bg-[#f9fafb] p-6">
                     <h3>Active subscriptions</h3>
-                    <p className={styles.adminStatValue}>{stats.activeSubscriptionCount}</p>
+                    <p className="m-0 text-[28px] font-bold text-[#1f2937]">
+                      {stats.activeSubscriptionCount}
+                    </p>
                   </div>
                 </div>
               )}
@@ -257,40 +281,78 @@ export default function AdminPage() {
           )}
 
           {activeTab === "transactions" && (
-            <div className={styles.adminSection}>
-              <div className={styles.adminFlexRowSmall}>
-                <h2 className={`${styles.adminSectionTitle} ${styles.adminNoMargin}`}></h2>
-                <button type="button" onClick={() => fetchTransactions()} disabled={loadingTx} className={styles.retryButton}>
+            <div className="mt-4">
+              <div className="mb-3 flex items-center gap-3">
+                <h2 className="m-0 text-[18px] font-semibold text-[#374151]">
+                  Recent transactions ({transactionsTotal})
+                </h2>
+                <button
+                  type="button"
+                  onClick={() => fetchTransactions()}
+                  disabled={loadingTx}
+                  className="rounded-[8px] bg-[#6b4423] px-[30px] py-3 text-[16px] font-semibold text-white transition-colors duration-200 hover:bg-[#5c3a1f]"
+                >
                   {loadingTx ? "Loading…" : "Refresh"}
                 </button>
               </div>
               {loadingTx ? (
                 <p>Loading…</p>
               ) : (
-                <div className={styles.adminTableWrap}>
-                  <table className={styles.adminTable}>
+                <div className="overflow-x-auto rounded-[8px] border border-[#e5e7eb] bg-white">
+                  <table className="w-full border-collapse text-[14px]">
                     <thead>
                       <tr>
-                        <th>Date</th>
-                        <th>User ID</th>
-                        <th>Type</th>
-                        <th>Status</th>
-                        <th>Amount</th>
-                        <th>Description</th>
+                        <th className="border-b border-[#e5e7eb] bg-[#f9fafb] px-3 py-[10px] text-left font-semibold text-[#374151]">
+                          Date
+                        </th>
+                        <th className="border-b border-[#e5e7eb] bg-[#f9fafb] px-3 py-[10px] text-left font-semibold text-[#374151]">
+                          User ID
+                        </th>
+                        <th className="border-b border-[#e5e7eb] bg-[#f9fafb] px-3 py-[10px] text-left font-semibold text-[#374151]">
+                          Type
+                        </th>
+                        <th className="border-b border-[#e5e7eb] bg-[#f9fafb] px-3 py-[10px] text-left font-semibold text-[#374151]">
+                          Status
+                        </th>
+                        <th className="border-b border-[#e5e7eb] bg-[#f9fafb] px-3 py-[10px] text-left font-semibold text-[#374151]">
+                          Amount
+                        </th>
+                        <th className="border-b border-[#e5e7eb] bg-[#f9fafb] px-3 py-[10px] text-left font-semibold text-[#374151]">
+                          Description
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
                       {transactions.length === 0 ? (
-                        <tr><td colSpan={6}>No transactions</td></tr>
+                        <tr>
+                          <td
+                            colSpan={6}
+                            className="border-b border-[#e5e7eb] px-3 py-[10px] text-left"
+                          >
+                            No transactions
+                          </td>
+                        </tr>
                       ) : (
                         transactions.map((tx) => (
-                          <tr key={tx.id}>
-                            <td>{formatDate(tx.createdAt)}</td>
-                            <td className={styles.adminMonospace}>{tx.userId.slice(0, 8)}…</td>
-                            <td>{tx.type}</td>
-                            <td>{tx.status}</td>
-                            <td>{formatRupees(tx.amountPaise)}</td>
-                            <td>{tx.description || "—"}</td>
+                          <tr key={tx.id} className="hover:bg-[#f9fafb]">
+                            <td className="border-b border-[#e5e7eb] px-3 py-[10px] text-left">
+                              {formatDate(tx.createdAt)}
+                            </td>
+                            <td className="border-b border-[#e5e7eb] px-3 py-[10px] text-left font-mono text-[13px]">
+                              {tx.userId.slice(0, 8)}…
+                            </td>
+                            <td className="border-b border-[#e5e7eb] px-3 py-[10px] text-left">
+                              {tx.type}
+                            </td>
+                            <td className="border-b border-[#e5e7eb] px-3 py-[10px] text-left">
+                              {tx.status}
+                            </td>
+                            <td className="border-b border-[#e5e7eb] px-3 py-[10px] text-left">
+                              {formatRupees(tx.amountPaise)}
+                            </td>
+                            <td className="border-b border-[#e5e7eb] px-3 py-[10px] text-left">
+                              {tx.description || "—"}
+                            </td>
                           </tr>
                         ))
                       )}
@@ -302,36 +364,66 @@ export default function AdminPage() {
           )}
 
           {activeTab === "reports" && (
-            <div className={styles.adminSection}>
-              <div className={styles.adminFlexRowSmall}>
-                <h2 className={`${styles.adminSectionTitle} ${styles.adminNoMargin}`}>Recent reports ({reportsTotal})</h2>
-                <button type="button" onClick={() => fetchReports()} disabled={loadingReports} className={styles.retryButton}>
+            <div className="mt-4">
+              <div className="mb-3 flex items-center gap-3">
+                <h2 className="m-0 text-[18px] font-semibold text-[#374151]">
+                  Recent reports ({reportsTotal})
+                </h2>
+                <button
+                  type="button"
+                  onClick={() => fetchReports()}
+                  disabled={loadingReports}
+                  className="rounded-[8px] bg-[#6b4423] px-[30px] py-3 text-[16px] font-semibold text-white transition-colors duration-200 hover:bg-[#5c3a1f]"
+                >
                   {loadingReports ? "Loading…" : "Refresh"}
                 </button>
               </div>
               {loadingReports ? (
                 <p>Loading…</p>
               ) : (
-                <div className={styles.adminTableWrap}>
-                  <table className={styles.adminTable}>
+                <div className="overflow-x-auto rounded-[8px] border border-[#e5e7eb] bg-white">
+                  <table className="w-full border-collapse text-[14px]">
                     <thead>
                       <tr>
-                        <th>Date</th>
-                        <th>User ID</th>
-                        <th>Type</th>
-                        <th>Filename</th>
+                        <th className="border-b border-[#e5e7eb] bg-[#f9fafb] px-3 py-[10px] text-left font-semibold text-[#374151]">
+                          Date
+                        </th>
+                        <th className="border-b border-[#e5e7eb] bg-[#f9fafb] px-3 py-[10px] text-left font-semibold text-[#374151]">
+                          User ID
+                        </th>
+                        <th className="border-b border-[#e5e7eb] bg-[#f9fafb] px-3 py-[10px] text-left font-semibold text-[#374151]">
+                          Type
+                        </th>
+                        <th className="border-b border-[#e5e7eb] bg-[#f9fafb] px-3 py-[10px] text-left font-semibold text-[#374151]">
+                          Filename
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
                       {reports.length === 0 ? (
-                        <tr><td colSpan={4}>No reports</td></tr>
+                        <tr>
+                          <td
+                            colSpan={4}
+                            className="border-b border-[#e5e7eb] px-3 py-[10px] text-left"
+                          >
+                            No reports
+                          </td>
+                        </tr>
                       ) : (
                         reports.map((r) => (
-                          <tr key={r.id}>
-                            <td>{formatDate(r.createdAt)}</td>
-                            <td className={styles.adminMonospace}>{r.userId.slice(0, 8)}…</td>
-                            <td>{r.reportType}</td>
-                            <td className={styles.adminMonospace}>{r.filename}</td>
+                          <tr key={r.id} className="hover:bg-[#f9fafb]">
+                            <td className="border-b border-[#e5e7eb] px-3 py-[10px] text-left">
+                              {formatDate(r.createdAt)}
+                            </td>
+                            <td className="border-b border-[#e5e7eb] px-3 py-[10px] text-left font-mono text-[13px]">
+                              {r.userId.slice(0, 8)}…
+                            </td>
+                            <td className="border-b border-[#e5e7eb] px-3 py-[10px] text-left">
+                              {r.reportType}
+                            </td>
+                            <td className="border-b border-[#e5e7eb] px-3 py-[10px] text-left font-mono text-[13px]">
+                              {r.filename}
+                            </td>
                           </tr>
                         ))
                       )}
@@ -343,10 +435,15 @@ export default function AdminPage() {
           )}
 
           {activeTab === "content" && (
-            <div className={styles.adminSection}>
-              <div className={styles.adminFlexRowSmall}>
-                <h2 className={styles.adminSectionTitle} style={{ marginBottom: 0 }}>Content & AI</h2>
-                <button type="button" onClick={() => fetchContent()} disabled={loadingContent} className={styles.retryButton}>
+            <div className="mt-4">
+              <div className="mb-3 flex items-center gap-3">
+                <h2 className="m-0 text-[18px] font-semibold text-[#374151]">Content & AI</h2>
+                <button
+                  type="button"
+                  onClick={() => fetchContent()}
+                  disabled={loadingContent}
+                  className="rounded-[8px] bg-[#6b4423] px-[30px] py-3 text-[16px] font-semibold text-white transition-colors duration-200 hover:bg-[#5c3a1f]"
+                >
                   {loadingContent ? "Loading…" : "Refresh"}
                 </button>
               </div>
@@ -354,8 +451,8 @@ export default function AdminPage() {
                 <p>Loading…</p>
               ) : (
                 <>
-                  <div className={styles.adminToggleWrap}>
-                    <label className={styles.adminCheckboxLabel}>
+                  <div className="mb-4">
+                    <label className="flex cursor-pointer items-center gap-2">
                       <input
                         type="checkbox"
                         checked={aiEnabled}
@@ -364,38 +461,47 @@ export default function AdminPage() {
                       <span>AI assistant enabled</span>
                     </label>
                   </div>
-                  <div className={styles.adminColumnGroup}>
+                  <div className="mb-4 flex flex-col gap-3">
                     <label>
-                      <span className={styles.adminLabelText}>Sun sign meanings</span>
+                      <span className="mb-1 block">Sun sign meanings</span>
                       <textarea
                         value={content.sunSignMeanings ?? ""}
-                        onChange={(e) => setContent((c) => ({ ...c, sunSignMeanings: e.target.value }))}
+                        onChange={(e) =>
+                          setContent((c) => ({ ...c, sunSignMeanings: e.target.value }))
+                        }
                         rows={4}
-                        className={'${styles.adminTable} $ {styles.adminTextarea}'}
+                        className="w-full max-w-[600px] rounded-[8px] border border-[#e5e7eb] bg-white px-3 py-[10px] text-[14px]"
                       />
                     </label>
                     <label>
-                      <span className={styles.adminLabelText}>Planet meanings</span>
+                      <span className="mb-1 block">Planet meanings</span>
                       <textarea
                         value={content.planetMeanings ?? ""}
-                        onChange={(e) => setContent((c) => ({ ...c, planetMeanings: e.target.value }))}
+                        onChange={(e) =>
+                          setContent((c) => ({ ...c, planetMeanings: e.target.value }))
+                        }
                         rows={4}
-                        className={styles.adminTable}
-                        style={{ width: "100%", maxWidth: 600 }}
+                        className="w-full max-w-[600px] rounded-[8px] border border-[#e5e7eb] bg-white px-3 py-[10px] text-[14px]"
                       />
                     </label>
                     <label>
-                      <span className={styles.adminLabelText}>Transit interpretations</span>
+                      <span className="mb-1 block">Transit interpretations</span>
                       <textarea
                         value={content.transitInterpretations ?? ""}
-                        onChange={(e) => setContent((c) => ({ ...c, transitInterpretations: e.target.value }))}
+                        onChange={(e) =>
+                          setContent((c) => ({ ...c, transitInterpretations: e.target.value }))
+                        }
                         rows={4}
-                        className={styles.adminTable}
-                        style={{ width: "100%", maxWidth: 600 }}
+                        className="w-full max-w-[600px] rounded-[8px] border border-[#e5e7eb] bg-white px-3 py-[10px] text-[14px]"
                       />
                     </label>
                   </div>
-                  <button type="button" onClick={() => saveContent()} disabled={savingContent} className={styles.retryButton}>
+                  <button
+                    type="button"
+                    onClick={() => saveContent()}
+                    disabled={savingContent}
+                    className="rounded-[8px] bg-[#6b4423] px-[30px] py-3 text-[16px] font-semibold text-white transition-colors duration-200 hover:bg-[#5c3a1f]"
+                  >
                     {savingContent ? "Saving…" : "Save content"}
                   </button>
                 </>
