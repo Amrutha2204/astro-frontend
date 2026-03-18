@@ -25,7 +25,7 @@ function buildUrl(base: string, path: string, params?: Record<string, string>): 
 function buildHeaders(
   baseUrl: string | undefined,
   token?: string | null,
-  hasBody?: boolean
+  hasBody?: boolean,
 ): Record<string, string> {
   const headers: Record<string, string> = {};
   if (hasBody) headers["Content-Type"] = "application/json";

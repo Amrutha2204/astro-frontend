@@ -211,11 +211,11 @@ export default function MonthlyHoroscopePage() {
                               predDate.toDateString() !== today.toDateString();
                             const prevDate = horoscope.predictions?.[index - 1]?.date;
 
-const isTomorrow =
-  predDate &&
-  index > 0 &&
-  prevDate &&
-  new Date(prevDate).toDateString() === today.toDateString();
+                            const isTomorrow =
+                              predDate &&
+                              index > 0 &&
+                              prevDate &&
+                              new Date(prevDate).toDateString() === today.toDateString();
                             const dayType = prediction.horoscope?.dayType;
                             const isGood = dayType === "Good";
                             const isChallenging = dayType === "Challenging";

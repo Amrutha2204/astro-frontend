@@ -206,8 +206,8 @@ export default function WeeklyHoroscopePage() {
                               predDate < today &&
                               predDate.toDateString() !== today.toDateString();
                             const prevDateStr = horoscope.predictions?.[index - 1]?.date;
-const prevDate = prevDateStr ? new Date(prevDateStr) : null;
-const isTomorrow = prevDate?.toDateString() === today.toDateString();
+                            const prevDate = prevDateStr ? new Date(prevDateStr) : null;
+                            const isTomorrow = prevDate?.toDateString() === today.toDateString();
                             const dayType = prediction.horoscope?.dayType;
                             const isGood = dayType === "Good";
                             const isChallenging = dayType === "Challenging";

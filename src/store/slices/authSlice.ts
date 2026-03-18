@@ -38,7 +38,7 @@ export const selectIsGuest = (s: { auth: AuthState }) => !isValidJwtFormat(s.aut
 /** Decode JWT payload and return roleId (auth-service: Admin = 3). Used for UI only; backend validates. */
 export const selectRoleId = (s: { auth: AuthState }): number | undefined => {
   const token = s.auth.token?.trim();
-  if (!token ||!isValidJwtFormat(token)) return undefined;
+  if (!token || !isValidJwtFormat(token)) return undefined;
   try {
     const payload = token.split(".")[1];
     if (!payload) return undefined;
