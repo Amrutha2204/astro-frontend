@@ -8,14 +8,19 @@ export default function Register() {
   const router = useRouter();
   const guestId = typeof router.query.guestId === "string" ? router.query.guestId : undefined;
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const pageClass = "relative flex min-h-screen flex-col bg-[#faf8f5]";
+  const pageClass = "relative flex min-h-screen flex-col bg-gradient-to-br from-[#fff7ed] via-[#ffedd5] to-[#fde68a] dark:from-gray-900 dark:to-gray-800";
   const headerClass = "relative z-[1] px-6 pb-7 pt-12 text-center";
-  const cardClass =
-    "max-h-[85vh] w-full max-w-[560px] overflow-y-auto rounded-[16px] border border-[#e8ddd0] border-t-[3px] border-t-[#6b4423] bg-white px-8 py-9 shadow-[0_10px_40px_rgba(92,64,51,0.1),0_2px_8px_rgba(0,0,0,0.04)]";
-  const labelClass = "m-0 text-[14px] font-semibold text-[#374151]";
-  const inputClass =
-    "w-full rounded-[8px] border border-[#e8ddd0] bg-[#faf8f5] px-[14px] py-3 text-[15px] outline-none transition-[border-color,background,box-shadow] duration-200 placeholder:text-[#9ca3af] focus:border-[#6b4423] focus:bg-white focus:shadow-[0_0_0_3px_rgba(107,68,35,0.12)] disabled:cursor-not-allowed disabled:bg-[#f9fafb] disabled:opacity-60";
+  const cardClass = `
+w-full max-w-xl rounded-3xl 
+backdrop-blur-xl bg-white/80 dark:bg-gray-900/70 
+border border-white/20 
+shadow-[0_25px_80px_rgba(0,0,0,0.2)] 
+px-6 py-7
+transition-all duration-500 hover:shadow-[0_30px_100px_rgba(0,0,0,0.25)]
+`;
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -142,25 +147,30 @@ export default function Register() {
     }
   };
 
+  const getPasswordStrength = (password: string) => {
+  if (password.length < 4) return "Weak";
+  if (password.length < 8) return "Medium";
+  return "Strong";
+};
+
   return (
     <div className={pageClass}>
-      <div className="absolute inset-x-0 top-0 z-0 h-[180px] bg-[linear-gradient(180deg,#5c3a1f_0%,#6b4423_45%,#c4a77d_100%)]" />
       <div className={headerClass}>
-        <div className="mb-[6px] flex items-center justify-center gap-[10px] text-[28px] font-bold tracking-[-0.02em] text-white">
+        <div className="mb-[6px] flex items-center justify-center gap-[10px] text-[28px] font-bold tracking-[-0.02em] text-amber-700">
           <span className="text-[32px] opacity-95">🪔</span>
           <span>Jyotishya Darshan</span>
         </div>
-        <p className="m-0 text-[13px] font-medium tracking-[0.02em] text-white/88">
+        <p className="m-0 text-[13px] font-medium tracking-[0.02em] text-amber-600">
           Vedic Astrology • Horoscope • Panchangam
         </p>
       </div>
       <div className="relative z-[1] flex flex-1 items-center justify-center px-5 pb-8 pt-6">
         <div className={cardClass}>
           <div className="mb-6 text-center">
-            <h1 className="m-0 mb-2 text-[26px] font-bold leading-[1.2] tracking-[-0.02em] text-[#5c4033]">
+            <h1 className="m-0 mb-2 text-[26px] font-bold leading-[1.2] tracking-[-0.02em] text-gray-800 dark:text-white">
               New Registration
             </h1>
-            <p className="m-0 text-[14px] leading-[1.5] text-[#5c5047]">
+            <p className="m-0 text-[14px] leading-[1.5] text-gray-500">
               Create your account to access personalized astrology insights
             </p>
           </div>
@@ -170,110 +180,202 @@ export default function Register() {
               e.preventDefault();
               handleRegister();
             }}
-            className="flex flex-col gap-[18px]"
+            className="flex flex-col gap-5"
           >
-            <div className="flex flex-col gap-2">
-              <label className={labelClass}>
-                Full Name <span className="font-bold text-[#6b4423]">*</span>
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                placeholder="Enter your full name"
-                onChange={handleChange}
-                disabled={loading}
-                required
-                className={inputClass}
-                autoComplete="name"
-              />
-            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div className="relative">
+  <input
+    type="text"
+    name="name"
+    value={formData.name}
+    onChange={handleChange}
+    placeholder=" "
+    disabled={loading}
+    className="peer w-full px-4 pt-5 pb-2 rounded-xl 
+    bg-white/70 backdrop-blur-md 
+    border border-amber-200 
+    focus:outline-none focus:ring-2 focus:ring-amber-400"
+  />
 
-            <div className="flex flex-col gap-2">
-              <label className={labelClass}>
-                Email Address <span className="font-bold text-[#6b4423]">*</span>
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                placeholder="Enter your email"
-                onChange={handleChange}
-                disabled={loading}
-                required
-                className={inputClass}
-                autoComplete="email"
-              />
-            </div>
+  <label className="absolute left-4 top-2 text-xs text-gray-600 dark:text-gray-300 peer-focus:text-amber-500
+    transition-all 
+    peer-placeholder-shown:top-3.5 
+    peer-placeholder-shown:text-sm 
+    peer-placeholder-shown:text-gray-400 
+    peer-focus:top-2 peer-focus:text-xs peer-focus:text-amber-700">
+    Full Name
+  </label>
 
+  {!formData.name && (
+    <p className="text-xs text-red-500 mt-1">Name is required</p>
+  )}
+</div>
+
+  <div className="relative">
+  <input
+    type="email"
+    name="email"
+    value={formData.email}
+    onChange={handleChange}
+    placeholder=" "
+    className="peer w-full px-4 pt-5 pb-2 rounded-xl 
+    bg-white/80 
+    border border-gray-200 
+    focus:outline-none focus:ring-2 focus:ring-amber-400"
+  />
+
+  <label className="absolute left-4 top-2 text-xs text-gray-600 
+    peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm 
+    peer-placeholder-shown:text-gray-400 
+    peer-focus:top-2 peer-focus:text-xs peer-focus:text-amber-500">
+    Email Address
+  </label>
+
+  {formData.email && !formData.email.includes("@") && (
+    <p className="text-xs text-red-500 mt-1">Invalid email</p>
+  )}
+</div>
+</div>
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+
+  <div className="relative">
+
+  <input
+    type={showPassword ? "text" : "password"}
+    name="password"
+    value={formData.password}
+    onChange={handleChange}
+    placeholder=" "
+    className="peer w-full px-4 pt-5 pb-2 pr-12 rounded-xl 
+     bg-white/80 border border-gray-200
+    focus:outline-none focus:ring-2 focus:ring-amber-400"
+  />
+
+  <label className="absolute left-4 top-2 text-xs text-amber-700 
+    transition-all 
+    peer-placeholder-shown:top-3.5 
+    peer-placeholder-shown:text-sm 
+    peer-placeholder-shown:text-gray-400 
+    peer-focus:top-2 peer-focus:text-xs peer-focus:text-amber-700">
+    Password
+  </label>
+
+  {/* Toggle */}
+  <button
+    type="button"
+    onClick={() => setShowPassword(!showPassword)}
+    className="absolute right-3 top-1/2 -translate-y-1/2"
+  >
+    {showPassword ? "🙈" : "👁"}
+  </button>
+
+  {/* Strength */}
+  {formData.password && (
+    <p
+      className={`text-xs mt-1 ${
+        getPasswordStrength(formData.password) === "Weak"
+          ? "text-red-500"
+          : getPasswordStrength(formData.password) === "Medium"
+          ? "text-yellow-500"
+          : "text-green-500"
+      }`}
+    >
+      Strength: {getPasswordStrength(formData.password)}
+    </p>
+  )}
+</div>
+
+              <div className="relative">
+
+  <input
+    type={showConfirmPassword ? "text" : "password"}
+    name="confirmPassword"
+    value={formData.confirmPassword}
+    onChange={handleChange}
+    placeholder=" "
+    className="peer w-full px-4 pt-5 pb-2 pr-12 rounded-xl 
+    bg-white/80 border border-gray-200
+    focus:outline-none focus:ring-2 focus:ring-amber-400"
+  />
+
+  <label className="absolute left-4 top-2 text-xs text-amber-700 
+    transition-all 
+    peer-placeholder-shown:top-3.5 
+    peer-placeholder-shown:text-sm 
+    peer-placeholder-shown:text-gray-400 
+    peer-focus:top-2 peer-focus:text-xs peer-focus:text-amber-700">
+    Confirm Password
+  </label>
+
+  {/* Toggle */}
+  <button
+    type="button"
+    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+    className="absolute right-3 top-1/2 -translate-y-1/2"
+  >
+    {showConfirmPassword ? "🙈" : "👁"}
+  </button>
+
+  {/* Match check */}
+  {formData.confirmPassword && (
+    <p
+      className={`text-xs mt-1 ${
+        formData.password === formData.confirmPassword
+          ? "text-green-500"
+          : "text-red-500"
+      }`}
+    >
+      {formData.password === formData.confirmPassword
+        ? "Passwords match"
+        : "Passwords do not match"}
+    </p>
+  )}
+</div>
+</div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="flex flex-col gap-2">
-                <label className={labelClass}>
-                  Password <span className="font-bold text-[#6b4423]">*</span>
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  placeholder="Min 8 chars"
-                  onChange={handleChange}
-                  disabled={loading}
-                  required
-                  minLength={8}
-                  className={inputClass}
-                  autoComplete="new-password"
-                />
-              </div>
+              <div className="relative">
+  <input
+    type="tel"
+    name="phoneNumber"
+    value={formData.phoneNumber}
+    onChange={handleChange}
+    placeholder=" "
+    disabled={loading}
+    className="peer w-full px-4 pt-5 pb-2 rounded-xl 
+    bg-white/70 backdrop-blur-md 
+    border border-gray-200 
+    focus:outline-none focus:ring-2 focus:ring-amber-400"
+  />
 
-              <div className="flex flex-col gap-2">
-                <label className={labelClass}>
-                  Confirm Password <span className="font-bold text-[#6b4423]">*</span>
-                </label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  placeholder="Re-enter password"
-                  onChange={handleChange}
-                  disabled={loading}
-                  required
-                  className={inputClass}
-                  autoComplete="new-password"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="flex flex-col gap-2">
-                <label className={labelClass}>
-                  Phone Number <span className="font-normal text-[#6b5b52]">(Optional)</span>
-                </label>
-                <input
-                  type="tel"
-                  name="phoneNumber"
-                  value={formData.phoneNumber}
-                  placeholder="Phone number"
-                  onChange={handleChange}
-                  disabled={loading}
-                  className={inputClass}
-                  autoComplete="tel"
-                />
-              </div>
+  <label className="absolute left-4 top-2 text-xs text-gray-600 
+    transition-all 
+    peer-placeholder-shown:top-3.5 
+    peer-placeholder-shown:text-sm 
+    peer-placeholder-shown:text-gray-400 
+    peer-focus:top-2 peer-focus:text-xs peer-focus:text-amber-600">
+    Phone Number (Optional)
+  </label>
+</div>
               {!guestId && (
-                <div className="flex flex-col gap-2">
-                  <label className={labelClass}>
-                    Date of Birth <span className="font-bold text-[#6b4423]">*</span>
-                  </label>
-                  <input
-                    type="date"
-                    name="dob"
-                    value={formData.dob}
-                    onChange={handleChange}
-                    disabled={loading}
-                    required
-                    className={`${inputClass} formDateInput`}
-                  />
-                </div>
+                <div className="relative">
+  <input
+    type="date"
+    name="dob"
+    value={formData.dob}
+    onChange={handleChange}
+    disabled={loading}
+    required
+    className="peer w-full px-4 pt-5 pb-2 rounded-xl 
+    bg-white/70 
+    border border-gray-200 
+    focus:outline-none focus:ring-2 focus:ring-amber-400"
+  />
+
+  <label className="absolute left-4 top-2 text-xs text-gray-600">
+    Date of Birth *
+  </label>
+</div>
               )}
             </div>
 
@@ -284,35 +386,41 @@ export default function Register() {
             )}
 
             {!guestId && (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="flex flex-col gap-2">
-                  <label className={labelClass}>
-                    Birth place <span className="font-bold text-[#6b4423]">*</span>
-                  </label>
-                  <PlaceAutocomplete
-                    value={formData.birthPlace}
-                    onChange={(v) => {
-                      setFormData({ ...formData, birthPlace: v });
-                      setError(null);
-                    }}
-                    placeholder="e.g. Mumbai, Maharashtra, India or town/village"
-                    required
-                    disabled={loading}
-                    aria-label="Birth place"
-                  />
-                </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div className="relative">
+  <label className="text-xs text-gray-600 mb-1 block">
+    Birth Place *
+  </label>
 
-                <div className="flex flex-col gap-2">
-                  <label className={labelClass}>Birth Time</label>
-                  <input
-                    type="time"
-                    name="birthTime"
-                    value={formData.birthTime}
-                    onChange={handleChange}
-                    disabled={loading}
-                    className={inputClass}
-                  />
-                </div>
+  <PlaceAutocomplete
+    value={formData.birthPlace}
+    onChange={(v) => {
+      setFormData({ ...formData, birthPlace: v });
+      setError(null);
+    }}
+    placeholder="e.g. Mumbai, Maharashtra, India"
+    required
+    disabled={loading}
+  />
+</div>
+
+<div className="relative">
+  <input
+    type="time"
+    name="birthTime"
+    value={formData.birthTime}
+    onChange={handleChange}
+    disabled={loading}
+    className="peer w-full px-4 pt-5 pb-2 rounded-xl 
+    bg-white/70 
+    border border-gray-200 
+    focus:outline-none focus:ring-2 focus:ring-amber-400"
+  />
+
+  <label className="absolute left-4 top-2 text-xs text-gray-600">
+    Birth Time
+  </label>
+</div>
               </div>
             )}
 
@@ -327,14 +435,19 @@ export default function Register() {
             <button
               type="submit"
               disabled={loading}
-              className="mt-2 w-full rounded-[8px] bg-[#6b4423] px-6 py-[14px] text-[16px] font-semibold text-white transition-all duration-200 hover:-translate-y-px hover:bg-[#5c3a1f] hover:shadow-[0_4px_12px_rgba(107,68,35,0.25)] disabled:cursor-not-allowed disabled:opacity-60 disabled:transform-none"
+              className="mt-4 w-full rounded-xl 
+bg-gradient-to-r from-amber-500 to-orange-500
+hover:from-amber-600 hover:to-orange-600
+py-3 text-white font-semibold 
+shadow-lg hover:scale-[1.03] hover:shadow-2xl 
+transition-all duration-300 disabled:opacity-60"
             >
               {loading ? "Registering..." : "Register"}
             </button>
           </form>
 
           <div className="mt-7 border-t border-[#e8ddd0] pt-[22px] text-center">
-            <p className="m-0 text-[14px] leading-[1.5] text-[#5c5047]">
+            <p className="m-0 text-[14px] leading-[1.5] text-gray-500">
               Already have an account?{" "}
               <a
                 href="#"

@@ -56,7 +56,7 @@ export default function NatalChartPage() {
     }
     try {
       setLoading(true);
-      const data = await astroApi.getNatalChart(t);
+      const data = (await astroApi.getNatalChart(t)) as NatalChartData;
       setNatalChart(data);
       setError(null);
     } catch (err) {

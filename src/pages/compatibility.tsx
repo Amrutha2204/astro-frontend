@@ -236,11 +236,12 @@ export default function CompatibilityPage() {
     const t = token?.trim();
     if (!t || t.split(".").length !== 3 || partner1Prefilled) return;
     getUserDetails(t)
-      .then((res: UserDetailsResponse) => {
-        const dob = res?.dob;
-        const birthPlace = res?.birthPlace ?? "";
-        const birthTime = res?.birthTime ?? "12:00:00";
-        const name = res?.user?.name ?? res?.name ?? "" ?? "";
+      .then((res) => {
+        const data = res as UserDetailsResponse;
+        const dob = data?.dob;
+        const birthPlace = data?.birthPlace ?? "";
+        const birthTime = data?.birthTime ?? "12:00:00";
+        const name = data?.user?.name ?? data?.name ?? "";
         if (!dob || !birthPlace) return;
         const d = new Date(dob);
         if (isNaN(d.getTime())) return;

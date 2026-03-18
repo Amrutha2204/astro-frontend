@@ -23,11 +23,17 @@ type RazorpayOptions = {
   name: string;
   description: string;
   handler: (response: RazorpayHandlerPayload) => Promise<void>;
+  modal: { ondismiss: () => void };
+};
+
+type RazorpayInstance = {
+  open: () => void;
+  on: (event: "payment.failed", callback: () => void) => void;
 };
 
 declare global {
   interface Window {
-    Razorpay?: new (options: RazorpayOptions) => { open: () => void };
+    Razorpay?: new (options: RazorpayOptions) => RazorpayInstance;
   }
 }
 
@@ -105,7 +111,7 @@ export default function PaymentPage() {
       const res = await paymentApi.createOrder(t, amount, "Wallet top-up");
       showSuccess("Order created. Complete payment on the next screen.");
       if (typeof window !== "undefined" && window.Razorpay) {
-        const options = {
+        const options: RazorpayOptions = {
           key: res.keyId,
           amount: res.amount * 100,
           currency: res.currency,
@@ -126,6 +132,11 @@ export default function PaymentPage() {
             } catch (e) {
               showError(e instanceof Error ? e.message : "Verification failed");
             }
+          },
+          modal: {
+            ondismiss: () => {
+              showError("Payment cancelled");
+            },
           },
         };
         const rzp = new window.Razorpay(options);
@@ -256,3 +267,4 @@ export default function PaymentPage() {
     </div>
   );
 }
+ 
