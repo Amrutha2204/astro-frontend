@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
 import PageHeader from "@/components/layout/PageHeader";
-import { aiAssistantApi, ChatResponse } from "@/services/aiAssistantService";
+import { aiAssistantApi, type ChatResponse } from "@/services/aiAssistantService";
 import { showError, showSuccess, showWarning } from "@/utils/toast";
 import { selectToken, selectIsRehydrated } from "@/store/slices/authSlice";
 
@@ -24,9 +24,13 @@ export default function AIChatPage() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (!rehydrated) return;
+    if (!rehydrated) {
+      return;
+    }
     const t = token?.trim();
-    if (!t || t.split(".").length !== 3) router.replace("/auth/login");
+    if (!t || t.split(".").length !== 3) {
+      router.replace("/auth/login");
+    }
   }, [rehydrated, token, router]);
 
   useEffect(() => {

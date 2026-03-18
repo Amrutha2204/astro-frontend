@@ -35,9 +35,13 @@ export default function PlaceAutocomplete({
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      return;
+    }
     const q = value.trim();
-    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
     const run = async () => {
       setLoading(true);
       try {
@@ -52,12 +56,16 @@ export default function PlaceAutocomplete({
     if (q.length >= 2) {
       debounceRef.current = setTimeout(run, DEBOUNCE_MS);
       return () => {
-        if (debounceRef.current) clearTimeout(debounceRef.current);
+        if (debounceRef.current) {
+          clearTimeout(debounceRef.current);
+        }
       };
     }
     run();
     return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
     };
   }, [open, value]);
 
@@ -68,12 +76,18 @@ export default function PlaceAutocomplete({
   }, [value, suggestions.length]);
 
   useEffect(() => {
-    if (!showList) return;
+    if (!showList) {
+      return;
+    }
     const onDocClick = (e: MouseEvent) => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setOpen(false);
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
     };
     const onEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setOpen(false);
+      }
     };
     document.addEventListener("mousedown", onDocClick);
     document.addEventListener("keydown", onEscape);
@@ -84,7 +98,9 @@ export default function PlaceAutocomplete({
   }, [showList]);
 
   useEffect(() => {
-    if (!showList || !listRef.current) return;
+    if (!showList || !listRef.current) {
+      return;
+    }
     const el = listRef.current.children[focusedIndex] as HTMLElement | undefined;
     el?.scrollIntoView({ block: "nearest" });
   }, [showList, focusedIndex]);
@@ -121,7 +137,14 @@ export default function PlaceAutocomplete({
   };
 
   return (
-    <div ref={wrapRef} className={`relative mb-4 w-full ${className}`}>
+    <div
+      ref={wrapRef}
+      role="combobox"
+      aria-expanded={showList}
+      aria-haspopup="listbox"
+      aria-controls="place-list"
+      className={`relative mb-4 w-full ${className}`}
+    >
       <input
         type="text"
         id={id}
@@ -138,7 +161,6 @@ export default function PlaceAutocomplete({
         autoComplete="off"
         aria-label={ariaLabel ?? "Birth place (city, town or village)"}
         aria-autocomplete="list"
-        aria-expanded={showList}
         aria-controls={showList ? "place-list" : undefined}
         aria-activedescendant={
           showList && suggestions[focusedIndex] ? `place-option-${focusedIndex}` : undefined
@@ -154,11 +176,19 @@ export default function PlaceAutocomplete({
           aria-label="Place suggestions"
         >
           {loading && suggestions.length === 0 ? (
-            <li className="px-4 py-3 text-[14px] text-[#6b5b52]" role="option">
+            <li
+              className="px-4 py-3 text-[14px] text-[#6b5b52]"
+              role="option"
+              aria-selected="false"
+            >
               Searching…
             </li>
           ) : suggestions.length === 0 ? (
-            <li className="px-4 py-3 text-[14px] text-[#6b5b52]" role="option">
+            <li
+              className="px-4 py-3 text-[14px] text-[#6b5b52]"
+              role="option"
+              aria-selected="false"
+            >
               Type a city, town or village name. You can use the place as-is; we’ll use it for
               coordinates.
             </li>

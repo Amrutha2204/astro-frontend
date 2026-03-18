@@ -30,7 +30,9 @@ export interface SuggestionsResponse {
 export const aiAssistantApi = {
   chat(token: string, data: ChatRequest): Promise<ChatResponse> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token format. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token format. Please login again.");
+    }
     return request<ChatResponse>(ASTRO_BASE, "/api/v1/ai-assistant/chat", {
       method: "POST",
       token: t,
@@ -40,7 +42,9 @@ export const aiAssistantApi = {
 
   explainKundli(token: string, data: ExplainKundliRequest = {}): Promise<ExplainKundliResponse> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token format. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token format. Please login again.");
+    }
     return request<ExplainKundliResponse>(ASTRO_BASE, "/api/v1/ai-assistant/explain-kundli", {
       method: "POST",
       token: t,
@@ -50,7 +54,9 @@ export const aiAssistantApi = {
 
   getSuggestions(token: string): Promise<SuggestionsResponse> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token format. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token format. Please login again.");
+    }
     return request<SuggestionsResponse>(ASTRO_BASE, "/api/v1/ai-assistant/suggestions", {
       method: "GET",
       token: t,

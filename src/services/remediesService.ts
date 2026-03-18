@@ -27,7 +27,9 @@ export interface RemedyTimingResponse {
 export const remediesApi = {
   getRecommendations(token: string): Promise<RemedyRecommendations> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token format. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token format. Please login again.");
+    }
     return request<RemedyRecommendations>(ASTRO_BASE, "/api/v1/remedies/recommendations", {
       method: "GET",
       token: t,
@@ -36,7 +38,9 @@ export const remediesApi = {
 
   getTiming(token: string): Promise<RemedyTimingResponse> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token format. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token format. Please login again.");
+    }
     return request<RemedyTimingResponse>(ASTRO_BASE, "/api/v1/remedies/timing", {
       method: "GET",
       token: t,

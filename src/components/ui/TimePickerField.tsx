@@ -13,15 +13,20 @@ function parseTime(value: string): { h: number; m: number; s: number } {
 function toValue(h: number, m: number, s: number, withSeconds: boolean): string {
   const hh = String(h).padStart(2, "0");
   const mm = String(m).padStart(2, "0");
-  if (withSeconds) return `${hh}:${mm}:${String(s).padStart(2, "0")}`;
+  if (withSeconds) {
+    return `${hh}:${mm}:${String(s).padStart(2, "0")}`;
+  }
   return `${hh}:${mm}`;
 }
 
 function formatDisplay(value: string): string {
-  if (!value) return "";
+  if (!value) {
+    return "";
+  }
   const { h, m, s } = parseTime(value);
-  if (s !== 0)
+  if (s !== 0) {
     return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  }
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 }
 
@@ -62,12 +67,18 @@ export default function TimePickerField({
   }, [value]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      return;
+    }
     const onDocClick = (e: MouseEvent) => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setOpen(false);
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
     };
     const onEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setOpen(false);
+      }
     };
     document.addEventListener("mousedown", onDocClick);
     document.addEventListener("keydown", onEscape);
@@ -99,7 +110,9 @@ export default function TimePickerField({
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
-            if (!disabled) setOpen((o) => !o);
+            if (!disabled) {
+              setOpen((o) => !o);
+            }
           }
         }}
       >

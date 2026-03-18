@@ -3,7 +3,13 @@ import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
-import { adminApi, AdminStats, AdminTransaction, AdminReport, AdminContent } from "@/services/api";
+import {
+  adminApi,
+  type AdminStats,
+  type AdminTransaction,
+  type AdminReport,
+  type AdminContent,
+} from "@/services/api";
 import {
   selectToken,
   selectIsRehydrated,
@@ -58,7 +64,9 @@ export default function AdminPage() {
 
   const fetchTransactions = useCallback(async () => {
     const t = token?.trim();
-    if (!t) return;
+    if (!t) {
+      return;
+    }
     setLoadingTx(true);
     try {
       const res = await adminApi.getTransactions(t, 50, 0);
@@ -74,7 +82,9 @@ export default function AdminPage() {
 
   const fetchReports = useCallback(async () => {
     const t = token?.trim();
-    if (!t) return;
+    if (!t) {
+      return;
+    }
     setLoadingReports(true);
     try {
       const res = await adminApi.getReports(t, 50, 0);
@@ -90,7 +100,9 @@ export default function AdminPage() {
 
   const fetchContent = useCallback(async () => {
     const t = token?.trim();
-    if (!t) return;
+    if (!t) {
+      return;
+    }
     setLoadingContent(true);
     try {
       const [contentRes, aiRes] = await Promise.all([
@@ -109,7 +121,9 @@ export default function AdminPage() {
 
   const saveContent = useCallback(async () => {
     const t = token?.trim();
-    if (!t) return;
+    if (!t) {
+      return;
+    }
     setSavingContent(true);
     try {
       await adminApi.setContent(t, content);
@@ -124,7 +138,9 @@ export default function AdminPage() {
   const saveAiEnabled = useCallback(
     async (enabled: boolean) => {
       const t = token?.trim();
-      if (!t) return;
+      if (!t) {
+        return;
+      }
       try {
         await adminApi.setAiEnabled(t, enabled);
         setAiEnabled(enabled);
@@ -137,28 +153,38 @@ export default function AdminPage() {
   );
 
   useEffect(() => {
-    if (!rehydrated) return;
+    if (!rehydrated) {
+      return;
+    }
     fetchStats();
   }, [rehydrated, fetchStats]);
 
   // Redirect non-admin users to dashboard
   useEffect(() => {
-    if (!rehydrated || !token) return;
+    if (!rehydrated || !token) {
+      return;
+    }
     if (roleId !== undefined && roleId !== ADMIN_ROLE_ID) {
       router.replace("/dashboard");
     }
   }, [rehydrated, token, roleId, router]);
 
   useEffect(() => {
-    if (activeTab === "transactions" && token) fetchTransactions();
+    if (activeTab === "transactions" && token) {
+      fetchTransactions();
+    }
   }, [activeTab, token, fetchTransactions]);
 
   useEffect(() => {
-    if (activeTab === "reports" && token) fetchReports();
+    if (activeTab === "reports" && token) {
+      fetchReports();
+    }
   }, [activeTab, token, fetchReports]);
 
   useEffect(() => {
-    if (activeTab === "content" && token) fetchContent();
+    if (activeTab === "content" && token) {
+      fetchContent();
+    }
   }, [activeTab, token, fetchContent]);
 
   if (!rehydrated || !token) {

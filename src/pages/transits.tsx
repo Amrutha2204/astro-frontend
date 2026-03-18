@@ -8,10 +8,10 @@ import ErrorMessage from "@/components/ui/ErrorMessage";
 import PlaceAutocomplete from "@/components/ui/PlaceAutocomplete";
 import {
   astroApi,
-  TransitsTodayResponse,
-  RetrogradesResponse,
-  MajorTransitsResponse,
-  Eclipse,
+  type TransitsTodayResponse,
+  type RetrogradesResponse,
+  type MajorTransitsResponse,
+  type Eclipse,
 } from "@/services/api";
 
 type TabId = "today" | "retrogrades" | "major" | "eclipses";
@@ -28,18 +28,26 @@ function groupByMonth<T extends { date?: string; startDate?: string }>(items: T[
   const map: Record<string, T[]> = {};
   items.forEach((item) => {
     const raw = item.date || item.startDate;
-    if (!raw) return;
+    if (!raw) {
+      return;
+    }
     const d = new Date(raw);
-    if (isNaN(d.getTime())) return;
+    if (isNaN(d.getTime())) {
+      return;
+    }
     const key = d.toLocaleString("default", { month: "long", year: "numeric" });
-    if (!map[key]) map[key] = [];
+    if (!map[key]) {
+      map[key] = [];
+    }
     map[key].push(item);
   });
   return map;
 }
 
 function formatDate(dateStr: string | undefined) {
-  if (!dateStr) return "-";
+  if (!dateStr) {
+    return "-";
+  }
   const d = new Date(dateStr);
   return isNaN(d.getTime())
     ? dateStr
@@ -112,7 +120,9 @@ export default function TransitsPage() {
 
   useEffect(() => {
     const rawUser = localStorage.getItem("user");
-    if (!rawUser) return;
+    if (!rawUser) {
+      return;
+    }
     const parsed = JSON.parse(rawUser) as StoredUser;
     setStoredUser(parsed);
     setPlace(parsed.birthPlace || "");
@@ -183,7 +193,9 @@ export default function TransitsPage() {
   }, [loadEclipses]);
 
   useEffect(() => {
-    if (activeTab === "eclipses") loadEclipses();
+    if (activeTab === "eclipses") {
+      loadEclipses();
+    }
   }, [activeTab, loadEclipses]);
 
   const handleRefresh = useCallback(() => {
@@ -198,9 +210,15 @@ export default function TransitsPage() {
         .finally(() => setLoading(false));
       return;
     }
-    if (activeTab === "retrogrades") loadRetrogrades();
-    if (activeTab === "major") loadMajor();
-    if (activeTab === "eclipses") loadEclipses();
+    if (activeTab === "retrogrades") {
+      loadRetrogrades();
+    }
+    if (activeTab === "major") {
+      loadMajor();
+    }
+    if (activeTab === "eclipses") {
+      loadEclipses();
+    }
   }, [activeTab, loadEclipses, loadMajor, loadRetrogrades]);
 
   return (

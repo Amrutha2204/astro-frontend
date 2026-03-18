@@ -5,7 +5,9 @@
 
 /** Default (Delhi) when place is empty or not resolved. Used only as fallback. */
 export function getCoordinatesFromCity(cityName: string): { lat: number; lng: number } {
-  if (!cityName?.trim()) return { lat: 28.6139, lng: 77.209 };
+  if (!cityName?.trim()) {
+    return { lat: 28.6139, lng: 77.209 };
+  }
   // All real resolution is done via astroApi.getGeocode(place) – no static list.
   return { lat: 28.6139, lng: 77.209 };
 }

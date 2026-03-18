@@ -7,13 +7,14 @@ import CalculationInfo from "@/components/common/CalculationInfo";
 import Loading from "@/components/ui/Loading";
 import PlaceAutocomplete from "@/components/ui/PlaceAutocomplete";
 import { showError } from "@/utils/toast";
+import Image from "next/image";
 import {
   astroApi,
-  GuestCalendarResponse,
-  FestivalsResponse,
-  MuhuratResponse,
-  AuspiciousDayResponse,
-  RahuYamagandamResponse,
+  type GuestCalendarResponse,
+  type FestivalsResponse,
+  type MuhuratResponse,
+  type AuspiciousDayResponse,
+  type RahuYamagandamResponse,
 } from "@/services/api";
 
 type TabId = "today" | "festivals" | "muhurat" | "auspicious" | "rahu";
@@ -72,14 +73,18 @@ export default function CalendarPage() {
 
   useEffect(() => {
     const rawUser = localStorage.getItem("user");
-    if (!rawUser) return;
+    if (!rawUser) {
+      return;
+    }
     const parsed = JSON.parse(rawUser) as StoredUser;
     setStoredUser(parsed);
     setPlace(parsed.birthPlace || "");
   }, []);
 
   useEffect(() => {
-    if (activeTab !== "today" || !place) return;
+    if (activeTab !== "today" || !place) {
+      return;
+    }
 
     const fetchToday = async () => {
       try {
@@ -150,7 +155,9 @@ export default function CalendarPage() {
 
   const handleRefresh = useCallback(() => {
     if (activeTab === "today") {
-      if (!place) return;
+      if (!place) {
+        return;
+      }
       (async () => {
         try {
           setTodayLoading(true);
@@ -165,10 +172,18 @@ export default function CalendarPage() {
       })();
       return;
     }
-    if (activeTab === "festivals") fetchFestivals();
-    if (activeTab === "muhurat") fetchMuhurat();
-    if (activeTab === "auspicious") fetchAuspicious();
-    if (activeTab === "rahu") fetchRahuYamagandam();
+    if (activeTab === "festivals") {
+      fetchFestivals();
+    }
+    if (activeTab === "muhurat") {
+      fetchMuhurat();
+    }
+    if (activeTab === "auspicious") {
+      fetchAuspicious();
+    }
+    if (activeTab === "rahu") {
+      fetchRahuYamagandam();
+    }
   }, [activeTab, fetchAuspicious, fetchFestivals, fetchMuhurat, fetchRahuYamagandam, place]);
 
   const tabs: { id: TabId; label: string }[] = [
@@ -288,12 +303,14 @@ export default function CalendarPage() {
                           {(todayData.sunrise ?? todayData.sunset) && (
                             <div className="cursor-default overflow-hidden rounded-[18px] border border-[rgba(148,163,184,0.3)] bg-[linear-gradient(135deg,rgba(71,85,105,0.4)_0%,rgba(51,65,85,0.3)_100%)] shadow-[0_8px_24px_rgba(0,0,0,0.15)] backdrop-blur-[12px] transition-all duration-300 hover:-translate-y-2 hover:border-[rgba(148,163,184,0.5)] hover:bg-[linear-gradient(135deg,rgba(71,85,105,0.6)_0%,rgba(51,65,85,0.5)_100%)] hover:shadow-[0_16px_40px_rgba(59,130,246,0.15)]">
                               <div className="relative flex h-[160px] w-full items-center justify-center overflow-hidden border-b-[2px] border-b-[rgba(148,163,184,0.2)] bg-[linear-gradient(135deg,#1e3a8a_0%,#1e40af_50%,#0284c7_100%)]">
-                                <img
+                                <Image
                                   src="https://res.cloudinary.com/dmxmm7emu/image/upload/v1773319718/sunrise_kw5rub.jpg"
                                   alt="Sunrise"
-                                  className="h-full w-full object-cover"
+                                  fill
+                                  sizes="(max-width: 768px) 100vw, 50vw"
+                                  className="object-cover"
                                   onError={(e) => {
-                                    e.currentTarget.style.display = "none";
+                                    (e.target as HTMLImageElement).style.display = "none";
                                   }}
                                 />
                               </div>
@@ -312,12 +329,14 @@ export default function CalendarPage() {
                           {(todayData.moonRise ?? todayData.moonSet) && (
                             <div className="cursor-default overflow-hidden rounded-[18px] border border-[rgba(148,163,184,0.3)] bg-[linear-gradient(135deg,rgba(71,85,105,0.4)_0%,rgba(51,65,85,0.3)_100%)] shadow-[0_8px_24px_rgba(0,0,0,0.15)] backdrop-blur-[12px] transition-all duration-300 hover:-translate-y-2 hover:border-[rgba(148,163,184,0.5)] hover:bg-[linear-gradient(135deg,rgba(71,85,105,0.6)_0%,rgba(51,65,85,0.5)_100%)] hover:shadow-[0_16px_40px_rgba(59,130,246,0.15)]">
                               <div className="relative flex h-[160px] w-full items-center justify-center overflow-hidden border-b-[2px] border-b-[rgba(148,163,184,0.2)] bg-[linear-gradient(135deg,#1e3a8a_0%,#1e40af_50%,#0284c7_100%)]">
-                                <img
+                                <Image
                                   src="https://res.cloudinary.com/dmxmm7emu/image/upload/v1773319343/moonrise_azuvh4.jpg"
                                   alt="Moonrise"
-                                  className="h-full w-full object-cover"
+                                  fill
+                                  sizes="(max-width: 768px) 100vw, 50vw"
+                                  className="object-cover"
                                   onError={(e) => {
-                                    e.currentTarget.style.display = "none";
+                                    (e.target as HTMLImageElement).style.display = "none";
                                   }}
                                 />
                               </div>

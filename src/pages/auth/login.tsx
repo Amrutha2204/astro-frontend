@@ -14,20 +14,18 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const getPasswordStrength = (password: string) => {
-    if (password.length < 4) return "Weak";
-    if (password.length < 8) return "Medium";
+    if (password.length < 4) {
+      return "Weak";
+    }
+    if (password.length < 8) {
+      return "Medium";
+    }
     return "Strong";
   };
-  const pageClass = "relative flex min-h-screen flex-col bg-[#faf8f5]";
-  const headerClass = "relative z-[1] px-6 pb-7 pt-12 text-center";
-  const cardClass =
-    "max-h-[85vh] w-full max-w-[440px] overflow-y-auto rounded-[16px] border border-[#e8ddd0] border-t-[3px] border-t-[#6b4423] bg-white px-8 py-9 shadow-[0_10px_40px_rgba(92,64,51,0.1),0_2px_8px_rgba(0,0,0,0.04)]";
-  const labelClass = "m-0 text-[14px] font-semibold text-[#374151]";
-  const inputClass =
-    "w-full rounded-[8px] border border-[#e8ddd0] bg-[#faf8f5] px-[14px] py-3 text-[15px] outline-none transition-[border-color,background,box-shadow] duration-200 placeholder:text-[#9ca3af] focus:border-[#6b4423] focus:bg-white focus:shadow-[0_0_0_3px_rgba(107,68,35,0.12)] disabled:cursor-not-allowed disabled:bg-[#f9fafb] disabled:opacity-60";
-
   const submit = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+    if (e) {
+      e.preventDefault();
+    }
 
     const trimmedEmail = email.trim();
     const trimmedPassword = password.trim();

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { astroApi, KundliResponse, CHART_OPTIONS } from "@/services/api";
+import { astroApi, type KundliResponse, CHART_OPTIONS } from "@/services/api";
 import { onboardGuest } from "@/services/authService";
 import { showError } from "@/utils/toast";
 import AppHeader from "@/components/layout/AppHeader";
@@ -30,7 +30,9 @@ type KundliHouse = KundliResponse["houses"][number];
 type KundliPlanet = KundliResponse["planetaryPositions"][number];
 
 function getStored(): GuestSession | null {
-  if (typeof window === "undefined") return null;
+  if (typeof window === "undefined") {
+    return null;
+  }
   try {
     const raw = sessionStorage.getItem(SESSION_KEY);
     return raw ? (JSON.parse(raw) as GuestSession) : null;
@@ -40,12 +42,16 @@ function getStored(): GuestSession | null {
 }
 
 function setStored(data: GuestSession) {
-  if (typeof window === "undefined") return;
+  if (typeof window === "undefined") {
+    return;
+  }
   sessionStorage.setItem(SESSION_KEY, JSON.stringify(data));
 }
 
 function clearStored() {
-  if (typeof window === "undefined") return;
+  if (typeof window === "undefined") {
+    return;
+  }
   sessionStorage.removeItem(SESSION_KEY);
 }
 
@@ -106,7 +112,9 @@ export default function GuestKundliPage() {
   const [birthTime, setBirthTime] = useState("");
 
   const renderHouseBox = (houseNumber: number) => {
-    if (!stored?.kundli?.planetaryPositions || !stored?.kundli?.houses) return null;
+    if (!stored?.kundli?.planetaryPositions || !stored?.kundli?.houses) {
+      return null;
+    }
 
     const houseSign = stored.kundli.houses.find((h: KundliHouse) => h.house === houseNumber)?.sign;
 
@@ -122,7 +130,7 @@ export default function GuestKundliPage() {
         <div className="-rotate-45 text-center text-[12px] leading-[1.4] text-[#6b4423]">
           {planetsInHouse.map((p: KundliPlanet, i: number) => (
             <div key={i} className="font-medium">
-              {p.planet.slice(0, 2)} {p.degree != null ? p.degree.toFixed(0) + "°" : ""}
+              {p.planet.slice(0, 2)} {p.degree !== null ? p.degree.toFixed(0) + "°" : ""}
               {p.retrograde ? " *" : ""}
             </div>
           ))}
@@ -209,7 +217,9 @@ export default function GuestKundliPage() {
 
   const handleChartChange = async (newChart: string) => {
     const details = stored?.birthDetails;
-    if (!details) return;
+    if (!details) {
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -305,7 +315,7 @@ export default function GuestKundliPage() {
                       {k.nakshatra || "N/A"}
                     </span>
                   </div>
-                  {k.pada != null && (
+                  {k.pada !== null && (
                     <div className="overflow-hidden rounded-[12px] border-[1.5px] border-[rgba(180,123,69,0.3)] bg-[linear-gradient(135deg,rgba(180,123,69,0.1)_0%,rgba(212,165,116,0.08)_100%)] px-5 py-[18px]">
                       <span className="mb-[6px] block text-[12px] font-bold uppercase tracking-[0.08em] text-[#f1eeeb]">
                         Pada:
@@ -510,7 +520,9 @@ export default function GuestKundliPage() {
               }`}
               onClick={() => {
                 setUnknownTime((prev) => {
-                  if (!prev) setBirthTime("12:00");
+                  if (!prev) {
+                    setBirthTime("12:00");
+                  }
                   return !prev;
                 });
               }}
