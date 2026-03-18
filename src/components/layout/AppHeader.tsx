@@ -15,17 +15,17 @@ const AppHeader = () => {
   const rehydrated = useSelector(selectIsRehydrated);
   const [walletBalance, setWalletBalance] = useState<number | null>(null);
   const { locale, setLocale, t } = useLanguage();
+  const shouldDisableWallet = !rehydrated || isGuest || !isValidJwtFormat(token);
 
   useEffect(() => {
-    if (!rehydrated || isGuest || !isValidJwtFormat(token)) {
-      setWalletBalance(null);
+    if (shouldDisableWallet) {
       return;
     }
     paymentApi
       .getBalance(token!)
       .then((r) => setWalletBalance(r.balanceRupees))
       .catch(() => setWalletBalance(null));
-  }, [rehydrated, isGuest, token]);
+  }, [shouldDisableWallet, token]);
 
   const handleBack = () => {
     if (typeof window !== "undefined" && window.history.length > 1) {
@@ -116,9 +116,7 @@ const AppHeader = () => {
           <div className="flex items-center gap-1 text-[16px] font-semibold text-white">
             <span className="text-[18px]">₹</span>
             <span className="text-[16px]">
-              {walletBalance == null || typeof walletBalance !== "number"
-                ? "—"
-                : walletBalance.toFixed(2)}
+              {shouldDisableWallet || walletBalance === null ? "—" : walletBalance.toFixed(2)}
             </span>
           </div>
         )}

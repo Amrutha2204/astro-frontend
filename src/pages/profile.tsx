@@ -9,6 +9,7 @@ import { isValidJwtFormat } from "@/utils/auth";
 import { getUserDetails } from "@/services/userService";
 import Loading from "@/components/ui/Loading";
 import ErrorMessage from "@/components/ui/ErrorMessage";
+import Image from "next/image";
 
 /** Raw API response: user-details with nested user */
 type ApiUser = {
@@ -49,10 +50,14 @@ type ProfileDisplay = {
 };
 
 function formatDate(value: string | null | undefined): string {
-  if (!value) return "—";
+  if (!value) {
+    return "—";
+  }
   try {
     const d = new Date(value);
-    if (Number.isNaN(d.getTime())) return value;
+    if (Number.isNaN(d.getTime())) {
+      return value;
+    }
     return d.toLocaleDateString(undefined, { dateStyle: "medium" });
   } catch {
     return value;
@@ -60,12 +65,16 @@ function formatDate(value: string | null | undefined): string {
 }
 
 function formatTime(value: string | null | undefined): string {
-  if (!value) return "—";
+  if (!value) {
+    return "—";
+  }
   return value;
 }
 
 function normalizeProfile(data: ApiUserDetails | null): ProfileDisplay | null {
-  if (!data) return null;
+  if (!data) {
+    return null;
+  }
   const u = data.user;
   const name = (u?.name ?? data.guestName ?? "").trim() || "—";
   return {
@@ -84,9 +93,13 @@ function normalizeProfile(data: ApiUserDetails | null): ProfileDisplay | null {
 
 function getInitial(name: string): string {
   const n = (name || "").trim();
-  if (!n || n === "—") return "?";
+  if (!n || n === "—") {
+    return "?";
+  }
   const parts = n.split(/\s+/).filter(Boolean);
-  if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
   return n.slice(0, 2).toUpperCase();
 }
 
@@ -121,7 +134,9 @@ const ProfilePage = () => {
   }, [token, dispatch, router]);
 
   useEffect(() => {
-    if (!rehydrated) return;
+    if (!rehydrated) {
+      return;
+    }
     fetchProfile();
   }, [rehydrated, fetchProfile]);
 
@@ -165,12 +180,14 @@ const ProfilePage = () => {
               <div className="mx-auto max-w-[720px]">
                 <div className="mb-6 flex flex-wrap items-center gap-6 rounded-[20px] bg-[linear-gradient(145deg,#2d2438_0%,#1a1625_50%,#15121c_100%)] px-9 py-8 text-white shadow-[0_12px_40px_rgba(0,0,0,0.2)]">
                   <div className="shrink-0">
-                    <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-[20px] border-[2px] border-[rgba(255,255,255,0.2)] bg-[linear-gradient(135deg,rgba(255,255,255,0.15)_0%,rgba(255,255,255,0.08)_100%)] text-[32px] font-bold text-white">
+                    <div className="relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-[20px] border-[2px] border-[rgba(255,255,255,0.2)] bg-[linear-gradient(135deg,rgba(255,255,255,0.15)_0%,rgba(255,255,255,0.08)_100%)] text-[32px] font-bold text-white">
                       {profile.profilePic ? (
-                        <img
+                        <Image
                           src={profile.profilePic}
-                          alt=""
-                          className="h-full w-full object-cover"
+                          alt="Profile picture"
+                          fill
+                          sizes="80px"
+                          className="object-cover"
                         />
                       ) : (
                         getInitial(profile.name)

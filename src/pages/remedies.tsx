@@ -4,10 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
 import PageHeader from "@/components/layout/PageHeader";
-import { remediesApi, RemedyRecommendations } from "@/services/remediesService";
+import { remediesApi, type RemedyRecommendations } from "@/services/remediesService";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
 import ErrorMessage from "@/components/ui/ErrorMessage";
 import Loading from "@/components/ui/Loading";
+import Image from "next/image";
 
 const REDIRECT_DELAY_MS = 2000;
 
@@ -79,7 +80,9 @@ export default function RemediesPage() {
   ];
 
   const getCategoryData = (categoryId: string) => {
-    if (!remedies) return [];
+    if (!remedies) {
+      return [];
+    }
     switch (categoryId) {
       case "gemstone":
         return remedies.gemstones;
@@ -200,7 +203,9 @@ export default function RemediesPage() {
   }, [token, dispatch, router]);
 
   useEffect(() => {
-    if (!rehydrated) return;
+    if (!rehydrated) {
+      return;
+    }
     if (!token?.trim() || token.trim().split(".").length !== 3) {
       dispatch(clearToken());
       setTimeout(() => router.push("/auth/login"), REDIRECT_DELAY_MS);
@@ -298,14 +303,15 @@ export default function RemediesPage() {
                         }
                       >
                         <div className="absolute inset-0 overflow-hidden rounded-[16px]">
-                          <img
-                            src={category.image}
-                            alt={category.name}
-                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
-                            onError={(e) => {
-                              e.currentTarget.style.display = "none";
-                            }}
-                          />
+                          <div className="relative h-full w-full">
+                            <Image
+                              src={category.image}
+                              alt={category.name}
+                              fill
+                              sizes="(max-width:768px) 50vw, 200px"
+                              className="object-cover transition-transform duration-300 group-hover:scale-110"
+                            />
+                          </div>
                           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.3)_50%,rgba(0,0,0,0.6)_100%)]" />
                         </div>
                         <div className="relative z-[2] text-center text-white">
@@ -372,17 +378,18 @@ export default function RemediesPage() {
                     >
                       <div className="relative max-h-[85vh] overflow-y-auto rounded-[24px] border-l-[8px] border-l-[#6b4423] bg-[linear-gradient(135deg,#ffffff_0%,#faf7f2_100%)] p-[50px] shadow-[0_20px_60px_rgba(107,68,35,0.2),0_10px_30px_rgba(0,0,0,0.1)]">
                         <div className="mb-8 -mx-[50px] -mt-[50px] flex h-[300px] w-[calc(100%+100px)] items-center justify-center overflow-hidden rounded-t-[24px] bg-[linear-gradient(135deg,#f5ebe0_0%,#ede4d8_100%)]">
-                          <img
-                            src={getRemedyImagePath(
-                              selectedRemedy.type || "default",
-                              selectedRemedy.name,
-                            )}
-                            alt={selectedRemedy.name}
-                            className="relative z-[1] h-full w-full object-cover object-center"
-                            onError={(e) => {
-                              e.currentTarget.style.display = "none";
-                            }}
-                          />
+                          <div className="relative z-[1] h-full w-full">
+                            <Image
+                              src={getRemedyImagePath(
+                                selectedRemedy.type || "default",
+                                selectedRemedy.name,
+                              )}
+                              alt={selectedRemedy.name}
+                              fill
+                              sizes="(max-width:768px) 100vw, 750px"
+                              className="object-cover object-center"
+                            />
+                          </div>
                         </div>
 
                         {selectedRemedy.type === "gemstone" && (

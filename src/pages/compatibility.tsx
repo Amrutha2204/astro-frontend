@@ -6,12 +6,12 @@ import AppSidebar from "@/components/layout/AppSidebar";
 import PageHeader from "@/components/layout/PageHeader";
 import {
   compatibilityApi,
-  CompatibilityRequest,
-  GunaMilanResponse,
-  MarriageCompatibilityResponse,
+  type CompatibilityRequest,
+  type GunaMilanResponse,
+  type MarriageCompatibilityResponse,
 } from "@/services/compatibilityService";
 import { paymentApi } from "@/services/paymentService";
-import { reportsApi, GenerateReportResponse } from "@/services/reportsService";
+import { reportsApi, type GenerateReportResponse } from "@/services/reportsService";
 import { getUserDetails } from "@/services/userService";
 import { astroApi } from "@/services/api";
 import { isCityRecognized } from "@/utils/coordinates";
@@ -234,7 +234,9 @@ export default function CompatibilityPage() {
 
   useEffect(() => {
     const t = token?.trim();
-    if (!t || t.split(".").length !== 3 || partner1Prefilled) return;
+    if (!t || t.split(".").length !== 3 || partner1Prefilled) {
+      return;
+    }
     getUserDetails(t)
       .then((res) => {
         const data = res as UserDetailsResponse;
@@ -242,9 +244,13 @@ export default function CompatibilityPage() {
         const birthPlace = data?.birthPlace ?? "";
         const birthTime = data?.birthTime ?? "12:00:00";
         const name = data?.user?.name ?? data?.name ?? "";
-        if (!dob || !birthPlace) return;
+        if (!dob || !birthPlace) {
+          return;
+        }
         const d = new Date(dob);
-        if (isNaN(d.getTime())) return;
+        if (isNaN(d.getTime())) {
+          return;
+        }
         const [h = 12, m = 0] = birthTime.split(":").map(Number);
         setPartner1({
           name: typeof name === "string" ? name : "",
@@ -375,7 +381,9 @@ export default function CompatibilityPage() {
   };
 
   const calculateGunaMilan = async () => {
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      return;
+    }
     try {
       setLoading(true);
       const t = token?.trim();
@@ -398,7 +406,9 @@ export default function CompatibilityPage() {
   };
 
   const calculateMarriage = async () => {
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      return;
+    }
     try {
       setLoading(true);
       const t = token?.trim();
@@ -439,8 +449,12 @@ export default function CompatibilityPage() {
   };
 
   const loadRazorpay = (): Promise<void> => {
-    if (typeof window === "undefined") return Promise.reject(new Error("No window"));
-    if (window.Razorpay) return Promise.resolve();
+    if (typeof window === "undefined") {
+      return Promise.reject(new Error("No window"));
+    }
+    if (window.Razorpay) {
+      return Promise.resolve();
+    }
     return new Promise((resolve, reject) => {
       const s = document.createElement("script");
       s.src = "https://checkout.razorpay.com/v1/checkout.js";

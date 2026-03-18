@@ -42,7 +42,9 @@ export const horoscopeApi = {
 
   getDailyHoroscope(token: string, chartType?: string): Promise<DailyHoroscopeResponse> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token format. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token format. Please login again.");
+    }
     return request<DailyHoroscopeResponse>(ASTRO_BASE, "/api/v1/astrology/horoscope/today", {
       method: "GET",
       token: t,
@@ -52,7 +54,9 @@ export const horoscopeApi = {
 
   getWeeklyHoroscope(token: string): Promise<WeeklyHoroscopeResponse> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token format. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token format. Please login again.");
+    }
     return request<WeeklyHoroscopeResponse>(ASTRO_BASE, "/api/v1/horoscope/weekly", {
       method: "GET",
       token: t,
@@ -61,7 +65,9 @@ export const horoscopeApi = {
 
   getMonthlyHoroscope(token: string): Promise<MonthlyHoroscopeResponse> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token format. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token format. Please login again.");
+    }
     return request<MonthlyHoroscopeResponse>(ASTRO_BASE, "/api/v1/horoscope/monthly", {
       method: "GET",
       token: t,

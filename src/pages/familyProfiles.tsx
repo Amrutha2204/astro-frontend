@@ -7,9 +7,9 @@ import {
   updateFamilyProfile,
   deleteFamilyProfile,
 } from "@/services/familyService";
-import { FamilyProfile, CreateFamilyProfilePayload } from "@/data/family";
+import { type FamilyProfile, type CreateFamilyProfilePayload } from "@/data/family";
 import { astroApi } from "@/services/api";
-import { horoscopeApi, DailyHoroscopeResponse } from "@/services/horoscopeService";
+import { horoscopeApi, type DailyHoroscopeResponse } from "@/services/horoscopeService";
 import AppSidebar from "@/components/layout/AppSidebar";
 import AppHeader from "@/components/layout/AppHeader";
 import DatePickerField from "@/components/ui/DatePickerField";
@@ -85,7 +85,9 @@ export default function FamilyProfiles() {
 
   // Auth redirect
   useEffect(() => {
-    if (!rehydrated) return;
+    if (!rehydrated) {
+      return;
+    }
     if (isGuest || !isValidJwtFormat(token)) {
       dispatch(clearToken());
       router.replace("/auth/login");
@@ -94,7 +96,9 @@ export default function FamilyProfiles() {
 
   // Load profiles
   const loadProfiles = useCallback(async () => {
-    if (!isValidJwtFormat(token)) return;
+    if (!isValidJwtFormat(token)) {
+      return;
+    }
     try {
       setProfilesLoading(true);
       const data = await fetchFamilyProfiles(token);
@@ -107,7 +111,9 @@ export default function FamilyProfiles() {
   }, [token]);
 
   useEffect(() => {
-    if (!rehydrated || isGuest || !isValidJwtFormat(token)) return;
+    if (!rehydrated || isGuest || !isValidJwtFormat(token)) {
+      return;
+    }
     loadProfiles();
   }, [rehydrated, isGuest, token, loadProfiles]);
 
@@ -120,9 +126,15 @@ export default function FamilyProfiles() {
 
   // Validation
   const validateForm = () => {
-    if (!form.name.trim()) return "Name is required";
-    if (!form.dob) return "Date of Birth is required";
-    if (!form.birthPlace.trim()) return "Birth Place is required";
+    if (!form.name.trim()) {
+      return "Name is required";
+    }
+    if (!form.dob) {
+      return "Date of Birth is required";
+    }
+    if (!form.birthPlace.trim()) {
+      return "Birth Place is required";
+    }
     return null;
   };
 
@@ -188,7 +200,9 @@ export default function FamilyProfiles() {
   };
 
   const confirmDelete = async () => {
-    if (!deleteId) return;
+    if (!deleteId) {
+      return;
+    }
     try {
       await deleteFamilyProfile(deleteId, token);
       showSuccessToast("Profile deleted successfully!");
@@ -233,7 +247,7 @@ export default function FamilyProfiles() {
         kundli: kundli
           ? {
               ...kundli,
-              pada: kundli.pada != null ? String(kundli.pada) : undefined,
+              pada: kundli.pada !== null ? String(kundli.pada) : undefined,
             }
           : undefined,
         calendar,
@@ -249,7 +263,9 @@ export default function FamilyProfiles() {
     }
   };
 
-  if (!rehydrated) return null;
+  if (!rehydrated) {
+    return null;
+  }
 
   const getInitial = (name: string) => (name && name[0] ? name[0].toUpperCase() : "?");
 

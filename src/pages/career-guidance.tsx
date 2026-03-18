@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import AppSidebar from "@/components/layout/AppSidebar";
 import AppHeader from "@/components/layout/AppHeader";
-import { careerApi, CareerGuidanceResponse } from "@/services/api";
+import { careerApi, type CareerGuidanceResponse } from "@/services/api";
 import { selectToken } from "@/store/slices/authSlice";
 
 export default function CareerGuidancePage() {
@@ -13,7 +13,9 @@ export default function CareerGuidancePage() {
 
   useEffect(() => {
     const fetchGuidance = async () => {
-      if (!token) return;
+      if (!token) {
+        return;
+      }
       setLoading(true);
       setError("");
       try {

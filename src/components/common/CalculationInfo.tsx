@@ -19,8 +19,12 @@ export default function CalculationInfo({
   className,
 }: Props) {
   const parts: string[] = [];
-  if (showAyanamsa) parts.push("Lahiri ayanamsa");
-  if (showDasha) parts.push("Vimshottari dasha");
+  if (showAyanamsa) {
+    parts.push("Lahiri ayanamsa");
+  }
+  if (showDasha) {
+    parts.push("Vimshottari dasha");
+  }
   const method = parts.length ? `Calculated using ${parts.join(", ")}.` : null;
 
   return (

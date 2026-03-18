@@ -13,7 +13,7 @@ import {
 import { isValidJwtFormat } from "@/utils/auth";
 import { showError } from "@/utils/toast";
 import { getUserDetails } from "@/services/userService";
-
+import Image from "next/image";
 export default function Dashboard() {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -26,7 +26,9 @@ export default function Dashboard() {
     "ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]";
 
   useEffect(() => {
-    if (!rehydrated) return;
+    if (!rehydrated) {
+      return;
+    }
     if (isGuest) {
       dispatch(clearToken());
       router.replace("/auth/login");
@@ -34,7 +36,9 @@ export default function Dashboard() {
   }, [rehydrated, isGuest, dispatch, router]);
 
   useEffect(() => {
-    if (!rehydrated || isGuest || !token?.trim()) return;
+    if (!rehydrated || isGuest || !token?.trim()) {
+      return;
+    }
     getUserDetails(token).catch((e: unknown) => {
       const msg = e instanceof Error ? e.message : "Request failed";
       showError(msg);
@@ -44,7 +48,9 @@ export default function Dashboard() {
   useEffect(() => {
     const handlePopState = () => {
       const t = store.getState().auth.token;
-      if (!isValidJwtFormat(t)) router.replace("/auth/login");
+      if (!isValidJwtFormat(t)) {
+        router.replace("/auth/login");
+      }
     };
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
@@ -245,11 +251,15 @@ export default function Dashboard() {
                 onClick={service.onClick}
               >
                 {service.image && (
-                  <img
-                    src={service.image}
-                    alt=""
-                    className="block h-[140px] w-full bg-[#f5f0e8] object-cover object-center"
-                  />
+                  <div className="relative h-[140px] w-full bg-[#f5f0e8]">
+                    <Image
+                      src={service.image}
+                      alt={service.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 280px"
+                      className="object-cover object-center"
+                    />
+                  </div>
                 )}
                 <h3 className="mx-4 mt-3 mb-[6px] text-[16px] font-semibold text-[#1f2937]">
                   {service.title}

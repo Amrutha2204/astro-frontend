@@ -5,8 +5,8 @@ import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
 import {
   subscriptionApi,
-  SubscriptionPlan,
-  UserSubscriptionResponse,
+  type SubscriptionPlan,
+  type UserSubscriptionResponse,
 } from "@/services/subscriptionService";
 import { showError, showSuccess } from "@/utils/toast";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
@@ -55,7 +55,9 @@ export default function SubscriptionPlansPage() {
   }, [token, dispatch, router]);
 
   useEffect(() => {
-    if (!rehydrated) return;
+    if (!rehydrated) {
+      return;
+    }
     if (!token?.trim() || token.trim().split(".").length !== 3) {
       dispatch(clearToken());
       setTimeout(() => router.push("/auth/login"), REDIRECT_DELAY_MS);
@@ -66,7 +68,9 @@ export default function SubscriptionPlansPage() {
 
   const handleSubscribe = async (planSlug: string) => {
     const t = token?.trim();
-    if (!t) return;
+    if (!t) {
+      return;
+    }
     setSubscribing(planSlug);
     try {
       await subscriptionApi.subscribe(t, planSlug, planSlug.includes("yearly") ? 12 : 1);

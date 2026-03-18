@@ -4,9 +4,9 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
-import { astroApi, KundliResponse, CHART_OPTIONS } from "@/services/api";
+import { astroApi, type KundliResponse, CHART_OPTIONS } from "@/services/api";
 import { paymentApi } from "@/services/paymentService";
-import { reportsApi, GenerateReportResponse } from "@/services/reportsService";
+import { reportsApi, type GenerateReportResponse } from "@/services/reportsService";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
 import { isValidJwtFormat } from "@/utils/auth";
 import { showError, showSuccess } from "@/utils/toast";
@@ -98,7 +98,9 @@ export default function KundliPage() {
     const lagnaIndex = zodiacSigns.indexOf(lagna);
     const signIndex = zodiacSigns.indexOf(sign);
 
-    if (lagnaIndex === -1 || signIndex === -1) return null;
+    if (lagnaIndex === -1 || signIndex === -1) {
+      return null;
+    }
 
     return ((signIndex - lagnaIndex + 12) % 12) + 1;
   };
@@ -130,7 +132,9 @@ export default function KundliPage() {
   }, [token, dispatch, router, chartSelection]);
 
   useEffect(() => {
-    if (!rehydrated) return;
+    if (!rehydrated) {
+      return;
+    }
     if (!isValidJwtFormat(token)) {
       dispatch(clearToken());
       setTimeout(() => router.push("/auth/login"), REDIRECT_DELAY_MS);
@@ -149,8 +153,12 @@ export default function KundliPage() {
     "border-[#d4cfc4] bg-[linear-gradient(135deg,#f0f4f8_0%,#e8eef5_100%)]";
 
   const loadRazorpay = (): Promise<void> => {
-    if (typeof window === "undefined") return Promise.reject(new Error("No window"));
-    if (window.Razorpay) return Promise.resolve();
+    if (typeof window === "undefined") {
+      return Promise.reject(new Error("No window"));
+    }
+    if (window.Razorpay) {
+      return Promise.resolve();
+    }
     return new Promise((resolve, reject) => {
       const s = document.createElement("script");
       s.src = "https://checkout.razorpay.com/v1/checkout.js";
@@ -237,7 +245,9 @@ export default function KundliPage() {
     }
 
     const planetsInHouse = kundli.planetaryPositions.filter((planet: PlanetPosition) => {
-      if (!planet?.sign || !kundli?.lagna) return false;
+      if (!planet?.sign || !kundli?.lagna) {
+        return false;
+      }
 
       const house = getHouseFromSign(planet.sign, kundli.lagna);
       return house === houseNumber;
@@ -250,7 +260,9 @@ export default function KundliPage() {
         </div>
         <div className="-rotate-45 text-center text-[12px] leading-[1.4] text-[#6b4423]">
           {planetsInHouse.map((planet: PlanetPosition, index: number) => {
-            if (!planet?.planet) return null;
+            if (!planet?.planet) {
+              return null;
+            }
 
             const shortName = planet.planet.slice(0, 2);
             const degreeText =
@@ -368,7 +380,7 @@ export default function KundliPage() {
                             {kundli.nakshatra || "N/A"}
                           </span>
                         </div>
-                        {kundli.pada != null && kundli.pada > 0 && (
+                        {kundli.pada !== null && kundli.pada > 0 && (
                           <div className="overflow-hidden rounded-[12px] border-[1.5px] border-[rgba(180,123,69,0.3)] bg-[linear-gradient(135deg,rgba(180,123,69,0.1)_0%,rgba(212,165,116,0.08)_100%)] bg-[url('https://res.cloudinary.com/dmxmm7emu/image/upload/v1773318886/pada-bg3_bs8jtx.jpg')] bg-cover bg-center px-5 py-[18px]">
                             <span className="mb-[6px] block text-[12px] font-bold uppercase tracking-[0.08em] text-[#f1eeeb]">
                               Pada:

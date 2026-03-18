@@ -6,10 +6,11 @@ import AppSidebar from "@/components/layout/AppSidebar";
 import PageHeader from "@/components/layout/PageHeader";
 import CalculationInfo from "@/components/common/CalculationInfo";
 import TrustNote from "@/components/common/TrustNote";
-import { astroApi, CreateShareableCardDto, StoredCardResponse } from "@/services/api";
+import { astroApi, type CreateShareableCardDto, type StoredCardResponse } from "@/services/api";
 import { ASTRO_BASE } from "@/services/fetcher";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
 import ErrorMessage from "@/components/ui/ErrorMessage";
+import Image from "next/image";
 
 const REDIRECT_DELAY_MS = 2000;
 
@@ -52,7 +53,9 @@ export default function ShareableCardPage() {
   }, []);
 
   useEffect(() => {
-    if (!rehydrated) return;
+    if (!rehydrated) {
+      return;
+    }
     const t = token?.trim();
     if (!t || t.split(".").length !== 3) {
       dispatch(clearToken());
@@ -87,7 +90,9 @@ export default function ShareableCardPage() {
             if (idx > 0) {
               const k = line.slice(0, idx).trim();
               const v = line.slice(idx + 1).trim();
-              if (k) payload[k] = v;
+              if (k) {
+                payload[k] = v;
+              }
             }
           });
         }
@@ -116,7 +121,9 @@ export default function ShareableCardPage() {
   );
 
   const fileUrl = useCallback((pathOrFilename: string) => {
-    if (!pathOrFilename) return "";
+    if (!pathOrFilename) {
+      return "";
+    }
     const filename = pathOrFilename.includes("/")
       ? pathOrFilename.split("/").pop()
       : pathOrFilename;
@@ -260,11 +267,15 @@ export default function ShareableCardPage() {
                 <h3 className="mb-2 text-[24px] font-bold text-[#6b4423]">Card created</h3>
                 <p className="mb-3 text-[14px] leading-[1.6] text-[#6b7280]">{card.createdAt}</p>
                 <div className="mb-4">
-                  <img
-                    src={fileUrl(card.imageUrl)}
-                    alt="Shareable card"
-                    className="h-auto max-w-full rounded-[8px] border border-[#e8ddd0]"
-                  />
+                  <div className="relative w-full max-w-[900px] aspect-[4/5]">
+                    <Image
+                      src={fileUrl(card.imageUrl)}
+                      alt="Shareable card"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 900px"
+                      className="rounded-[8px] border border-[#e8ddd0] object-contain"
+                    />
+                  </div>
                 </div>
                 <div className="mt-5 flex flex-wrap justify-start gap-2">
                   <a

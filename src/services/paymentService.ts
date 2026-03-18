@@ -21,7 +21,9 @@ export const paymentApi = {
     receipt?: string,
   ): Promise<CreateOrderResponse> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token. Please login again.");
+    }
     return request<CreateOrderResponse>(ASTRO_BASE, "/api/v1/payment/create-order", {
       method: "POST",
       token: t,
@@ -36,7 +38,9 @@ export const paymentApi = {
     signature: string,
   ): Promise<{ status: string; transactionId: string }> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token. Please login again.");
+    }
     return request<{ status: string; transactionId: string }>(
       ASTRO_BASE,
       "/api/v1/payment/verify",
@@ -50,7 +54,9 @@ export const paymentApi = {
 
   async getBalance(token: string): Promise<WalletBalanceResponse> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token. Please login again.");
+    }
     return request<WalletBalanceResponse>(ASTRO_BASE, "/api/v1/payment/wallet/balance", {
       method: "GET",
       token: t,
@@ -63,10 +69,16 @@ export const paymentApi = {
     offset?: number,
   ): Promise<{ items: UserTransaction[]; total: number }> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token. Please login again.");
+    }
     const params: Record<string, string> = {};
-    if (limit != null) params.limit = String(limit);
-    if (offset != null) params.offset = String(offset);
+    if (limit !== null) {
+      params.limit = String(limit);
+    }
+    if (offset !== null) {
+      params.offset = String(offset);
+    }
     return request<{ items: UserTransaction[]; total: number }>(
       ASTRO_BASE,
       "/api/v1/payment/transactions/me",
