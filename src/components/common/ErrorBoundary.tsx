@@ -27,34 +27,13 @@ export default class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       if (this.props.fallback) return this.props.fallback;
       return (
-        <div
-          style={{
-            minHeight: "60vh",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: 24,
-            textAlign: "center",
-            fontFamily: "system-ui, sans-serif",
-          }}
-        >
-          <h1 style={{ fontSize: 20, marginBottom: 8 }}>Something went wrong</h1>
-          <p style={{ color: "#6b7280", marginBottom: 16 }}>
-            We couldn’t load this page. Please try again.
-          </p>
+        <div className="flex min-h-[60vh] flex-col items-center justify-center p-6 text-center font-[system-ui,sans-serif]">
+          <h1 className="mb-2 text-[20px]">Something went wrong</h1>
+          <p className="mb-4 text-[#6b7280]">We couldn’t load this page. Please try again.</p>
           <button
             type="button"
             onClick={() => this.setState({ hasError: false })}
-            style={{
-              padding: "10px 20px",
-              background: "#6b4423",
-              color: "#fff",
-              border: "none",
-              borderRadius: 8,
-              cursor: "pointer",
-              fontWeight: 600,
-            }}
+            className="rounded-[8px] bg-[#6b4423] px-5 py-[10px] font-semibold text-white"
           >
             Try again
           </button>

@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
-import styles from "@/styles/dashboard.module.css";
 import { astroApi, GuestCalendarResponse } from "@/services/api";
 
 export default function GuestCalendarPage() {
@@ -28,61 +27,42 @@ export default function GuestCalendarPage() {
   }, []);
 
   return (
-    <div className={styles.dashboardContainer}>
+    <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]">
       <AppHeader />
 
-      <div className={styles.dashboardContent}>
+      <div className="flex w-full">
         <AppSidebar />
 
-        <main className={styles.mainContent}>
-          {/* 🌸 HEADER */}
-          <div style={{ marginBottom: "24px" }}>
+        <main className="ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]">
+          <div className="mb-6">
             <button
               onClick={() => router.back()}
-              style={{
-                background: "transparent",
-                border: "none",
-                color: "#8b5a2b",
-                cursor: "pointer",
-                marginBottom: "10px",
-                fontSize: "14px",
-              }}
+              className="mb-[10px] border-none bg-transparent text-[14px] text-[#8b5a2b]"
             >
               ← Back to Home
             </button>
 
-            <h1 style={{ fontSize: "26px" }}>🪔 Today’s Panchang</h1>
-            <p style={{ opacity: 0.6 }}>
-              Sacred Vedic calendar · Guest View
-            </p>
+            <h1 className="text-[26px] font-bold text-[#6b4423]">🪔 Today’s Panchang</h1>
+            <p className="opacity-60">Sacred Vedic calendar · Guest View</p>
           </div>
 
-          {/* ⏳ LOADING */}
           {loading && (
-            <div className={styles.noDataContainer}>
-              <div className={styles.noDataIcon}>🌼</div>
+            <div className="mt-4 flex items-center justify-center rounded-[8px] border border-[#e8ddd0] bg-[#fdf8f3] px-4 py-3">
+              <div className="mr-2 text-[24px]">🌼</div>
               <p>Loading divine timings...</p>
             </div>
           )}
 
-          {/* ❌ ERROR */}
           {!loading && error && (
-            <div className={styles.noDataContainer}>
-              <div className={styles.noDataIcon}>⚠️</div>
+            <div className="mt-4 flex items-center justify-center rounded-[8px] border border-[#e8ddd0] bg-[#fdf8f3] px-4 py-3">
+              <div className="mr-2 text-[24px]">⚠️</div>
               <h3>Error</h3>
               <p>{error}</p>
             </div>
           )}
 
-          {/* 🌞 PANCHANG */}
           {!loading && calendar && (
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-                gap: "18px",
-              }}
-            >
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-[18px]">
               <DivineCard title="📅 Date" value={calendar.date} />
               <DivineCard title="🌕 Moon Phase" value={calendar.moonPhase} />
               <DivineCard title="🌙 Tithi" value={calendar.tithi} />
@@ -90,35 +70,21 @@ export default function GuestCalendarPage() {
 
               {Array.isArray(calendar.majorPlanetaryEvents) &&
                 calendar.majorPlanetaryEvents.map((event, index) => (
-                  <DivineCard
-                    key={index}
-                    title={`✨ Event ${index + 1}`}
-                    value={event}
-                  />
+                  <DivineCard key={index} title={`✨ Event ${index + 1}`} value={event} />
                 ))}
             </div>
           )}
-
         </main>
       </div>
     </div>
   );
 }
 
-/* 🌺 DIVINE CARD */
 function DivineCard({ title, value }: { title: string; value: string }) {
   return (
-    <div
-      style={{
-        padding: "18px",
-        borderRadius: "14px",
-        background: "linear-gradient(135deg, #fffaf0, #ffffff)",
-        border: "1px solid #f0e6d8",
-        boxShadow: "0 6px 14px rgba(0,0,0,0.06)",
-      }}
-    >
-      <h3 style={{ fontSize: "15px", marginBottom: "6px" }}>{title}</h3>
-      <p style={{ fontSize: "14px", fontWeight: 500 }}>{value}</p>
+    <div className="rounded-[14px] border border-[#f0e6d8] bg-[linear-gradient(135deg,#fffaf0,#ffffff)] p-[18px] shadow-[0_6px_14px_rgba(0,0,0,0.06)]">
+      <h3 className="mb-[6px] text-[15px] font-semibold text-[#6b4423]">{title}</h3>
+      <p className="text-[14px] font-medium">{value}</p>
     </div>
   );
 }

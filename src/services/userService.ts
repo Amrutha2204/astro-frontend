@@ -8,7 +8,7 @@ export const getUserDetails = (token: string) =>
 
 export const saveBirthDetails = (
   token: string,
-  data: { dob: string; birthTime: string; placeOfBirth: string }
+  data: { dob: string; birthTime: string; placeOfBirth: string },
 ) =>
   request<unknown>(AUTH_BASE, "/api/v1/user-details/birth-details", {
     method: "POST",

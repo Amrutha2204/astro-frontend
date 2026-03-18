@@ -11,7 +11,7 @@ export const authSyncMiddleware: Middleware = () => (next) => (action) => {
   } else if (clearToken.match(action)) {
     if (typeof window !== "undefined") {
       window.localStorage.removeItem("token");
-      window.localStorage.clear();
+      window.localStorage.removeItem("user");
     }
   }
   return result;

@@ -25,4 +25,3 @@ export const showInfo = (message: string) => {
     },
   });
 };
-

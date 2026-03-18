@@ -7,6 +7,8 @@ import { Toaster } from "react-hot-toast";
 import { store } from "@/store";
 import { rehydrate } from "@/store/slices/authSlice";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
+import { ThemeProvider } from "@/components/common/ThemeToggle";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 
 function RehydrateAuth() {
   const s = useStore();
@@ -21,7 +23,7 @@ export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     const handleError = (event: ErrorEvent) => {
       const err = event.error;
-      if (err?.response?.status || err?.message?.includes("Request failed")) {
+      if (err?.message?.includes?.("Request failed")) {
         event.preventDefault();
         event.stopPropagation();
         return false;
@@ -29,7 +31,7 @@ export default function App({ Component, pageProps }: AppProps) {
     };
     const handleRejection = (event: PromiseRejectionEvent) => {
       const r = event.reason;
-      if (r?.response?.status || r?.message?.includes("Request failed")) {
+      if (r?.message?.includes?.("Request failed")) {
         event.preventDefault();
         event.stopPropagation();
         return false;
@@ -47,12 +49,19 @@ export default function App({ Component, pageProps }: AppProps) {
     <Provider store={store}>
       <Head>
         <title>Jyotishya Darshan – Vedic Horoscope & Kundli</title>
-        <meta name="description" content="Vedic horoscope, Kundli, Dasha, Dosha check, marriage match, and Panchang. Try free without login." />
+        <meta
+          name="description"
+          content="Vedic horoscope, Kundli, Dasha, Dosha check, marriage match, and Panchang. Try free without login."
+        />
       </Head>
       <RehydrateAuth />
-      <ErrorBoundary>
-        <Component {...pageProps} />
-      </ErrorBoundary>
+      <ThemeProvider>
+        <LanguageProvider>
+          <ErrorBoundary>
+            <Component {...pageProps} />
+          </ErrorBoundary>
+        </LanguageProvider>
+      </ThemeProvider>
       <Toaster
         position="top-right"
         toastOptions={{

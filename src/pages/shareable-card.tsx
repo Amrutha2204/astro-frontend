@@ -3,13 +3,13 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
+import PageHeader from "@/components/layout/PageHeader";
 import CalculationInfo from "@/components/common/CalculationInfo";
 import TrustNote from "@/components/common/TrustNote";
 import { astroApi, CreateShareableCardDto, StoredCardResponse } from "@/services/api";
 import { ASTRO_BASE } from "@/services/fetcher";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
-import styles from "@/styles/dashboard.module.css";
-import formStyles from "@/styles/birthDetails.module.css";
+import ErrorMessage from "@/components/ui/ErrorMessage";
 
 const REDIRECT_DELAY_MS = 2000;
 
@@ -36,11 +36,16 @@ export default function ShareableCardPage() {
   const [mainTheme, setMainTheme] = useState("");
   const [reason, setReason] = useState("");
   const [kundliPayload, setKundliPayload] = useState(
-    "moonSign: Cancer\nsunSign: Leo\nlagna: Virgo"
+    "moonSign: Cancer\nsunSign: Leo\nlagna: Virgo",
   );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [card, setCard] = useState<StoredCardResponse | null>(null);
+  const [shareLinks, setShareLinks] = useState<{
+    whatsapp: string;
+    twitter: string;
+    telegram: string;
+  } | null>(null);
 
   useEffect(() => {
     setDate(getDefaultDate());
@@ -72,7 +77,8 @@ export default function ShareableCardPage() {
             ? {
                 dayType: (dayType && dayType.trim()) || "Based on today's chart",
                 mainTheme: (mainTheme && mainTheme.trim()) || "General planetary influence",
-                reason: (reason && reason.trim()) || "Derived from current transits and Vedic methods.",
+                reason:
+                  (reason && reason.trim()) || "Derived from current transits and Vedic methods.",
               }
             : {};
         if (type === "kundli_summary") {
@@ -87,20 +93,26 @@ export default function ShareableCardPage() {
         }
         const dto: CreateShareableCardDto = {
           type,
-          title:
-            title || (type === "horoscope" ? "Today's Horoscope" : "Kundli Summary"),
+          title: title || (type === "horoscope" ? "Today's Horoscope" : "Kundli Summary"),
           date: date || undefined,
           payload: Object.keys(payload).length ? payload : undefined,
         };
         const result = await astroApi.createShareableCard(t, dto);
         setCard(result);
+        setShareLinks(null);
+        try {
+          const links = await astroApi.getShareLinks(t, result.imageUrl, title || result.id);
+          setShareLinks(links);
+        } catch {
+          // share links optional
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to create card");
       } finally {
         setLoading(false);
       }
     },
-    [token, type, title, date, dayType, mainTheme, reason, kundliPayload]
+    [token, type, title, date, dayType, mainTheme, reason, kundliPayload],
   );
 
   const fileUrl = useCallback((pathOrFilename: string) => {
@@ -114,12 +126,12 @@ export default function ShareableCardPage() {
 
   if (!rehydrated || !token?.trim() || token.trim().split(".").length !== 3) {
     return (
-      <div className={styles.dashboardContainer}>
+      <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]">
         <AppHeader />
-        <div className={styles.dashboardContent}>
+        <div className="flex w-full">
           <AppSidebar />
-          <main className={styles.mainContent}>
-            <div className={styles.loadingContainer}>
+          <main className="ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]">
+            <div className="flex min-h-[200px] items-center justify-center">
               <p>Redirecting to login…</p>
             </div>
           </main>
@@ -128,116 +140,92 @@ export default function ShareableCardPage() {
     );
   }
 
-  if (error && !card) {
-    return (
-      <div className={styles.dashboardContainer}>
-        <AppHeader />
-        <div className={styles.dashboardContent}>
-          <AppSidebar />
-          <main className={styles.mainContent}>
-            <div className={styles.errorContainer}>
-              <p className={styles.errorText}>Error: {error}</p>
-              <div className={styles.buttonGroup}>
-                <button
-                  type="button"
-                  onClick={() => setError(null)}
-                  className={styles.backButton}
-                >
-                  Try again
-                </button>
-                <button
-                  type="button"
-                  onClick={() => router.push("/auth/login")}
-                  className={styles.backButton}
-                >
-                  Go to Login
-                </button>
-              </div>
-            </div>
-          </main>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className={styles.dashboardContainer}>
+    <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]">
       <AppHeader />
-      <div className={styles.dashboardContent}>
+      <div className="flex w-full">
         <AppSidebar />
-        <main className={styles.mainContent}>
-          <div className={styles.kundliContainer}>
-            <div className={styles.pageHeader}>
-              <button
-                type="button"
-                onClick={() => router.back()}
-                className={styles.backButton}
-              >
-                ← Back
-              </button>
-            </div>
+        <main className="ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]">
+          <div className="relative mx-auto max-w-[1200px]">
+            <PageHeader onBack={() => router.back()} />
 
-            <h1 className={styles.sectionTitle}>Shareable Card</h1>
-            <p className={styles.explanationLine}>
-              Create an image or PDF card (e.g. daily horoscope or kundli summary) to
-              download or share.
+            <h1 className="mb-6 border-b-[2px] border-b-[#d4a574] pb-[14px] text-[26px] font-bold tracking-[-0.01em] text-[#6b4423]">
+              Shareable Card
+            </h1>
+            {loading && <p>Creating card, please wait…</p>}
+            {error && <ErrorMessage message={error} />}
+            <p className="mt-2 rounded-[6px] border-l-[3px] border-l-[#6b4423] bg-[#faf8f5] px-3 py-2 text-[14px] italic text-[#5c4033]">
+              Create an image or PDF card (e.g. daily horoscope or kundli summary) to download or
+              share.
             </p>
 
-            <div className={formStyles.card} style={{ maxWidth: 520, marginBottom: 24 }}>
-              <h2 className={formStyles.title}>Create card</h2>
-              <p className={formStyles.subtitle}>
+            <div className="mx-auto mb-6 w-full max-w-[520px] rounded-[20px] border-[2px] border-[#e4cfa6] bg-[linear-gradient(135deg,#fff9f1_0%,#fffaf2_100%)] px-[52px] py-12 shadow-[0_20px_60px_rgba(122,46,46,0.15),0_0_100px_rgba(180,123,69,0.08)] backdrop-blur-[12px]">
+              <h2 className="m-0 mb-[14px] text-center text-[32px] font-extrabold tracking-[-0.02em] text-transparent bg-[linear-gradient(135deg,#8b5e34_0%,#6b4423_100%)] bg-clip-text">
+                Create card
+              </h2>
+              <p className="m-0 mb-8 text-center text-[15px] font-medium leading-[1.7] text-[#6b5b52]">
                 Choose type and fill in the content to generate a shareable image and PDF.
               </p>
               <form onSubmit={handleSubmit}>
-                <label className={formStyles.label}>Type</label>
+                <label className="mb-[10px] block text-[14px] font-bold uppercase tracking-[0.08em] text-[#6b4423]">
+                  Type
+                </label>
                 <select
-                  className={formStyles.input}
+                  className="w-full formSelect"
                   value={type}
-                  onChange={(e) =>
-                    setType(e.target.value as "horoscope" | "kundli_summary")
-                  }
-                  style={{ cursor: "pointer" }}
+                  onChange={(e) => setType(e.target.value as "horoscope" | "kundli_summary")}
+                  aria-label="Card type"
                 >
                   <option value="horoscope">Horoscope</option>
                   <option value="kundli_summary">Kundli Summary</option>
                 </select>
-                <label className={formStyles.label}>Title</label>
+                <label className="mb-[10px] block text-[14px] font-bold uppercase tracking-[0.08em] text-[#6b4423]">
+                  Title
+                </label>
                 <input
                   type="text"
-                  className={formStyles.input}
+                  className="w-full"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. Today's Horoscope"
                 />
-                <label className={formStyles.label}>Date</label>
+                <label className="mb-[10px] block text-[14px] font-bold uppercase tracking-[0.08em] text-[#6b4423]">
+                  Date
+                </label>
                 <input
                   type="date"
-                  className={formStyles.input}
+                  className="w-full formDateInput"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
                 />
                 {type === "horoscope" && (
                   <>
-                    <label className={formStyles.label}>Day type</label>
+                    <label className="mb-[10px] block text-[14px] font-bold uppercase tracking-[0.08em] text-[#6b4423]">
+                      Day type
+                    </label>
                     <input
                       type="text"
-                      className={formStyles.input}
+                      className="w-full"
                       value={dayType}
                       onChange={(e) => setDayType(e.target.value)}
                       placeholder="e.g. Good"
                     />
-                    <label className={formStyles.label}>Main theme</label>
+                    <label className="mb-[10px] block text-[14px] font-bold uppercase tracking-[0.08em] text-[#6b4423]">
+                      Main theme
+                    </label>
                     <input
                       type="text"
-                      className={formStyles.input}
+                      className="w-full"
                       value={mainTheme}
                       onChange={(e) => setMainTheme(e.target.value)}
                       placeholder="e.g. Focus on opportunities"
                     />
-                    <label className={formStyles.label}>Reason</label>
+                    <label className="mb-[10px] block text-[14px] font-bold uppercase tracking-[0.08em] text-[#6b4423]">
+                      Reason
+                    </label>
                     <input
                       type="text"
-                      className={formStyles.input}
+                      className="w-full"
                       value={reason}
                       onChange={(e) => setReason(e.target.value)}
                       placeholder="e.g. Jupiter supports your Moon sign"
@@ -246,22 +234,21 @@ export default function ShareableCardPage() {
                 )}
                 {type === "kundli_summary" && (
                   <>
-                    <label className={formStyles.label}>
+                    <label className="mb-[10px] block text-[14px] font-bold uppercase tracking-[0.08em] text-[#6b4423]">
                       Summary (one key: value per line)
                     </label>
                     <textarea
-                      className={formStyles.input}
                       value={kundliPayload}
                       onChange={(e) => setKundliPayload(e.target.value)}
                       rows={5}
-                      style={{ minHeight: 100, resize: "vertical" }}
+                      className="min-h-[100px] w-full resize-y"
                     />
                   </>
                 )}
                 <button
                   type="submit"
                   disabled={loading}
-                  className={formStyles.button}
+                  className="mt-[14px] w-full rounded-[12px] bg-[linear-gradient(135deg,#8b5e34_0%,#6b4423_100%)] px-5 py-4 text-[16px] font-bold text-white shadow-[0_8px_24px_rgba(107,68,35,0.3)] transition-all duration-300 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-[2px] hover:bg-[linear-gradient(135deg,#a67a4a_0%,#7d5a3c_100%)] hover:shadow-[0_12px_36px_rgba(107,68,35,0.4)] disabled:cursor-not-allowed disabled:opacity-60 disabled:transform-none"
                 >
                   {loading ? "Creating…" : "Create Card"}
                 </button>
@@ -269,31 +256,23 @@ export default function ShareableCardPage() {
             </div>
 
             {card && (
-              <div className={`${styles.resultBlock} ${styles.resultBlockActive}`}>
-                <h3 className={styles.cardTitle}>Card created</h3>
-                <p className={styles.cardDescription} style={{ marginBottom: 12 }}>
-                  {card.createdAt}
-                </p>
-                <div style={{ marginBottom: 16 }}>
+              <div className="rounded-[16px] border-[2px] border-[#6b4423] bg-[linear-gradient(135deg,#fdf8f3_0%,#f5ebe0_100%)] p-8 shadow-[0_4px_12px_rgba(107,68,35,0.15)]">
+                <h3 className="mb-2 text-[24px] font-bold text-[#6b4423]">Card created</h3>
+                <p className="mb-3 text-[14px] leading-[1.6] text-[#6b7280]">{card.createdAt}</p>
+                <div className="mb-4">
                   <img
                     src={fileUrl(card.imageUrl)}
                     alt="Shareable card"
-                    style={{
-                      maxWidth: "100%",
-                      height: "auto",
-                      borderRadius: 8,
-                      border: "1px solid #e8ddd0",
-                    }}
+                    className="h-auto max-w-full rounded-[8px] border border-[#e8ddd0]"
                   />
                 </div>
-                <div className={styles.buttonGroup} style={{ justifyContent: "flex-start" }}>
+                <div className="mt-5 flex flex-wrap justify-start gap-2">
                   <a
                     href={fileUrl(card.imageUrl)}
                     download
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={styles.retryButton}
-                    style={{ textDecoration: "none", color: "#fff" }}
+                    className="rounded-[6px] bg-[#6b4423] px-4 py-2 text-[14px] font-medium text-white no-underline transition-all duration-200 hover:-translate-x-[2px] hover:bg-[#5c3a1f]"
                   >
                     Download PNG
                   </a>
@@ -303,11 +282,38 @@ export default function ShareableCardPage() {
                       download
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={styles.retryButton}
-                      style={{ textDecoration: "none", color: "#fff" }}
+                      className="rounded-[6px] bg-[#6b4423] px-4 py-2 text-[14px] font-medium text-white no-underline transition-all duration-200 hover:-translate-x-[2px] hover:bg-[#5c3a1f]"
                     >
                       Download PDF
                     </a>
+                  )}
+                  {shareLinks && (
+                    <>
+                      <a
+                        href={shareLinks.whatsapp}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="rounded-[6px] bg-[#6b4423] px-4 py-2 text-[14px] font-medium text-white no-underline transition-all duration-200 hover:-translate-x-[2px] hover:bg-[#5c3a1f]"
+                      >
+                        Share on WhatsApp
+                      </a>
+                      <a
+                        href={shareLinks.twitter}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="rounded-[6px] bg-[#6b4423] px-4 py-2 text-[14px] font-medium text-white no-underline transition-all duration-200 hover:-translate-x-[2px] hover:bg-[#5c3a1f]"
+                      >
+                        Share on Twitter
+                      </a>
+                      <a
+                        href={shareLinks.telegram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="rounded-[6px] bg-[#6b4423] px-4 py-2 text-[14px] font-medium text-white no-underline transition-all duration-200 hover:-translate-x-[2px] hover:bg-[#5c3a1f]"
+                      >
+                        Share on Telegram
+                      </a>
+                    </>
                   )}
                 </div>
                 <CalculationInfo

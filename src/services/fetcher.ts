@@ -3,6 +3,8 @@
  * Use instead of scattered fetch/axios calls for cleaner code and better build performance.
  */
 
+import { isValidJwtFormat } from "@/utils/auth";
+
 export type FetcherOptions = {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   body?: object;
@@ -13,7 +15,8 @@ export type FetcherOptions = {
 };
 
 function buildUrl(base: string, path: string, params?: Record<string, string>): string {
-  const url = `${base.replace(/\/$/, "")}${path.startsWith("/") ? path : `/${path}`}`;
+  const baseStr = (base ?? "").replace(/\/$/, "");
+  const url = `${baseStr}${path.startsWith("/") ? path : `/${path}`}`;
   if (!params || Object.keys(params).length === 0) return url;
   const search = new URLSearchParams(params).toString();
   return `${url}${url.includes("?") ? "&" : "?"}${search}`;
@@ -22,8 +25,8 @@ function buildUrl(base: string, path: string, params?: Record<string, string>): 
 function buildHeaders(token?: string | null, hasBody?: boolean): Record<string, string> {
   const headers: Record<string, string> = {};
   if (hasBody) headers["Content-Type"] = "application/json";
-  if (token?.trim() && token.trim().split(".").length === 3) {
-    headers["Authorization"] = `Bearer ${token.trim()}`;
+  if (isValidJwtFormat(token)) {
+    headers["Authorization"] = `Bearer ${token?.trim()}`;
   }
   return headers;
 }
@@ -31,24 +34,39 @@ function buildHeaders(token?: string | null, hasBody?: boolean): Record<string, 
 export async function request<T>(
   baseUrl: string,
   path: string,
-  options: FetcherOptions & { noThrow: true }
+  options: FetcherOptions & { noThrow: true },
 ): Promise<{ status: number; data: T }>;
-export async function request<T>(baseUrl: string, path: string, options?: FetcherOptions): Promise<T>;
 export async function request<T>(
   baseUrl: string,
   path: string,
-  options: FetcherOptions = {}
+  options?: FetcherOptions,
+): Promise<T>;
+export async function request<T>(
+  baseUrl: string,
+  path: string,
+  options: FetcherOptions = {},
 ): Promise<T | { status: number; data: T }> {
   const { method = "GET", body, token, params, noThrow = false } = options;
   const url = buildUrl(baseUrl, path, params);
   const hasBody = Boolean(body && (method === "POST" || method === "PUT" || method === "PATCH"));
   const headers = buildHeaders(token, hasBody || Boolean(body));
 
-  const res = await fetch(url, {
-    method,
-    headers: Object.keys(headers).length ? headers : undefined,
-    body: hasBody ? JSON.stringify(body) : undefined,
-  });
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method,
+      headers: Object.keys(headers).length ? headers : undefined,
+      body: hasBody ? JSON.stringify(body) : undefined,
+    });
+  } catch (e) {
+    const msg =
+      e instanceof TypeError && e.message === "Failed to fetch"
+        ? "Cannot reach the server. Check that the backend is running and try again."
+        : e instanceof Error
+          ? e.message
+          : "Network error. Please try again.";
+    throw new Error(msg);
+  }
 
   const data = (await res.json().catch(() => ({}))) as T;
 

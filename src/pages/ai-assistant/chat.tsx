@@ -3,19 +3,23 @@ import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
+import PageHeader from "@/components/layout/PageHeader";
 import { aiAssistantApi, ChatResponse } from "@/services/aiAssistantService";
 import { showError, showSuccess, showWarning } from "@/utils/toast";
 import { selectToken, selectIsRehydrated } from "@/store/slices/authSlice";
-import styles from "@/styles/dashboard.module.css";
 
 export default function AIChatPage() {
   const router = useRouter();
   const rehydrated = useSelector(selectIsRehydrated);
   const token = useSelector(selectToken);
   const [question, setQuestion] = useState("");
-  const [context, setContext] = useState<'daily' | 'weekly' | 'relationships' | 'career' | 'wellness' | undefined>(undefined);
+  const [context, setContext] = useState<
+    "daily" | "weekly" | "relationships" | "career" | "wellness" | undefined
+  >(undefined);
   const [loading, setLoading] = useState(false);
-  const [responses, setResponses] = useState<Array<{ question: string; response: ChatResponse; timestamp: string }>>([]);
+  const [responses, setResponses] = useState<
+    Array<{ question: string; response: ChatResponse; timestamp: string }>
+  >([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -31,7 +35,7 @@ export default function AIChatPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!question.trim()) {
       showWarning("Please enter a question");
       return;
@@ -78,106 +82,125 @@ export default function AIChatPage() {
 
   const formatTime = (timestamp: string) => {
     try {
-      return new Date(timestamp).toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
+      return new Date(timestamp).toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
       });
     } catch {
-      return '';
+      return "";
     }
   };
 
   return (
-    <div className={styles.dashboardContainer}>
+    <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]">
       <AppHeader />
-      <div className={styles.dashboardContent}>
+      <div className="flex w-full">
         <AppSidebar />
-        <main className={styles.mainContent}>
-          <div className={styles.pageHeader}>
-            <button onClick={() => router.back()} className={styles.backButton}>
-              ← Back
-            </button>
-          </div>
+        <main className="ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]">
+          <PageHeader title="AI Astrology Assistant" onBack={() => router.back()} />
 
-          <div className={styles.kundliContainer}>
-            <h1 className={styles.sectionTitle}>AI Astrology Assistant</h1>
+          <div className="relative mx-auto max-w-[1200px]">
+            <h1 className="mb-6 border-b-[2px] border-b-[#d4a574] pb-[14px] text-[26px] font-bold tracking-[-0.01em] text-[#6b4423]">
+              AI Astrology Assistant
+            </h1>
             <p className="text-sm text-gray-500 mb-6">
-            Ask any astrology-related questions and get personalized insights based on your birth chart.
-          </p>
+              Ask any astrology-related questions and get personalized insights based on your birth
+              chart.
+            </p>
 
-            <div className={styles.chatContainer}>
-              <div className={styles.chatMessages}>
+            <div className="flex min-h-[600px] h-[calc(100vh-300px)] max-h-[800px] flex-col rounded-[12px] bg-white shadow-[0_2px_8px_rgba(0,0,0,0.1)]">
+              <div className="flex flex-1 flex-col gap-5 overflow-y-auto p-5">
                 {responses.length === 0 ? (
-                  <div className={styles.emptyChat}>
-                    <div className={styles.emptyChatIcon}>💬</div>
-                    <h3>Start a conversation</h3>
+                  <div className="flex h-full flex-col items-center justify-center text-center text-[#6b7280]">
+                    <div className="mb-5 text-[64px]">💬</div>
+                    <h3 className="mb-[10px] text-[20px] text-[#1f2937]">Start a conversation</h3>
                     <p>Ask questions like:</p>
-                    <ul className={styles.suggestedQuestions}>
-                      <li onClick={() => {
-                        setQuestion("Why is today important for me?");
-                        setTimeout(() => inputRef.current?.focus(), 100);
-                      }}>
-                        "Why is today important for me?"
+                    <ul className="mt-5 text-left">
+                      <li
+                        onClick={() => {
+                          setQuestion("Why is today important for me?");
+                          setTimeout(() => inputRef.current?.focus(), 100);
+                        }}
+                        className="mb-2 cursor-pointer rounded-[8px] bg-[#f9fafb] p-[10px] text-[#374151] transition-colors duration-200 hover:bg-[#f5ebe0]"
+                      >
+                        &quot;Why is today important for me?&quot;
                       </li>
-                      <li onClick={() => {
-                        setQuestion("What should I focus on this week?");
-                        setTimeout(() => inputRef.current?.focus(), 100);
-                      }}>
-                        "What should I focus on this week?"
+                      <li
+                        onClick={() => {
+                          setQuestion("What should I focus on this week?");
+                          setTimeout(() => inputRef.current?.focus(), 100);
+                        }}
+                        className="mb-2 cursor-pointer rounded-[8px] bg-[#f9fafb] p-[10px] text-[#374151] transition-colors duration-200 hover:bg-[#f5ebe0]"
+                      >
+                        &quot;What should I focus on this week?&quot;
                       </li>
-                      <li onClick={() => {
-                        setQuestion("How do current transits affect my relationships?");
-                        setTimeout(() => inputRef.current?.focus(), 100);
-                      }}>
-                        "How do current transits affect my relationships?"
+                      <li
+                        onClick={() => {
+                          setQuestion("How do current transits affect my relationships?");
+                          setTimeout(() => inputRef.current?.focus(), 100);
+                        }}
+                        className="mb-2 cursor-pointer rounded-[8px] bg-[#f9fafb] p-[10px] text-[#374151] transition-colors duration-200 hover:bg-[#f5ebe0]"
+                      >
+                        &quot;How do current transits affect my relationships?&quot;
                       </li>
-                      <li onClick={() => {
-                        setQuestion("What are the best days for career decisions?");
-                        setTimeout(() => inputRef.current?.focus(), 100);
-                      }}>
-                        "What are the best days for career decisions?"
+                      <li
+                        onClick={() => {
+                          setQuestion("What are the best days for career decisions?");
+                          setTimeout(() => inputRef.current?.focus(), 100);
+                        }}
+                        className="cursor-pointer rounded-[8px] bg-[#f9fafb] p-[10px] text-[#374151] transition-colors duration-200 hover:bg-[#f5ebe0]"
+                      >
+                        &quot;What are the best days for career decisions?&quot;
                       </li>
                     </ul>
                   </div>
                 ) : (
                   responses.map((item, index) => (
-                    <div key={index} className={styles.chatMessageGroup}>
-                      <div className={styles.userMessage}>
-                        <div className={styles.messageHeader}>
+                    <div key={index} className="flex flex-col gap-[10px]">
+                      <div className="max-w-[70%] self-end rounded-[12px] bg-[#6b4423] px-4 py-3 text-white">
+                        <div className="mb-[6px] flex items-center justify-between text-[12px] opacity-80">
                           <strong>You</strong>
-                          <span className={styles.messageTime}>{formatTime(item.timestamp)}</span>
+                          <span className="text-[11px]">{formatTime(item.timestamp)}</span>
                         </div>
-                        <div className={styles.messageContent}>{item.question}</div>
+                        <div className="whitespace-pre-wrap break-words text-[14px] leading-[1.6]">
+                          {item.question}
+                        </div>
                       </div>
-                      <div className={styles.aiMessage}>
-                        <div className={styles.messageHeader}>
+                      <div className="max-w-[70%] self-start rounded-[12px] border border-[#e5e7eb] bg-[var(--muted)] px-4 py-3">
+                        <div className="mb-[6px] flex items-center justify-between text-[12px] opacity-80">
                           <strong>🤖 AI Assistant</strong>
-                          <span className={styles.messageTime}>{formatTime(item.response.timestamp)}</span>
+                          <span className="text-[11px]">{formatTime(item.response.timestamp)}</span>
                         </div>
-                        <div className={styles.messageContent}>{item.response.answer}</div>
-                        {item.response.relatedTransits && item.response.relatedTransits.length > 0 && (
-                          <div className={styles.relatedTransits}>
-                            <strong>Related Transits:</strong>
-                            <div className={styles.transitsList}>
-                              {item.response.relatedTransits.map((transit, idx) => (
-                                <span key={idx} className={styles.transitBadge}>
-                                  {transit.planet} in {transit.sign}
-                                </span>
-                              ))}
+                        <div className="whitespace-pre-wrap break-words text-[14px] leading-[1.6]">
+                          {item.response.answer}
+                        </div>
+                        {item.response.relatedTransits &&
+                          item.response.relatedTransits.length > 0 && (
+                            <div className="mt-3 border-t border-t-[#e5e7eb] pt-3 text-[12px]">
+                              <strong>Related Transits:</strong>
+                              <div className="mt-[6px] flex flex-wrap gap-[6px]">
+                                {item.response.relatedTransits.map((transit, idx) => (
+                                  <span
+                                    key={idx}
+                                    className="rounded-[6px] bg-[#f5ebe0] px-2 py-1 text-[11px] font-medium text-[#5c4033]"
+                                  >
+                                    {transit.planet} in {transit.sign}
+                                  </span>
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
                       </div>
                     </div>
                   ))
                 )}
                 {loading && (
-                  <div className={styles.aiMessage}>
-                    <div className={styles.messageContent}>
-                      <div className={styles.loadingDots}>
-                        <span></span>
-                        <span></span>
-                        <span></span>
+                  <div className="max-w-[70%] self-start rounded-[12px] border border-[#e5e7eb] bg-[var(--muted)] px-4 py-3">
+                    <div className="whitespace-pre-wrap break-words text-[14px] leading-[1.6]">
+                      <div className="flex gap-1">
+                        <span className="h-2 w-2 animate-pulse rounded-full bg-[#6b4423]" />
+                        <span className="h-2 w-2 animate-pulse rounded-full bg-[#6b4423] [animation-delay:150ms]" />
+                        <span className="h-2 w-2 animate-pulse rounded-full bg-[#6b4423] [animation-delay:300ms]" />
                       </div>
                     </div>
                   </div>
@@ -185,13 +208,28 @@ export default function AIChatPage() {
                 <div ref={messagesEndRef} />
               </div>
 
-              <form onSubmit={handleSubmit} className={styles.chatForm}>
-                <div className={styles.contextSelector}>
-                  <label>Context (Optional):</label>
+              <form
+                onSubmit={handleSubmit}
+                className="border-t border-t-[#e5e7eb] bg-[#f9fafb] p-4"
+              >
+                <div className="mb-3">
+                  <label className="mr-[10px] text-[14px] font-semibold text-[#374151]">
+                    Context (Optional):
+                  </label>
                   <select
-                    value={context || ''}
-                    onChange={(e) => setContext(e.target.value as any || undefined)}
-                    className={styles.contextSelect}
+                    value={context || ""}
+                    onChange={(e) =>
+                      setContext(
+                        (e.target.value || undefined) as
+                          | "daily"
+                          | "weekly"
+                          | "relationships"
+                          | "career"
+                          | "wellness"
+                          | undefined,
+                      )
+                    }
+                    className="formSelect rounded-[6px] border border-[#d1d5db] bg-white px-3 py-[6px] text-[14px]"
                   >
                     <option value="">None</option>
                     <option value="daily">Daily</option>
@@ -201,26 +239,26 @@ export default function AIChatPage() {
                     <option value="wellness">Wellness</option>
                   </select>
                 </div>
-                <div className={styles.chatInputGroup}>
+                <div className="flex items-center gap-[10px]">
                   <input
                     ref={inputRef}
                     type="text"
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
                     placeholder="Ask your astrology question..."
-                    className={styles.chatInput}
+                    className="flex-1 rounded-[8px] border border-[#d1d5db] px-4 py-3 text-[14px] focus:border-[#6b4423] focus:outline-none"
                     disabled={loading}
                     maxLength={500}
                   />
                   <button
                     type="submit"
                     disabled={loading || !question.trim()}
-                    className={styles.chatSendButton}
+                    className="rounded-[8px] bg-[#6b4423] px-5 py-3 text-[18px] text-white transition-colors duration-200 hover:bg-[#5c3a1f] disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    {loading ? '⏳' : '📤'}
+                    {loading ? "⏳" : "📤"}
                   </button>
                 </div>
-                <div className={styles.charCount}>
+                <div className="mt-[6px] text-right text-[12px] text-[#6b7280]">
                   {question.length} / 500 characters
                 </div>
               </form>
