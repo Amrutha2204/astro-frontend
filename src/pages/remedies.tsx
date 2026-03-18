@@ -373,7 +373,10 @@ export default function RemediesPage() {
                       <div className="relative max-h-[85vh] overflow-y-auto rounded-[24px] border-l-[8px] border-l-[#6b4423] bg-[linear-gradient(135deg,#ffffff_0%,#faf7f2_100%)] p-[50px] shadow-[0_20px_60px_rgba(107,68,35,0.2),0_10px_30px_rgba(0,0,0,0.1)]">
                         <div className="mb-8 -mx-[50px] -mt-[50px] flex h-[300px] w-[calc(100%+100px)] items-center justify-center overflow-hidden rounded-t-[24px] bg-[linear-gradient(135deg,#f5ebe0_0%,#ede4d8_100%)]">
                           <img
-                            src={getRemedyImagePath(selectedRemedy.type, selectedRemedy.name)}
+                            src={getRemedyImagePath(
+                              selectedRemedy.type || "default",
+                              selectedRemedy.name,
+                            )}
                             alt={selectedRemedy.name}
                             className="relative z-[1] h-full w-full object-cover object-center"
                             onError={(e) => {

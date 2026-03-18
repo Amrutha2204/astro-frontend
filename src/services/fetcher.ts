@@ -22,11 +22,19 @@ function buildUrl(base: string, path: string, params?: Record<string, string>): 
   return `${url}${url.includes("?") ? "&" : "?"}${search}`;
 }
 
-function buildHeaders(token?: string | null, hasBody?: boolean): Record<string, string> {
+function buildHeaders(
+  baseUrl: string | undefined,
+  token?: string | null,
+  hasBody?: boolean,
+): Record<string, string> {
   const headers: Record<string, string> = {};
   if (hasBody) headers["Content-Type"] = "application/json";
   if (isValidJwtFormat(token)) {
     headers["Authorization"] = `Bearer ${token?.trim()}`;
+  }
+  // Ngrok free tier shows a browser warning page; this header skips it for API calls
+  if (baseUrl && /ngrok-free\.app|ngrok\.io/i.test(baseUrl)) {
+    headers["ngrok-skip-browser-warning"] = "true";
   }
   return headers;
 }
@@ -49,7 +57,7 @@ export async function request<T>(
   const { method = "GET", body, token, params, noThrow = false } = options;
   const url = buildUrl(baseUrl, path, params);
   const hasBody = Boolean(body && (method === "POST" || method === "PUT" || method === "PATCH"));
-  const headers = buildHeaders(token, hasBody || Boolean(body));
+  const headers = buildHeaders(baseUrl, token, hasBody || Boolean(body));
 
   let res: Response;
   try {

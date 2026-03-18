@@ -230,7 +230,12 @@ export default function FamilyProfiles() {
       });
 
       setSelectedMemberData({
-        kundli,
+        kundli: kundli
+          ? {
+              ...kundli,
+              pada: kundli.pada != null ? String(kundli.pada) : undefined,
+            }
+          : undefined,
         calendar,
         dailyHoroscope,
         name: profile.name,
@@ -314,7 +319,7 @@ export default function FamilyProfiles() {
                       </label>
                       <TimePickerField
                         id="fp-time"
-                        value={form.birthTime}
+                        value={form.birthTime ?? ""}
                         onChange={(v) => setForm({ ...form, birthTime: v })}
                         placeholder="--:--"
                         aria-label="Birth time"
