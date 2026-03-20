@@ -461,13 +461,13 @@ export const astroApi = {
     });
   },
 
-  async getEclipses(from: string): Promise<{ solar: Eclipse[]; lunar: Eclipse[] }> {
+  async getEclipses(from: string, to: string): Promise<{ solar: Eclipse[]; lunar: Eclipse[] }> {
     return request<{ solar: Eclipse[]; lunar: Eclipse[] }>(
       ASTRO_BASE,
       "/api/v1/astrology/transits/eclipses",
       {
         method: "GET",
-        params: { fromDate: from },
+        params: { fromDate: from, toDate: to },
       },
     );
   },

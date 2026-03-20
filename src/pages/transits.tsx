@@ -81,11 +81,11 @@ const filterCardClass =
 const dateBoxClass =
   "rounded-[14px] border border-[#e2d4c8] bg-[#fffaf5] px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] transition-colors duration-200 hover:border-[#c7ab8b]";
 const primaryButtonClass =
-  "rounded-[12px] bg-[linear-gradient(135deg,#7d5a3c_0%,#6b4423_100%)] px-5 py-3 text-[14px] font-semibold text-white shadow-[0_4px_12px_rgba(107,68,35,0.2)] transition-all duration-200 hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(107,68,35,0.28)] disabled:cursor-not-allowed disabled:opacity-70";
+  "rounded-[14px] bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] px-6 py-3 text-[14px] font-bold text-white shadow-[0_8px_22px_rgba(236,72,153,0.35)] transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_14px_32px_rgba(124,58,237,0.45)] disabled:cursor-not-allowed disabled:opacity-60";
 const badgeClass =
-  "mb-3 inline-flex rounded-full bg-[#f5ebe0] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8b5e34]";
+  "mb-3 inline-flex rounded-full bg-gradient-to-r from-[#ede9fe] to-[#fce7f3] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[#6d28d9]";
 const cardClass =
-  "rounded-[18px] border border-[#eadfd3] bg-white px-6 py-5 shadow-[0_4px_18px_rgba(0,0,0,0.05)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_28px_rgba(139,94,52,0.12)]";
+  "group relative overflow-hidden rounded-[22px] border border-white/60 bg-gradient-to-br from-white via-[#fff7ed] to-[#f3e8ff] p-6 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(124,58,237,0.18)]";
 
 export default function TransitsPage() {
   const router = useRouter();
@@ -114,6 +114,7 @@ export default function TransitsPage() {
   const [majorError, setMajorError] = useState<string | null>(null);
 
   const [eclipseFrom, setEclipseFrom] = useState("1900-01-01");
+  const [eclipseLoading, setEclipseLoading] = useState(false);
   const [eclipseTo, setEclipseTo] = useState("2100-01-01");
   const [solarEclipses, setSolarEclipses] = useState<Eclipse[]>([]);
   const [lunarEclipses, setLunarEclipses] = useState<Eclipse[]>([]);
@@ -179,24 +180,29 @@ export default function TransitsPage() {
   }, [majorFrom, majorTo]);
 
   const loadEclipses = useCallback(async () => {
+    setEclipseLoading(true);
     try {
-      const data = await astroApi.getEclipses(eclipseFrom);
+      const data = await astroApi.getEclipses(eclipseFrom, eclipseTo);
       setSolarEclipses(data.solar || []);
       setLunarEclipses(data.lunar || []);
+      setError(null);
     } catch {
       setError("Unable to load eclipses. Please try again later.");
+    } finally {
+      setEclipseLoading(false);
     }
-  }, [eclipseFrom]);
+  }, [eclipseFrom, eclipseTo]);
+
+  const [eclipsesLoaded, setEclipsesLoaded] = useState(false);
 
   useEffect(() => {
+    if (activeTab !== "eclipses" || eclipsesLoaded) {
+      return;
+    }
+
     loadEclipses();
-  }, [loadEclipses]);
-
-  useEffect(() => {
-    if (activeTab === "eclipses") {
-      loadEclipses();
-    }
-  }, [activeTab, loadEclipses]);
+    setEclipsesLoaded(true);
+  }, [activeTab, eclipsesLoaded, loadEclipses]);
 
   const handleRefresh = useCallback(() => {
     if (activeTab === "today") {
@@ -222,11 +228,16 @@ export default function TransitsPage() {
   }, [activeTab, loadEclipses, loadMajor, loadRetrogrades]);
 
   return (
-    <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_15%_20%,#ffe7d6_0%,transparent_35%),radial-gradient(circle_at_85%_10%,#e0f2fe_0%,transparent_40%),radial-gradient(circle_at_80%_80%,#ede9fe_0%,transparent_40%),linear-gradient(135deg,#fffaf5_0%,#f8f4ff_50%,#f0f9ff_100%)] text-[var(--text-main)]">
       <AppHeader />
       <div className="flex w-full">
         <AppSidebar />
-        <main className="ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]">
+        <main className="ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-white/70 backdrop-blur-[6px] p-8 max-[768px]:ml-[200px]">
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
+            <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-[#ffd7ba]/40 blur-3xl" />
+            <div className="absolute top-1/3 -right-24 h-80 w-80 rounded-full bg-[#c7d2fe]/40 blur-3xl" />
+            <div className="absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-[#bae6fd]/40 blur-3xl" />
+          </div>
           <PageHeader
             onBack={() => router.push("/dashboard")}
             backAriaLabel="Go back to dashboard"
@@ -234,9 +245,16 @@ export default function TransitsPage() {
             refreshAriaLabel="Refresh transits"
             disableRefresh={loading || majorLoading}
           />
-          <h1 className="mb-7 text-[32px] font-bold text-[#6b4423]">Planetary Transits</h1>
+          <div className="mb-10">
+            <h1 className="text-[38px] font-extrabold tracking-tight bg-gradient-to-r from-[#7c3aed] via-[#db2777] to-[#d97706] bg-clip-text text-transparent">
+              Planetary Transits
+            </h1>
+            <p className="mt-2 text-[15px] text-[#8b7355]">
+              Explore real-time planetary movements, retrogrades, eclipses & major cosmic events
+            </p>
+          </div>
           {loading && <div>Loading...</div>}
-          <div className="mb-7 rounded-[16px] border border-[#e8d7c8] bg-[linear-gradient(135deg,#fffaf4_0%,#fff5ea_100%)] px-[26px] py-5 shadow-[0_4px_20px_rgba(139,94,52,0.08)]">
+          <div className="mb-8 rounded-[20px] border border-white/40 bg-white/60 px-[28px] py-6 shadow-[0_10px_30px_rgba(139,94,52,0.12)] backdrop-blur-[10px]">
             <p className="mb-2 text-[12px] font-semibold uppercase tracking-[0.08em] text-[#8b7355]">
               Birth place
             </p>
@@ -252,7 +270,7 @@ export default function TransitsPage() {
             )}
           </div>
           {error && <ErrorMessage message={error} />}
-          <div className="mb-7 flex flex-wrap gap-3">
+          <div className="mb-10 flex flex-wrap gap-3 rounded-[16px] bg-white/60 p-2 shadow-[0_4px_16px_rgba(0,0,0,0.06)] backdrop-blur">
             {[
               { id: "today", label: "Today" },
               { id: "eclipses", label: "Eclipses" },
@@ -264,8 +282,8 @@ export default function TransitsPage() {
                 onClick={() => setActiveTab(t.id as TabId)}
                 className={
                   activeTab === t.id
-                    ? "relative rounded-[12px] bg-[#6b4423] px-5 py-3 text-[14px] font-semibold text-white shadow-[0_4px_12px_rgba(107,68,35,0.2)] after:absolute after:bottom-[-8px] after:left-1/2 after:h-0 after:w-0 after:-translate-x-1/2 after:border-l-[8px] after:border-r-[8px] after:border-t-[8px] after:border-l-transparent after:border-r-transparent after:border-t-[#6b4423] after:content-['']"
-                    : "rounded-[12px] bg-white px-5 py-3 text-[14px] font-semibold text-[#6b5b52] shadow-[0_2px_8px_rgba(0,0,0,0.05)] transition-colors duration-200 hover:bg-[#f8eee3] hover:text-[#6b4423]"
+                    ? "relative rounded-[12px] bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] px-6 py-3 text-[14px] font-bold text-white shadow-[0_6px_18px_rgba(107,68,35,0.35)]"
+                    : "rounded-[12px] px-6 py-3 text-[14px] font-semibold text-[#6b5b52] transition-all duration-200 hover:bg-gradient-to-r hover:from-[#fdf2f8] hover:to-[#eff6ff] hover:shadow-[0_6px_16px_rgba(0,0,0,0.08)]"
                 }
               >
                 {t.label}
@@ -314,7 +332,7 @@ export default function TransitsPage() {
                   </button>
                 </div>
                 {retroOnDateResult && (
-                  <div className="mt-4 rounded-[12px] border-l-[4px] border-l-[#6b4423] bg-[#faf8f5] px-4 py-3 text-[14px] leading-[1.6] text-[#4a4238]">
+                  <div className="mt-4 rounded-[14px] border border-[#e8d7c8] bg-gradient-to-br from-[#fffaf4] to-[#fff1e6] px-5 py-4 text-[14px] leading-[1.7] text-[#4a4238] shadow-sm">
                     <strong>On {formatDate(retroOnDateResult.date)}:</strong>{" "}
                     {retroOnDateResult.planetsRetrograde.length === 0
                       ? "No planets retrograde."
@@ -350,19 +368,63 @@ export default function TransitsPage() {
                 </div>
               </div>
 
+              {retroData.length === 0 && (
+                <div className="rounded-[16px] border border-dashed border-[#d7cabf] bg-[#fffaf5] p-8 text-center">
+                  <div className="text-[40px]">🛰</div>
+                  <p className="mt-2 text-[15px] font-semibold text-[#6b4423]">
+                    No Retrogrades Found
+                  </p>
+                  <p className="mt-1 text-[13px] text-[#8b7355]">
+                    Try selecting a wider date range
+                  </p>
+                </div>
+              )}
+
               {Object.entries(groupByMonth(retroData)).map(([month, list]) => (
                 <div key={month}>
-                  <h3 className="mb-4 mt-7 text-[20px] font-bold text-[#6b4423]">📅 {month}</h3>
+                  <div className="mt-10 mb-5 flex items-center gap-3">
+                    <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent via-[#d4a373] to-transparent" />
+                    <h3 className="text-[18px] font-extrabold tracking-wide text-[#6b4423]">
+                      {month.toUpperCase()}
+                    </h3>
+                    <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent via-[#d4a373] to-transparent" />
+                  </div>
                   <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-5">
                     {list.map((r) => (
                       <div key={r.planet + r.startDate} className={cardClass}>
-                        <span className={badgeClass}>Retrograde</span>
-                        <h4 className="mb-2 text-[22px] font-bold text-[#6b4423]">{r.planet}</h4>
-                        <p className="mb-2 text-[15px] text-[#4a4238]">{r.description}</p>
-                        <p className="text-[14px] text-[#4a4238]">
-                          <strong>From:</strong> {formatDate(r.startDate)} | <strong>To:</strong>{" "}
-                          {formatDate(r.endDate)}
+                        {/* Top Accent Line */}
+                        <div className="absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-[#8b5e34] to-[#d4a373]" />
+
+                        {/* Glow on hover */}
+                        <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 bg-[radial-gradient(circle_at_top_right,rgba(255,210,160,0.25),transparent_60%)]" />
+
+                        {/* Badge */}
+                        <span className="inline-flex items-center gap-1 rounded-full bg-[#f3e8d9] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[#8b5e34]">
+                          🪐 Retrograde
+                        </span>
+
+                        {/* Planet Name */}
+                        <h4 className="mt-3 mb-1 text-[24px] font-extrabold tracking-tight text-[#5a3b22]">
+                          {r.planet}
+                        </h4>
+                        <p className="mb-3 text-[13px] font-medium text-[#a78a7a]">
+                          Planet in Retrograde Motion
                         </p>
+
+                        {/* Description */}
+                        <p className="text-[15px] leading-relaxed text-[#4a4238]">
+                          {r.description}
+                        </p>
+
+                        {/* Date Range Box */}
+                        <div className="mt-4 flex items-center gap-2 rounded-[12px] bg-[#f8f4ee] px-3 py-2 text-[13px] text-[#5b4636]">
+                          <span className="font-semibold">📅</span>
+                          <span>
+                            <strong>{formatDate(r.startDate)}</strong>
+                            <span className="mx-2 text-[#b08968]">→</span>
+                            <strong>{formatDate(r.endDate)}</strong>
+                          </span>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -421,7 +483,13 @@ export default function TransitsPage() {
 
               {Object.entries(groupByMonth(majorData)).map(([month, list]) => (
                 <div key={month}>
-                  <h3 className="mb-4 mt-7 text-[20px] font-bold text-[#6b4423]">📅 {month}</h3>
+                  <div className="mt-10 mb-5 flex items-center gap-3">
+                    <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent via-[#d4a373] to-transparent" />
+                    <h3 className="text-[18px] font-extrabold tracking-wide text-[#6b4423]">
+                      {month.toUpperCase()}
+                    </h3>
+                    <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent via-[#d4a373] to-transparent" />
+                  </div>
                   <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-5">
                     {list.map((m) => (
                       <div key={m.planet + m.date} className={cardClass}>
@@ -470,14 +538,21 @@ export default function TransitsPage() {
                       />
                     </div>
                   </div>
-                  <button className={primaryButtonClass} onClick={loadEclipses}>
-                    Get Eclipses
+                  <button
+                    className={primaryButtonClass}
+                    onClick={() => {
+                      setEclipsesLoaded(false);
+                      loadEclipses();
+                    }}
+                    disabled={eclipseLoading}
+                  >
+                    {eclipseLoading ? "Loading…" : "Get Eclipses"}
                   </button>
                 </div>
               </div>
 
               <div className="grid gap-8">
-                <div className="rounded-[18px] bg-white p-6 shadow-[0_4px_18px_rgba(0,0,0,0.05)]">
+                <div className="rounded-[24px] border border-white/60 bg-gradient-to-br from-white/80 to-[#f8fafc] p-7 shadow-[0_14px_40px_rgba(0,0,0,0.10)] backdrop-blur">
                   <h3 className="mb-5 text-[22px] font-bold text-[#6b4423]">🌞 Solar Eclipses</h3>
                   {solarEclipses.length > 0 ? (
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-5">

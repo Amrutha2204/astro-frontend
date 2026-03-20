@@ -227,11 +227,11 @@ export default function KundliPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]">
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-orange-50 to-amber-50 text-slate-800">
         <AppHeader />
         <div className="flex w-full">
           <AppSidebar />
-          <main className="ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]">
+          <main className="ml-[260px] h-[calc(100vh-56px)] w-full overflow-y-auto overflow-x-hidden p-8 max-[768px]:ml-[200px]">
             <Loading text="Loading your Kundli..." />
           </main>
         </div>
@@ -284,14 +284,18 @@ export default function KundliPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-orange-50 to-amber-50 text-slate-800">
       <AppHeader />
       <div className="flex w-full">
         <AppSidebar />
-        <main className="ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]">
+        <main className="ml-[260px] h-[calc(100vh-56px)] w-full overflow-y-auto overflow-x-hidden p-8 max-[768px]:ml-[200px]">
           <div className="relative mx-auto max-w-[1200px]">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-              <h1 className="m-0 mb-8 bg-[linear-gradient(135deg,#8b5e34_0%,#6b4423_100%)] bg-clip-text text-[36px] font-extrabold tracking-[-0.01em] text-transparent">
+              <h1
+                className="m-0 mb-10 text-4xl font-extrabold tracking-tight
+bg-gradient-to-r from-rose-800 via-orange-700 to-amber-600
+bg-clip-text text-transparent"
+              >
                 My Kundli
               </h1>
               <label className="mb-0 flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.08em] text-[#f1eeeb]">
@@ -319,7 +323,7 @@ export default function KundliPage() {
                 const hasNoData = !(kundli.lagna || kundli.moonSign || kundli.sunSign);
                 if (hasNoData) {
                   return (
-                    <div className="rounded-[16px] border border-[#e4cfa6] bg-[linear-gradient(135deg,#fffbf5_0%,#fdf6eb_100%)] p-10 shadow-[0_8px_32px_rgba(107,68,35,0.15)]">
+                    <div className="rounded-2xl border border-white/40 bg-white/70 backdrop-blur-md p-10 shadow-xl">
                       <ErrorMessage message="Kundli data could not be loaded. This usually means your birth details are missing or the server could not calculate the chart. Please save your date of birth, birth time and birth place on the Birth Details page and try again." />
                       <p className="mt-3">
                         <Link
@@ -338,7 +342,7 @@ export default function KundliPage() {
             {kundli && (kundli.lagna || kundli.moonSign || kundli.sunSign) && (
               <div className="rounded-[16px] border border-[#e4cfa6] bg-[linear-gradient(135deg,#fffbf5_0%,#fdf6eb_100%)] p-10 shadow-[0_8px_32px_rgba(107,68,35,0.15)]">
                 <div className="mb-6 rounded-[14px] border-[1.5px] border-[#e4cfa6] bg-[linear-gradient(135deg,rgba(255,251,245,0.8)_0%,rgba(253,246,235,0.9)_100%)] px-8 py-7 shadow-[0_4px_16px_rgba(107,68,35,0.08)] backdrop-blur-[8px] last:mb-0">
-                  <h2 className="mb-6 border-b-[2px] border-b-[#d4a574] pb-[14px] text-[26px] font-bold tracking-[-0.01em] text-[#6b4423]">
+                  <h2 className="mb-6 pb-3 text-2xl font-bold tracking-tight text-slate-800 border-b border-slate-200">
                     {kundli.chartLabel ||
                       (isWestern ? "Chart overview (Western)" : "Basic Information")}
                   </h2>
@@ -405,7 +409,11 @@ export default function KundliPage() {
                       * = retrograde (planet appears to move backward at birth)
                     </p>
                     <div className="mb-20 mt-[90px] flex justify-center">
-                      <div className="relative grid h-[380px] w-[380px] rotate-45 grid-cols-4 grid-rows-4 border-[2px] border-[#d6b98c] bg-[#f6efe6] shadow-[0_10px_25px_rgba(166,124,82,0.15)]">
+                      <div
+                        className="relative grid h-[380px] w-[380px] rotate-45 grid-cols-4 grid-rows-4
+border border-white/60 bg-white/80 backdrop-blur
+shadow-xl"
+                      >
                         <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-45 text-[120px] text-[#130c01] opacity-[0.05]">
                           ॐ
                         </div>
@@ -457,7 +465,7 @@ export default function KundliPage() {
                         {kundli.houses.map((houseData, index) => (
                           <div
                             key={houseData.house}
-                            className={`rounded-[12px] border-[1.5px] px-4 py-5 text-center shadow-[0_2px_8px_rgba(0,0,0,0.05)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_20px_rgba(107,68,35,0.15)] ${getHouseCardClass(index)}`}
+                            className={`rounded-2xl border border-white/50 bg-white/80 backdrop-blur px-5 py-6 text-center shadow-md] ${getHouseCardClass(index)}`}
                           >
                             <div className="mb-2 text-[13px] font-bold uppercase tracking-[0.05em] text-[#6b4423]">
                               House {houseData.house} – {houseData.meaning ?? "—"}
@@ -489,7 +497,11 @@ export default function KundliPage() {
                   <span className="font-medium text-[#1f2937]">{kundli.source}</span>
                 </div>
 
-                <div className="mt-6 rounded-[8px] border border-[#c8e6c9] bg-[#f0f7f0] p-5">
+                <div
+                  className="mt-8 rounded-2xl border border-amber-200
+bg-gradient-to-r from-amber-50 via-orange-50 to-rose-50
+p-6 shadow-md"
+                >
                   <h3 className="mb-2 text-[16px] font-semibold text-[#2e7d32]">
                     Get your Kundli as PDF
                   </h3>
@@ -501,7 +513,12 @@ export default function KundliPage() {
                       href={reportDownload.downloadUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-block rounded-[8px] bg-[#1565c0] px-[18px] py-[10px] text-[14px] font-semibold text-white no-underline transition-colors duration-200 hover:bg-[#0d47a1]"
+                      className="inline-flex items-center justify-center rounded-xl
+bg-gradient-to-r from-rose-700 via-orange-600 to-amber-500
+px-6 py-2.5 text-sm font-semibold text-white
+shadow-lg transition-all duration-300
+hover:scale-105 hover:shadow-xl
+disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                       Download report
                     </a>
@@ -510,7 +527,12 @@ export default function KundliPage() {
                       type="button"
                       onClick={handleGetPdfReport}
                       disabled={reportPaying}
-                      className="inline-block rounded-[8px] bg-[#2e7d32] px-[18px] py-[10px] text-[14px] font-semibold text-white transition-colors duration-200 hover:bg-[#1b5e20] disabled:cursor-not-allowed disabled:opacity-70"
+                      className="inline-flex items-center justify-center rounded-xl
+bg-gradient-to-r from-rose-700 via-orange-600 to-amber-500
+px-6 py-2.5 text-sm font-semibold text-white
+shadow-lg transition-all duration-300
+hover:scale-105 hover:shadow-xl
+disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                       {reportPaying ? "Opening payment…" : "Get PDF report — ₹99"}
                     </button>
