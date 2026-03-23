@@ -29,13 +29,21 @@ export default function DailyHoroscopePage() {
   const [horoscope, setHoroscope] = useState<DailyHoroscope | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const pageClass = "min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]";
+  const pageClass =
+    "min-h-screen bg-gradient-to-br from-rose-50 via-orange-50 to-amber-50 text-slate-800";
   const contentClass = "flex w-full";
   const mainClass =
-    "ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]";
+    "ml-[260px] h-[calc(100vh-56px)] w-full overflow-y-auto overflow-x-hidden p-8 max-[768px]:ml-[200px]";
   const containerClass = "relative mx-auto max-w-[1200px]";
+  const primaryBtn =
+    "inline-flex items-center justify-center rounded-xl \
+bg-gradient-to-r from-rose-700 via-orange-600 to-amber-500 \
+px-6 py-2.5 text-sm font-semibold text-white \
+shadow-lg transition-all duration-300 \
+hover:scale-105 hover:shadow-xl \
+disabled:opacity-60 disabled:cursor-not-allowed";
   const sectionTitleClass =
-    "mb-6 border-b-[2px] border-b-[#d4a574] pb-[14px] text-[26px] font-bold tracking-[-0.01em] text-[#6b4423]";
+    "mb-8 pb-3 text-3xl font-bold tracking-tight text-slate-800 border-b border-slate-200";
   const fetchHoroscope = useCallback(async () => {
     const t = token?.trim();
     if (!t || t.split(".").length !== 3) {
@@ -85,16 +93,10 @@ export default function DailyHoroscopePage() {
               <h1 className={sectionTitleClass}>🌙 Daily Horoscope</h1>
               <ErrorMessage message={error} />
               <div className="mt-5 flex gap-3">
-                <button
-                  onClick={fetchHoroscope}
-                  className="rounded-[14px] bg-[linear-gradient(135deg,#6b4423,#8c5a30)] px-[26px] py-3 text-[15px] font-semibold text-white transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_8px_18px_rgba(0,0,0,0.18)]"
-                >
+                <button onClick={fetchHoroscope} className={primaryBtn}>
                   Retry
                 </button>
-                <button
-                  onClick={() => router.push("/auth/login")}
-                  className="rounded-[14px] border border-[#d4a574] bg-white px-[26px] py-3 text-[15px] font-semibold text-[#6b4423] transition-colors duration-200 hover:bg-[#f5ebe0]"
-                >
+                <button onClick={() => router.push("/auth/login")} className={primaryBtn}>
                   Go to Login
                 </button>
               </div>
@@ -152,9 +154,9 @@ export default function DailyHoroscopePage() {
                 <p className="mb-0 mt-3 text-[15px] text-[#6b5b52]">
                   Based on your chart and current transits
                 </p>
-                <div className="mt-6 overflow-hidden rounded-[18px] border border-[#e8ddd0] bg-white shadow-[0_8px_18px_rgba(0,0,0,0.08)]">
+                <div className="mt-8 overflow-hidden rounded-2xl border border-white/50 bg-white/80 backdrop-blur-md shadow-xl">
                   <div
-                    className={`h-2 w-full ${horoscope.dayType === "Good" ? "bg-[linear-gradient(180deg,#4ade80,#22c55e)]" : horoscope.dayType === "Challenging" ? "bg-[linear-gradient(180deg,#fb923c,#ef4444)]" : "bg-[linear-gradient(180deg,#a8b3c0,#64748b)]"}`}
+                    className={`h-2.5 w-full ${horoscope.dayType === "Good" ? "bg-[linear-gradient(180deg,#4ade80,#22c55e)]" : horoscope.dayType === "Challenging" ? "bg-[linear-gradient(180deg,#fb923c,#ef4444)]" : "bg-[linear-gradient(180deg,#a8b3c0,#64748b)]"}`}
                     aria-hidden
                   />
                   <div className="p-6">
@@ -186,7 +188,7 @@ export default function DailyHoroscopePage() {
                       {horoscope.mainTheme || "No theme available"}
                     </p>
                     {horoscope.reason && (
-                      <div className="mt-5 rounded-[12px] bg-[#f9fafb] p-4">
+                      <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-5">
                         <p className="mb-2 text-[12px] font-semibold uppercase tracking-[0.08em] text-[#6b7280]">
                           Why today?
                         </p>
@@ -198,7 +200,7 @@ export default function DailyHoroscopePage() {
                     {(horoscope.doAvoid || horoscope.goodTime) && (
                       <div className="mt-5 grid gap-4 md:grid-cols-2">
                         {horoscope.doAvoid && (
-                          <div className="rounded-[12px] border border-[#e8ddd0] bg-[#fffaf5] p-4">
+                          <div className="rounded-xl border border-amber-100 bg-gradient-to-br from-amber-50 to-orange-50 p-5 shadow-sm">
                             <p className="mb-2 text-[12px] font-semibold uppercase tracking-[0.08em] text-[#6b7280]">
                               Do / Avoid today
                             </p>

@@ -56,32 +56,50 @@ const AppSidebar = () => {
       ? [...AUTH_MENU_BASE, { id: "admin", label: "Admin", href: "/admin" }]
       : AUTH_MENU_BASE;
 
-  const homeHref = isGuest ? "/" : "/dashboard";
-  const sidebarTitle = isGuest ? "Jyotishya Darshan" : "My Kundli";
-  const sidebarTitleAria = isGuest ? "Go to home" : "Go to dashboard";
   const menuButtonBase =
-    "flex w-full items-center gap-[10px] px-5 py-3 text-left text-[14px] text-white transition-colors duration-200";
+    "group relative flex w-full items-center gap-3 px-6 py-3 text-left text-sm text-white/90 rounded-lg no-underline transition-all duration-300";
   const menuButtonState = (active: boolean) =>
-    `${menuButtonBase} ${active ? "bg-white/15 font-semibold" : "bg-transparent hover:bg-white/10"}`;
+    `${menuButtonBase} ${
+      active
+        ? "bg-white/20 text-white font-semibold shadow-lg"
+        : "hover:bg-white/10 hover:text-white hover:translate-x-1"
+    }`;
 
   return (
-    <aside className="fixed left-0 top-[50px] flex h-[calc(100vh-50px)] w-[260px] shrink-0 flex-col overflow-hidden bg-[var(--accent)] text-white shadow-[2px_0_4px_rgba(0,0,0,0.1)] max-[768px]:w-[200px]">
-      <div className="shrink-0 border-b border-white/20 p-5">
-        <Link
-          href={homeHref}
-          className="mt-0 block rounded-[8px] px-3 py-2 text-[18px] font-semibold text-white no-underline transition-colors duration-200 hover:bg-white/15 active:bg-white/20"
-          aria-label={sidebarTitleAria}
-          title={sidebarTitleAria}
-        >
-          {sidebarTitle}
-        </Link>
-      </div>
+    <aside
+      className="fixed left-0 top-[56px] flex h-[calc(100vh-50px)] w-[260px] shrink-0 flex-col overflow-hidden
+bg-gradient-to-b from-rose-900 via-orange-800 to-amber-700
+text-white
+shadow-2xl backdrop-blur-md
+border-r border-white/10
+max-[768px]:w-[200px]"
+    >
+      <div className="shrink-0 border-b border-white/10 p-6 bg-white/5 backdrop-blur-sm">
+        <div className="flex items-center gap-3 px-2">
+          {/* Logo Circle */}
+          <div
+            className="flex h-10 w-10 items-center justify-center rounded-full
+      bg-gradient-to-br from-yellow-300 via-orange-400 to-rose-500
+      text-lg font-bold text-white shadow-lg"
+          >
+            ॐ
+          </div>
 
+          {/* Brand Text */}
+          <div className="flex flex-col">
+            <h1 className="text-lg font-bold tracking-wide text-white">Jyotishya Darshan</h1>
+            <p className="text-xs text-white/70">Vedic Astrology Portal</p>
+          </div>
+        </div>
+      </div>
       <nav className="flex-1 overflow-y-auto overflow-x-hidden px-0 py-[10px]">
-        <ul className="m-0 list-none p-0">
+        <ul className="m-0 list-none p-3 space-y-1">
           {menuItems.map((item) => (
             <li key={item.id} className="m-0">
               <Link href={item.href} className={menuButtonState(router.pathname === item.href)}>
+                {router.pathname === item.href && (
+                  <span className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-yellow-300 to-rose-400 rounded-r" />
+                )}
                 <span className="flex-1">{item.label}</span>
               </Link>
             </li>
@@ -89,7 +107,7 @@ const AppSidebar = () => {
         </ul>
       </nav>
 
-      <div className="mt-auto border-t border-white/20 px-0 py-[10px]">
+      <div className="mt-auto border-t border-white/10 p-3 bg-white/5 backdrop-blur-sm">
         {isGuest ? (
           <>
             <Link
@@ -107,7 +125,7 @@ const AppSidebar = () => {
           </>
         ) : (
           <button
-            className={`${menuButtonBase} bg-transparent hover:bg-white/15 active:bg-white/20`}
+            className="flex w-full items-center gap-3 px-6 py-3 text-sm text-red-200 hover:text-white hover:bg-red-500/20 transition-all duration-300 rounded-lg"
             onClick={handleLogout}
             aria-label="Logout"
           >

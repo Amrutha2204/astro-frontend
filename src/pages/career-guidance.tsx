@@ -37,27 +37,56 @@ export default function CareerGuidancePage() {
       <AppHeader />
       <div className="flex w-full">
         <AppSidebar />
-        <main className="ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]">
-          <div className="w-[75%] p-4">
-            <h2 className="mb-5 text-[24px] font-bold text-[#2c2c54]">Career Guidance</h2>
+        <main
+          className="ml-[260px] h-[calc(100vh-56px)] w-full overflow-y-auto overflow-x-hidden
+bg-gradient-to-br from-rose-50 via-orange-50 to-amber-50
+p-8 max-[768px]:ml-[200px]"
+        >
+          <div className="mx-auto w-full max-w-5xl p-2">
+            <h2
+              className="mb-8 text-3xl font-bold tracking-wide
+bg-gradient-to-r from-rose-800 via-orange-700 to-amber-600
+bg-clip-text text-transparent"
+            >
+              Career Guidance
+            </h2>
 
             {loading && (
-              <div className="flex h-[300px] flex-col items-center justify-center gap-3 text-[var(--text-main)]">
-                <div className="h-10 w-10 animate-spin rounded-full border-[4px] border-[rgba(202,167,92,0.3)] border-t-[var(--accent)]"></div>
-                <p>Generating career guidance...</p>
+              <div className="flex h-[360px] flex-col items-center justify-center gap-6">
+                <div className="relative">
+                  <div className="h-16 w-16 rounded-full border-4 border-white/40"></div>
+                  <div
+                    className="absolute inset-0 h-16 w-16 animate-spin rounded-full border-4
+        border-transparent border-t-rose-600 border-r-orange-500 border-b-amber-400"
+                  ></div>
+                </div>
+
+                <div className="text-center">
+                  <p className="text-lg font-semibold text-slate-700">
+                    Generating your personalized career insights…
+                  </p>
+                  <p className="mt-1 text-sm text-slate-500">Aligning planetary influences ✨</p>
+                </div>
               </div>
             )}
-            {error && <p className="font-semibold text-red-600">{error}</p>}
+            {error && (
+              <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 font-semibold text-red-700">
+                {error}
+              </p>
+            )}
 
             {guidance && (
-              <div className="mb-6 rounded-[16px] bg-white p-5 shadow-[0_6px_16px_rgba(0,0,0,0.08)]">
-                <h3 className="mb-3 text-[20px] font-semibold text-[#6b4423]">Career Advice</h3>
+              <div
+                className="mb-8 rounded-2xl bg-white/70 p-8
+shadow-xl backdrop-blur-md border border-white/40"
+              >
+                <h3 className="mb-3 text-[20px] font-semibold text-rose-900">Career Advice</h3>
                 {guidance.sections && Object.keys(guidance.sections).length > 0 ? (
                   <div className="flex flex-col gap-5">
                     {guidance.sections.strengths && (
                       <section>
                         <h4 className="mb-2 text-[17px] font-semibold text-[#6b4423]">Strengths</h4>
-                        <p className="text-[15px] leading-[1.6] text-[#3b3b6d]">
+                        <p className="text-[15px] leading-[1.6] text-slate-700">
                           {guidance.sections.strengths.split("\n").map((line, idx) => (
                             <span key={idx}>
                               {line}
@@ -134,7 +163,7 @@ export default function CareerGuidancePage() {
                     ))}
                   </p>
                 )}
-                <p className="mt-4 text-[13px] text-[#6b5b52]">
+                <p className="mt-6 border-t border-slate-200 pt-4 text-xs text-slate-500">
                   Guidance generated on: {new Date(guidance.timestamp).toLocaleString()}
                 </p>
               </div>

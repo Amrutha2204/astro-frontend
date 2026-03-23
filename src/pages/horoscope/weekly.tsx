@@ -33,13 +33,14 @@ export default function WeeklyHoroscopePage() {
   const [horoscope, setHoroscope] = useState<WeeklyHoroscope | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const pageClass = "min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]";
+  const pageClass =
+    "min-h-screen bg-gradient-to-br from-rose-50 via-orange-50 to-amber-50 text-slate-800";
   const contentClass = "flex w-full";
   const mainClass =
-    "ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]";
+    "ml-[260px] h-[calc(100vh-56px)] w-full overflow-y-auto overflow-x-hidden p-8 max-[768px]:ml-[200px]";
   const containerClass = "relative mx-auto max-w-[1200px]";
   const sectionTitleClass =
-    "mb-6 border-b-[2px] border-b-[#d4a574] pb-[14px] text-[26px] font-bold tracking-[-0.01em] text-[#6b4423]";
+    "mb-8 pb-3 text-3xl font-bold tracking-tight text-slate-800 border-b border-slate-200";
 
   const fetchHoroscope = useCallback(async () => {
     const t = token?.trim();
@@ -88,20 +89,20 @@ export default function WeeklyHoroscopePage() {
           <main className={mainClass}>
             <div className={containerClass}>
               <h1 className={sectionTitleClass}>🌙 Horoscope</h1>
-              <div className="mb-5 flex gap-[60px] border-b border-b-[#e5e5e5] pb-2 text-[20px]">
+              <div className="mb-8 flex gap-10 border-b border-slate-200 pb-3 text-lg">
                 <span
-                  className="cursor-pointer font-medium text-[#666666] hover:text-black"
+                  className="cursor-pointer font-medium text-slate-500 transition-colors hover:text-slate-900"
                   onClick={() => router.push("/horoscope/today")}
                 >
                   Today
                 </span>
 
-                <span className="border-b-[2px] border-b-[#c89b3c] pb-1 font-semibold text-black">
+                <span className="border-b-2 border-amber-500 pb-1 font-semibold text-slate-900">
                   Weekly
                 </span>
 
                 <span
-                  className="cursor-pointer font-medium text-[#666666] hover:text-black"
+                  className="cursor-pointer font-medium text-slate-500 transition-colors hover:text-slate-900"
                   onClick={() => router.push("/horoscope/monthly")}
                 >
                   Monthly
@@ -172,9 +173,11 @@ export default function WeeklyHoroscopePage() {
               <>
                 {horoscope.weekStart && (
                   <div className="mt-4 grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-[14px]">
-                    <div className="rounded-[12px] border-l-[4px] border-l-[#6b4423] border border-[#e8ddd0] bg-[linear-gradient(135deg,#fdf8f3_0%,#f5ebe0_100%)] p-5 shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
-                      <h3>Week starts</h3>
-                      <p className="text-[20px] font-bold text-[#845127]">
+                    <div className="rounded-2xl border border-white/50 bg-white/80 backdrop-blur-md p-6 shadow-xl">
+                      <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                        Week starts
+                      </h3>
+                      <p className="mt-1 text-xl font-bold text-slate-800">
                         {new Date(horoscope.weekStart).toLocaleDateString("en-US", {
                           weekday: "long",
                           year: "numeric",
@@ -216,7 +219,10 @@ export default function WeeklyHoroscopePage() {
                             return (
                               <div
                                 key={index}
-                                className={`overflow-hidden rounded-[16px] border border-[#e8ddd0] bg-white shadow-[0_8px_18px_rgba(0,0,0,0.08)] ${isToday ? "ring-2 ring-[#6b4423]" : ""} ${isPast ? "opacity-70" : ""} ${isTomorrow ? "border-[#d4a574]" : ""}`}
+                                className={`overflow-hidden rounded-2xl border border-white/50 bg-white/80 backdrop-blur-md shadow-xl
+${isToday ? "ring-2 ring-amber-500" : ""}
+${isPast ? "opacity-60" : ""}
+${isTomorrow ? "border-amber-300" : ""}`}
                               >
                                 <div className="flex">
                                   <div
@@ -228,14 +234,14 @@ export default function WeeklyHoroscopePage() {
                                       <div className="text-[14px] font-medium text-[#6b7280]">
                                         {isToday && (
                                           <>
-                                            <span className="mr-2 inline-flex rounded-[999px] bg-[#6b4423] px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.05em] text-white">
+                                            <span className="mr-2 inline-flex rounded-full bg-gradient-to-r from-rose-700 to-amber-500 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white shadow">
                                               Today
                                             </span>{" "}
                                           </>
                                         )}
                                         {isTomorrow && !isToday && (
                                           <>
-                                            <span className="mr-2 inline-flex rounded-[999px] bg-[#f5ebe0] px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.05em] text-[#6b4423]">
+                                            <span className="mr-2 inline-flex rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-800">
                                               Up next
                                             </span>{" "}
                                           </>

@@ -41,17 +41,20 @@ const AppHeader = () => {
 
   const backTitle = "Back to previous page";
   const homeTitle = isGuest ? "Go to home" : "Go to dashboard";
-  const headerButtonClass =
-    "rounded-[6px] text-white transition-colors duration-200 hover:bg-white/20";
   const languageButtonClass =
-    "cursor-pointer rounded-[6px] border border-white/40 bg-transparent px-[10px] py-1 text-[13px] text-white";
+    "cursor-pointer rounded-md border border-white/30 px-3 py-1 text-xs text-white transition-all duration-200";
 
   return (
-    <header className="flex h-[50px] items-center justify-between bg-[var(--accent)] px-5 shadow-[0_2px_4px_rgba(0,0,0,0.1)]">
+    <header
+      className="flex h-[56px] items-center justify-between px-6
+bg-gradient-to-r from-rose-900 via-orange-800 to-amber-700
+text-white shadow-lg backdrop-blur-md border-b border-white/10"
+    >
       <div className="flex items-center gap-[15px]">
         <button
           type="button"
-          className={`${headerButtonClass} flex h-6 w-6 items-center justify-center bg-white/20 text-[14px] font-bold`}
+          className="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 text-sm font-bold
+hover:bg-white/30 hover:scale-110 active:scale-95 transition-all duration-200"
           onClick={handleBack}
           aria-label={backTitle}
           title={backTitle}
@@ -60,7 +63,9 @@ const AppHeader = () => {
         </button>
         <button
           type="button"
-          className={`${headerButtonClass} mx-[-4px] bg-transparent px-[10px] py-[6px] text-[18px] font-bold`}
+          className="mx-[-4px] px-3 py-1 text-lg font-bold tracking-wide
+bg-white/10 rounded-lg hover:bg-white/20
+transition-all duration-300 hover:scale-[1.03] active:scale-[0.97]"
           onClick={handleHomeClick}
           aria-label={homeTitle}
           title={homeTitle}
@@ -77,8 +82,8 @@ const AppHeader = () => {
             onClick={() => setLocale("en")}
             className={
               locale === "en"
-                ? `${languageButtonClass} bg-white/30 font-semibold`
-                : `${languageButtonClass} hover:bg-white/15`
+                ? `${languageButtonClass} bg-white/30 font-semibold shadow`
+                : `${languageButtonClass} bg-white/10 hover:bg-white/20`
             }
             aria-pressed={locale === "en"}
           >
@@ -89,8 +94,8 @@ const AppHeader = () => {
             onClick={() => setLocale("hi")}
             className={
               locale === "hi"
-                ? `${languageButtonClass} bg-white/30 font-semibold`
-                : `${languageButtonClass} hover:bg-white/15`
+                ? `${languageButtonClass} bg-white/30 font-semibold shadow`
+                : `${languageButtonClass} bg-white/10 hover:bg-white/20`
             }
             aria-pressed={locale === "hi"}
           >
@@ -101,19 +106,21 @@ const AppHeader = () => {
           <>
             <Link
               href="/auth/login"
-              className="rounded-[6px] px-3 py-[6px] text-[14px] font-semibold text-white no-underline transition-colors duration-200 hover:bg-white/15"
+              className="rounded-lg px-4 py-2 text-sm font-semibold text-white no-underline
+bg-white/10 hover:bg-white/20 transition-all duration-300"
             >
               {t("login")}
             </Link>
             <Link
               href="/auth/register"
-              className="rounded-[6px] px-3 py-[6px] text-[14px] font-semibold text-white no-underline transition-colors duration-200 hover:bg-white/15"
+              className="rounded-lg px-4 py-2 text-sm font-semibold text-white no-underline
+bg-white/10 hover:bg-white/20 transition-all duration-300"
             >
               {t("register")}
             </Link>
           </>
         ) : (
-          <div className="flex items-center gap-1 text-[16px] font-semibold text-white">
+          <div className="flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-sm font-semibold backdrop-blur-sm">
             <span className="text-[18px]">₹</span>
             <span className="text-[16px]">
               {shouldDisableWallet || walletBalance === null ? "—" : walletBalance.toFixed(2)}
