@@ -178,31 +178,35 @@ export default function TransitsPage() {
       setMajorLoading(false);
     }
   }, [majorFrom, majorTo]);
-
-  const loadEclipses = useCallback(async () => {
-    setEclipseLoading(true);
-    try {
-      const data = await astroApi.getEclipses(eclipseFrom, eclipseTo);
-      setSolarEclipses(data.solar || []);
-      setLunarEclipses(data.lunar || []);
-      setError(null);
-    } catch {
-      setError("Unable to load eclipses. Please try again later.");
-    } finally {
-      setEclipseLoading(false);
-    }
-  }, [eclipseFrom, eclipseTo]);
-
   const [eclipsesLoaded, setEclipsesLoaded] = useState(false);
+const [eclipsesFetching, setEclipsesFetching] = useState(false);
+  const loadEclipsesSafe = useCallback(async () => {
+  if (eclipsesFetching) return; // prevent duplicate calls
+
+  try {
+    setEclipsesFetching(true);
+    setEclipseLoading(true);
+
+    const data = await astroApi.getEclipses(eclipseFrom, eclipseTo);
+
+    setSolarEclipses(data.solar || []);
+    setLunarEclipses(data.lunar || []);
+    setEclipsesLoaded(true); // ✅ mark only after success
+    setError(null);
+  } catch {
+    setError("Unable to load eclipses. Please try again later.");
+    setEclipsesLoaded(false); // allow retry
+  } finally {
+    setEclipseLoading(false);
+    setEclipsesFetching(false);
+  }
+}, [eclipseFrom, eclipseTo, eclipsesFetching]);
 
   useEffect(() => {
-    if (activeTab !== "eclipses" || eclipsesLoaded) {
-      return;
-    }
-
-    loadEclipses();
-    setEclipsesLoaded(true);
-  }, [activeTab, eclipsesLoaded, loadEclipses]);
+  if (activeTab === "eclipses" && !eclipsesLoaded) {
+    loadEclipsesSafe();
+  }
+}, [activeTab, eclipsesLoaded, loadEclipsesSafe]);
 
   const handleRefresh = useCallback(() => {
     if (activeTab === "today") {
@@ -223,9 +227,10 @@ export default function TransitsPage() {
       loadMajor();
     }
     if (activeTab === "eclipses") {
-      loadEclipses();
-    }
-  }, [activeTab, loadEclipses, loadMajor, loadRetrogrades]);
+  setEclipsesLoaded(false);
+  loadEclipsesSafe();
+}
+  }, [activeTab, loadEclipsesSafe, loadMajor, loadRetrogrades]);
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_15%_20%,#ffe7d6_0%,transparent_35%),radial-gradient(circle_at_85%_10%,#e0f2fe_0%,transparent_40%),radial-gradient(circle_at_80%_80%,#ede9fe_0%,transparent_40%),linear-gradient(135deg,#fffaf5_0%,#f8f4ff_50%,#f0f9ff_100%)] text-[var(--text-main)]">
@@ -541,9 +546,9 @@ export default function TransitsPage() {
                   <button
                     className={primaryButtonClass}
                     onClick={() => {
-                      setEclipsesLoaded(false);
-                      loadEclipses();
-                    }}
+  setEclipsesLoaded(false); // force reload
+  loadEclipsesSafe();
+}}
                     disabled={eclipseLoading}
                   >
                     {eclipseLoading ? "Loading…" : "Get Eclipses"}

@@ -67,7 +67,7 @@ const AppSidebar = () => {
 
   return (
     <aside
-      className="fixed left-0 top-[50px] flex h-[calc(100vh-50px)] w-[260px] shrink-0 flex-col overflow-hidden
+      className="fixed left-0 top-[56px] flex h-[calc(100vh-50px)] w-[260px] shrink-0 flex-col overflow-hidden
 bg-gradient-to-b from-rose-900 via-orange-800 to-amber-700
 text-white
 shadow-2xl backdrop-blur-md

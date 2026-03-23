@@ -214,7 +214,6 @@ html {
   animation: floatSlow2 8s ease-in-out infinite;
 }
 
-/* Hide Next.js dev indicator (N badge) */
 nextjs-portal {
-  display: none !important;
+  display: none;
 }
