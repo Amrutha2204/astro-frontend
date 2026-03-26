@@ -122,11 +122,7 @@ export default function SubscriptionPlansPage() {
             {error && (
               <div className="mb-4 flex min-h-[140px] flex-col items-center justify-center gap-5">
                 <p className="text-[18px] font-semibold text-[#6b4423]">{error}</p>
-                <button
-                  type="button"
-                  className={primaryButtonClass}
-                  onClick={fetchData}
-                >
+                <button type="button" className={primaryButtonClass} onClick={fetchData}>
                   Retry
                 </button>
               </div>

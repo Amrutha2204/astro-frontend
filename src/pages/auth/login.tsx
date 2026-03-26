@@ -178,14 +178,12 @@ export default function LoginPage() {
 
                 {/* 👁 Toggle */}
                 <button
-  type="button"
-  onClick={() => setShowPassword(!showPassword)}
-  className="absolute right-3 top-0 h-full flex items-center text-lg -mt-5"
->
-  <span className="block -translate-y-[2px]">
-    {showPassword ? "🙈" : "👁"}
-  </span>
-</button>
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-0 h-full flex items-center text-lg -mt-5"
+                >
+                  <span className="block -translate-y-[2px]">{showPassword ? "🙈" : "👁"}</span>
+                </button>
 
                 {/* Validation */}
                 {!password && <p className="text-xs text-red-500 mt-1">Password is required</p>}

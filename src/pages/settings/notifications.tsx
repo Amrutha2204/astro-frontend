@@ -22,7 +22,7 @@ export default function NotificationsSettingsPage() {
   const [preferredTime, setPreferredTime] = useState("09:00");
   const [timezone, setTimezone] = useState("Asia/Kolkata");
   const primaryButtonClass =
-  "rounded-[14px] bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] px-6 py-3 text-[14px] font-bold text-white shadow-[0_8px_22px_rgba(236,72,153,0.35)] transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_14px_32px_rgba(124,58,237,0.45)] disabled:cursor-not-allowed disabled:opacity-60";
+    "rounded-[14px] bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] px-6 py-3 text-[14px] font-bold text-white shadow-[0_8px_22px_rgba(236,72,153,0.35)] transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_14px_32px_rgba(124,58,237,0.45)] disabled:cursor-not-allowed disabled:opacity-60";
   const fetchPrefs = useCallback(async () => {
     const t = token?.trim();
     if (!t || t.split(".").length !== 3) {
@@ -138,11 +138,7 @@ export default function NotificationsSettingsPage() {
                   placeholder="Asia/Kolkata"
                   className="mb-4 w-full"
                 />
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className={primaryButtonClass}
-                >
+                <button type="submit" disabled={saving} className={primaryButtonClass}>
                   {saving ? "Saving…" : "Save preferences"}
                 </button>
               </form>

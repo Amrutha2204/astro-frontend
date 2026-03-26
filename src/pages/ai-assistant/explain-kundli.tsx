@@ -15,8 +15,8 @@ export default function ExplainKundliPage() {
   const [focus, setFocus] = useState<string>("overall");
   const [loading, setLoading] = useState(false);
   const [explanation, setExplanation] = useState<ExplainKundliResponse | null>(null);
-const primaryButtonClass =
-  "rounded-[14px] bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] px-6 py-3 text-[14px] font-bold text-white shadow-[0_8px_22px_rgba(236,72,153,0.35)] transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_14px_32px_rgba(124,58,237,0.45)] disabled:cursor-not-allowed disabled:opacity-60";
+  const primaryButtonClass =
+    "rounded-[14px] bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] px-6 py-3 text-[14px] font-bold text-white shadow-[0_8px_22px_rgba(236,72,153,0.35)] transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_14px_32px_rgba(124,58,237,0.45)] disabled:cursor-not-allowed disabled:opacity-60";
   useEffect(() => {
     if (!rehydrated) {
       return;
@@ -146,11 +146,7 @@ const primaryButtonClass =
                 </div>
 
                 <div className="mt-5 text-center">
-                  <button
-                    onClick={handleExplain}
-                    disabled={loading}
-                    className={primaryButtonClass}
-                  >
+                  <button onClick={handleExplain} disabled={loading} className={primaryButtonClass}>
                     🔄 Regenerate Explanation
                   </button>
                 </div>

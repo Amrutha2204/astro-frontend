@@ -171,32 +171,34 @@ const ProfilePage = () => {
               disableRefresh={loading}
             />
 
-           <div className="mb-10 flex flex-col items-center">
-  <div className="mb-2 text-[28px]">👤</div>
+            <div className="mb-10 flex flex-col items-center">
+              <div className="mb-2 text-[28px]">👤</div>
 
-  <h1 className="text-[36px] font-extrabold bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] bg-clip-text text-transparent">
-    Profile
-  </h1>
+              <h1 className="text-[36px] font-extrabold bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] bg-clip-text text-transparent">
+                Profile
+              </h1>
 
-  <p className="mt-1 text-[14px] text-[#6b7280]">
-    Your personal cosmic identity ✨
-  </p>
-</div>
+              <p className="mt-1 text-[14px] text-[#6b7280]">Your personal cosmic identity ✨</p>
+            </div>
 
             {error && <ErrorMessage message={error} />}
 
             {profile && (
               <div className="mx-auto max-w-[720px]">
-                <div className="mb-6 flex flex-wrap items-center gap-6 rounded-[24px] 
+                <div
+                  className="mb-6 flex flex-wrap items-center gap-6 rounded-[24px] 
 bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] 
 px-9 py-8 text-white 
-shadow-[0_12px_40px_rgba(124,58,237,0.35)]">
+shadow-[0_12px_40px_rgba(124,58,237,0.35)]"
+                >
                   <div className="shrink-0">
-                    <div className="relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-[20px] 
+                    <div
+                      className="relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-[20px] 
 border border-white/40 
 bg-white/20 backdrop-blur-md 
 text-[32px] font-bold text-white 
-shadow-[0_6px_20px_rgba(255,255,255,0.3)]">
+shadow-[0_6px_20px_rgba(255,255,255,0.3)]"
+                    >
                       {profile.profilePic ? (
                         <Image
                           src={profile.profilePic}

@@ -210,11 +210,7 @@ export default function PaymentPage() {
                   onChange={(e) => setAmountRupees(e.target.value)}
                   className="mb-3 w-full rounded-[6px] border border-[#ccc] px-3 py-2"
                 />
-                <button
-                  type="submit"
-                  disabled={creating}
-                  className={primaryButtonClass}
-                >
+                <button type="submit" disabled={creating} className={primaryButtonClass}>
                   {creating ? "Creating…" : "Pay with Razorpay"}
                 </button>
               </form>

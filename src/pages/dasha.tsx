@@ -25,21 +25,20 @@ export default function DashaPage() {
   const [error, setError] = useState<string | null>(null);
   const [showTimeline, setShowTimeline] = useState(false);
   const pageClass =
-  "min-h-screen bg-[radial-gradient(circle_at_15%_20%,#ffe7d6_0%,transparent_35%),radial-gradient(circle_at_85%_10%,#e0f2fe_0%,transparent_40%),radial-gradient(circle_at_80%_80%,#ede9fe_0%,transparent_40%),linear-gradient(135deg,#fffaf5_0%,#f8f4ff_50%,#f0f9ff_100%)] text-[var(--text-main)]";
+    "min-h-screen bg-[radial-gradient(circle_at_15%_20%,#ffe7d6_0%,transparent_35%),radial-gradient(circle_at_85%_10%,#e0f2fe_0%,transparent_40%),radial-gradient(circle_at_80%_80%,#ede9fe_0%,transparent_40%),linear-gradient(135deg,#fffaf5_0%,#f8f4ff_50%,#f0f9ff_100%)] text-[var(--text-main)]";
 
-const mainClass =
-  "ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-white/70 backdrop-blur-[6px] p-8 max-[768px]:ml-[200px]";
+  const mainClass =
+    "ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-white/70 backdrop-blur-[6px] p-8 max-[768px]:ml-[200px]";
   const contentClass = "flex w-full";
   const containerClass = "relative mx-auto max-w-[1200px] space-y-8";
   const sectionTitleClass =
-  "text-[32px] font-extrabold tracking-tight bg-gradient-to-r from-[#7c3aed] via-[#db2777] to-[#d97706] bg-clip-text text-transparent";
+    "text-[32px] font-extrabold tracking-tight bg-gradient-to-r from-[#7c3aed] via-[#db2777] to-[#d97706] bg-clip-text text-transparent";
   const infoGridClass = "mt-4 grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-[14px]";
   const infoCardClass =
-  "group relative overflow-hidden rounded-[22px] border border-white/60 bg-gradient-to-br from-white via-[#fff7ed] to-[#f3e8ff] p-6 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(124,58,237,0.18)]";
-  const activeCardClass =
-  "border border-[#e9d5ff] bg-gradient-to-br from-[#faf5ff] to-[#fdf4ff]";
+    "group relative overflow-hidden rounded-[22px] border border-white/60 bg-gradient-to-br from-white via-[#fff7ed] to-[#f3e8ff] p-6 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(124,58,237,0.18)]";
+  const activeCardClass = "border border-[#e9d5ff] bg-gradient-to-br from-[#faf5ff] to-[#fdf4ff]";
   const primaryButtonClass =
-  "rounded-[14px] bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] px-6 py-3 text-[14px] font-bold text-white shadow-[0_8px_22px_rgba(236,72,153,0.35)] transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_14px_32px_rgba(124,58,237,0.45)] disabled:cursor-not-allowed disabled:opacity-60";
+    "rounded-[14px] bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] px-6 py-3 text-[14px] font-bold text-white shadow-[0_8px_22px_rgba(236,72,153,0.35)] transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_14px_32px_rgba(124,58,237,0.45)] disabled:cursor-not-allowed disabled:opacity-60";
 
   const fetchDasha = useCallback(async () => {
     const t = token?.trim();
@@ -106,8 +105,8 @@ const mainClass =
     return (
       <div className={pageClass}>
         <div className="sticky top-0 z-60">
-  <AppHeader />
-</div>
+          <AppHeader />
+        </div>
         <div className={contentClass}>
           <AppSidebar />
           <main className={mainClass}>
@@ -128,16 +127,10 @@ const mainClass =
             <div className="flex min-h-[400px] flex-col items-center justify-center gap-5">
               <ErrorMessage message={error} />
               <div className="flex gap-[10px]">
-                <button
-                  onClick={fetchDasha}
-                  className={primaryButtonClass}
-                >
+                <button onClick={fetchDasha} className={primaryButtonClass}>
                   🔄 Retry
                 </button>
-                <button
-                  onClick={() => router.push("/auth/login")}
-                  className={primaryButtonClass}
-                >
+                <button onClick={() => router.push("/auth/login")} className={primaryButtonClass}>
                   Go to Login
                 </button>
               </div>

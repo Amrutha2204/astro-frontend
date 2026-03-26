@@ -71,17 +71,17 @@ export default function DoshaPage() {
   };
 
   const getSeverityBadgeClass = (severity?: string) => {
-  switch (severity) {
-    case "High":
-      return "bg-red-500";
-    case "Medium":
-      return "bg-amber-500";
-    case "Low":
-      return "bg-emerald-500";
-    default:
-      return "bg-slate-500";
-  }
-};
+    switch (severity) {
+      case "High":
+        return "bg-red-500";
+      case "Medium":
+        return "bg-amber-500";
+      case "Low":
+        return "bg-emerald-500";
+      default:
+        return "bg-slate-500";
+    }
+  };
 
   if (loading) {
     return (

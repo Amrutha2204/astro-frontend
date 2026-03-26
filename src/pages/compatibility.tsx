@@ -343,14 +343,14 @@ export default function CompatibilityPage() {
       return false;
     }
     if (!partner1.gender || !partner2.gender) {
-  showError("Please select gender for both partners");
-  return false;
-}
+      showError("Please select gender for both partners");
+      return false;
+    }
 
-if (partner1.gender === partner2.gender) {
-  showError("Partners must have different genders for compatibility match.");
-  return false;
-}
+    if (partner1.gender === partner2.gender) {
+      showError("Partners must have different genders for compatibility match.");
+      return false;
+    }
     if (partner1.year < 1900 || partner1.year > new Date().getFullYear()) {
       showError("Please enter a valid year for Partner 1");
       return false;
@@ -576,7 +576,7 @@ if (partner1.gender === partner2.gender) {
             <div className="mb-[30px] rounded-[12px] bg-white p-[30px] shadow-[0_2px_8px_rgba(0,0,0,0.1)]">
               <div className="mb-[30px] flex gap-[10px] border-b-[2px] border-b-[#e5e7eb]">
                 <button
-                 className={
+                  className={
                     calculationType === "guna-milan"
                       ? `${tabBaseClass} border-b-[3px] border-b-[#7c3aed] text-[#7c3aed]`
                       : `${tabBaseClass} border-b-[3px] border-b-transparent text-[#7c3aed] hover:text-[#7c3aed]`
@@ -705,8 +705,8 @@ if (partner1.gender === partner2.gender) {
                           onClick={() => setUnknownTime1((p) => !p)}
                           className={
                             unknownTime1
-? "rounded-[8px] border border-[var(--accent)] bg-[var(--accent-soft)] px-3 py-[6px] text-[12px] font-semibold text-[var(--accent)]"
-: "rounded-[8px] border border-gray-300 bg-white px-3 py-[6px] text-[12px] text-gray-600 hover:bg-gray-50"
+                              ? "rounded-[8px] border border-[var(--accent)] bg-[var(--accent-soft)] px-3 py-[6px] text-[12px] font-semibold text-[var(--accent)]"
+                              : "rounded-[8px] border border-gray-300 bg-white px-3 py-[6px] text-[12px] text-gray-600 hover:bg-gray-50"
                           }
                           aria-pressed={unknownTime1}
                         >
@@ -777,8 +777,8 @@ if (partner1.gender === partner2.gender) {
                         <option value="female">Female</option>
                       </select>
                       <p className="m-0 text-[12px] text-[#6b7280]">
-  Required. Both partners must be different genders.
-</p>
+                        Required. Both partners must be different genders.
+                      </p>
                     </div>
                     <div className={inputGroupClass}>
                       <label className={fieldLabelClass}>Birth place *</label>
@@ -841,8 +841,8 @@ if (partner1.gender === partner2.gender) {
                           onClick={() => setUnknownTime2((p) => !p)}
                           className={
                             unknownTime2
-  ? "rounded-[8px] border border-[var(--accent)] bg-[var(--accent-soft)] px-3 py-[6px] text-[12px] font-semibold text-[var(--accent)]"
-  : "rounded-[8px] border border-gray-300 bg-white px-3 py-[6px] text-[12px] text-gray-600 hover:bg-gray-50"
+                              ? "rounded-[8px] border border-[var(--accent)] bg-[var(--accent-soft)] px-3 py-[6px] text-[12px] font-semibold text-[var(--accent)]"
+                              : "rounded-[8px] border border-gray-300 bg-white px-3 py-[6px] text-[12px] text-gray-600 hover:bg-gray-50"
                           }
                           aria-pressed={unknownTime2}
                         >
@@ -1003,13 +1003,15 @@ if (partner1.gender === partner2.gender) {
                       )}
                       <p>{gunaMilanResult.gunas[selectedGunaIndex].description}</p>
                       <div className="mt-5 flex justify-between">
-                        <button className="text-[#7c3aed] font-semibold disabled:opacity-40"
+                        <button
+                          className="text-[#7c3aed] font-semibold disabled:opacity-40"
                           disabled={selectedGunaIndex === 0}
                           onClick={() => setSelectedGunaIndex((i) => i! - 1)}
                         >
                           ← Previous
                         </button>
-                        <button className="text-[#7c3aed] font-semibold disabled:opacity-40"
+                        <button
+                          className="text-[#7c3aed] font-semibold disabled:opacity-40"
                           disabled={selectedGunaIndex === gunaMilanResult.gunas.length - 1}
                           onClick={() => setSelectedGunaIndex((i) => i! + 1)}
                         >

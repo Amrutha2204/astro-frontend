@@ -74,7 +74,7 @@ export default function FamilyProfiles() {
   const [toastMessage, setToastMessage] = useState("");
 
   const primaryButtonClass =
-  "rounded-[14px] bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] px-6 py-3 text-[14px] font-bold text-white shadow-[0_8px_22px_rgba(236,72,153,0.35)] transition-all duration-200 hover:-translate-y-[2px] active:scale-95 hover:shadow-[0_14px_32px_rgba(124,58,237,0.45)] disabled:cursor-not-allowed disabled:opacity-60";
+    "rounded-[14px] bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] px-6 py-3 text-[14px] font-bold text-white shadow-[0_8px_22px_rgba(236,72,153,0.35)] transition-all duration-200 hover:-translate-y-[2px] active:scale-95 hover:shadow-[0_14px_32px_rgba(124,58,237,0.45)] disabled:cursor-not-allowed disabled:opacity-60";
 
   const [selectedMemberData, setSelectedMemberData] = useState<{
     kundli?: MemberKundli;
@@ -281,16 +281,16 @@ export default function FamilyProfiles() {
           <div className="relative mx-auto max-w-[1200px]">
             <div className="mx-auto max-w-[920px]">
               <div className="mb-10 text-center">
-  <h1 className="text-[36px] font-extrabold tracking-tight bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] bg-clip-text text-transparent drop-shadow-sm">
-    Family Profiles ✨
-  </h1>
-  <p className="mt-2 text-[14px] text-gray-500">
-    Manage your loved ones' astrology insights
-  </p>
-  <span className="mt-2 inline-block text-[13px] font-medium text-gray-600">
-    {profiles.length} / {MAX_FREE_MEMBERS} members
-  </span>
-</div>
+                <h1 className="text-[36px] font-extrabold tracking-tight bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] bg-clip-text text-transparent drop-shadow-sm">
+                  Family Profiles ✨
+                </h1>
+                <p className="mt-2 text-[14px] text-gray-500">
+                  Manage your loved ones astrology insights
+                </p>
+                <span className="mt-2 inline-block text-[13px] font-medium text-gray-600">
+                  {profiles.length} / {MAX_FREE_MEMBERS} members
+                </span>
+              </div>
 
               <div className="mb-7 rounded-[20px] border border-white/40 bg-white/70 px-8 py-7 shadow-[0_10px_30px_rgba(139,94,52,0.12)] backdrop-blur-[10px]">
                 <h2 className="mb-5 border-b border-b-[#f0ebe3] pb-3 text-[18px] font-semibold text-[#2d2a26]">
@@ -366,11 +366,7 @@ export default function FamilyProfiles() {
                     </div>
                   </div>
                   <div className="mt-5 flex flex-wrap items-center gap-4">
-                    <button
-                      type="submit"
-                      className={primaryButtonClass}
-                      disabled={isSubmitting}
-                    >
+                    <button type="submit" className={primaryButtonClass} disabled={isSubmitting}>
                       {isSubmitting ? "Saving…" : editingId ? "Update profile" : "Add member"}
                     </button>
                     {formError && <p className="m-0 text-[14px] text-[#b91c1c]">{formError}</p>}
