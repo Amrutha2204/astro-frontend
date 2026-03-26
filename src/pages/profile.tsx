@@ -142,7 +142,7 @@ const ProfilePage = () => {
 
   if (!rehydrated || (loading && !profile && !error)) {
     return (
-      <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]">
+      <div className="min-h-screen bg-[radial-gradient(circle_at_15%_20%,#ffe7d6_0%,transparent_35%),radial-gradient(circle_at_85%_10%,#e0f2fe_0%,transparent_40%),radial-gradient(circle_at_80%_80%,#ede9fe_0%,transparent_40%),linear-gradient(135deg,#fffaf5_0%,#f8f4ff_50%,#f0f9ff_100%)] text-[var(--text-main)]">
         <AppHeader />
         <div className="flex w-full">
           <AppSidebar />
@@ -155,14 +155,13 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_15%_20%,#ffe7d6_0%,transparent_35%),radial-gradient(circle_at_85%_10%,#e0f2fe_0%,transparent_40%),radial-gradient(circle_at_80%_80%,#ede9fe_0%,transparent_40%),linear-gradient(135deg,#fffaf5_0%,#f8f4ff_50%,#f0f9ff_100%)] text-[var(--text-main)]">
       <AppHeader />
       <div className="flex w-full">
         <AppSidebar />
         <main className="ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]">
           <div className="relative mx-auto max-w-[1200px]">
             <PageHeader
-              title="Profile"
               onBack={() => router.push("/dashboard")}
               backAriaLabel="Go back to dashboard"
               onTitleClick={fetchProfile}
@@ -172,15 +171,34 @@ const ProfilePage = () => {
               disableRefresh={loading}
             />
 
-            <h1 className="mb-6 text-[28px] font-bold text-[#2d2a26]">Profile</h1>
+            <div className="mb-10 flex flex-col items-center">
+              <div className="mb-2 text-[28px]">👤</div>
+
+              <h1 className="text-[36px] font-extrabold bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] bg-clip-text text-transparent">
+                Profile
+              </h1>
+
+              <p className="mt-1 text-[14px] text-[#6b7280]">Your personal cosmic identity ✨</p>
+            </div>
 
             {error && <ErrorMessage message={error} />}
 
             {profile && (
               <div className="mx-auto max-w-[720px]">
-                <div className="mb-6 flex flex-wrap items-center gap-6 rounded-[20px] bg-[linear-gradient(145deg,#2d2438_0%,#1a1625_50%,#15121c_100%)] px-9 py-8 text-white shadow-[0_12px_40px_rgba(0,0,0,0.2)]">
+                <div
+                  className="mb-6 flex flex-wrap items-center gap-6 rounded-[24px] 
+bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] 
+px-9 py-8 text-white 
+shadow-[0_12px_40px_rgba(124,58,237,0.35)]"
+                >
                   <div className="shrink-0">
-                    <div className="relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-[20px] border-[2px] border-[rgba(255,255,255,0.2)] bg-[linear-gradient(135deg,rgba(255,255,255,0.15)_0%,rgba(255,255,255,0.08)_100%)] text-[32px] font-bold text-white">
+                    <div
+                      className="relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-[20px] 
+border border-white/40 
+bg-white/20 backdrop-blur-md 
+text-[32px] font-bold text-white 
+shadow-[0_6px_20px_rgba(255,255,255,0.3)]"
+                    >
                       {profile.profilePic ? (
                         <Image
                           src={profile.profilePic}
@@ -206,46 +224,46 @@ const ProfilePage = () => {
                 >
                   <h2
                     id="account-heading"
-                    className="mb-[18px] border-b border-b-[#f0ebe3] pb-[10px] text-[16px] font-semibold text-[#6b4423]"
+                    className="mb-[18px] border-b border-b-[#f0ebe3] pb-[10px] text-[16px] font-semibold text-[#7c3aed]"
                   >
                     Account
                   </h2>
                   <div className="flex flex-col gap-[14px]">
                     <div className="flex flex-wrap items-start justify-between gap-4">
-                      <span className="min-w-[120px] text-[13px] font-semibold text-[#6b5b52]">
+                      <span className="min-w-[120px] text-[13px] font-semibold text-[#6b7280]">
                         Name
                       </span>
-                      <span className="break-words text-right text-[15px] text-[#2d2a26]">
+                      <span className="break-words text-right text-[15px] text-[#1f2937]">
                         {profile.name}
                       </span>
                     </div>
                     <div className="flex flex-wrap items-start justify-between gap-4">
-                      <span className="min-w-[120px] text-[13px] font-semibold text-[#6b5b52]">
+                      <span className="min-w-[120px] text-[13px] font-semibold text-[#6b7280]">
                         Email
                       </span>
-                      <span className="break-words text-right text-[15px] text-[#2d2a26]">
+                      <span className="break-words text-right text-[15px] text-[#1f2937]">
                         {profile.email}
                       </span>
                     </div>
                     <div className="flex flex-wrap items-start justify-between gap-4">
-                      <span className="min-w-[120px] text-[13px] font-semibold text-[#6b5b52]">
+                      <span className="min-w-[120px] text-[13px] font-semibold text-[#6b7280]">
                         Phone
                       </span>
                       <span
                         className={
                           profile.phoneNumber === "—"
                             ? "break-words text-right text-[15px] italic text-[#9c8b73]"
-                            : "break-words text-right text-[15px] text-[#2d2a26]"
+                            : "break-words text-right text-[15px] text-[#1f2937]"
                         }
                       >
                         {profile.phoneNumber}
                       </span>
                     </div>
                     <div className="flex flex-wrap items-start justify-between gap-4">
-                      <span className="min-w-[120px] text-[13px] font-semibold text-[#6b5b52]">
+                      <span className="min-w-[120px] text-[13px] font-semibold text-[#6b7280]">
                         Time zone
                       </span>
-                      <span className="break-words text-right text-[15px] text-[#2d2a26]">
+                      <span className="break-words text-right text-[15px] text-[#1f2937]">
                         {profile.timezone}
                       </span>
                     </div>
@@ -258,32 +276,32 @@ const ProfilePage = () => {
                 >
                   <h2
                     id="birth-heading"
-                    className="mb-[18px] border-b border-b-[#f0ebe3] pb-[10px] text-[16px] font-semibold text-[#6b4423]"
+                    className="mb-[18px] border-b border-b-[#f0ebe3] pb-[10px] text-[16px] font-semibold text-[#7c3aed]"
                   >
                     Birth details
                   </h2>
                   <div className="flex flex-col gap-[14px]">
                     <div className="flex flex-wrap items-start justify-between gap-4">
-                      <span className="min-w-[120px] text-[13px] font-semibold text-[#6b5b52]">
+                      <span className="min-w-[120px] text-[13px] font-semibold text-[#6b7280]">
                         Date of birth
                       </span>
-                      <span className="break-words text-right text-[15px] text-[#2d2a26]">
+                      <span className="break-words text-right text-[15px] text-[#1f2937]">
                         {profile.dob}
                       </span>
                     </div>
                     <div className="flex flex-wrap items-start justify-between gap-4">
-                      <span className="min-w-[120px] text-[13px] font-semibold text-[#6b5b52]">
+                      <span className="min-w-[120px] text-[13px] font-semibold text-[#6b7280]">
                         Birth place
                       </span>
-                      <span className="break-words text-right text-[15px] text-[#2d2a26]">
+                      <span className="break-words text-right text-[15px] text-[#1f2937]">
                         {profile.birthPlace}
                       </span>
                     </div>
                     <div className="flex flex-wrap items-start justify-between gap-4">
-                      <span className="min-w-[120px] text-[13px] font-semibold text-[#6b5b52]">
+                      <span className="min-w-[120px] text-[13px] font-semibold text-[#6b7280]">
                         Birth time
                       </span>
-                      <span className="break-words text-right text-[15px] text-[#2d2a26]">
+                      <span className="break-words text-right text-[15px] text-[#1f2937]">
                         {profile.birthTime}
                       </span>
                     </div>
@@ -296,24 +314,24 @@ const ProfilePage = () => {
                 >
                   <h2
                     id="meta-heading"
-                    className="mb-[18px] border-b border-b-[#f0ebe3] pb-[10px] text-[16px] font-semibold text-[#6b4423]"
+                    className="mb-[18px] border-b border-b-[#f0ebe3] pb-[10px] text-[16px] font-semibold text-[#7c3aed]"
                   >
                     Account info
                   </h2>
                   <div className="flex flex-col gap-[14px]">
                     <div className="flex flex-wrap items-start justify-between gap-4">
-                      <span className="min-w-[120px] text-[13px] font-semibold text-[#6b5b52]">
+                      <span className="min-w-[120px] text-[13px] font-semibold text-[#6b7280]">
                         Member since
                       </span>
-                      <span className="break-words text-right text-[15px] text-[#2d2a26]">
+                      <span className="break-words text-right text-[15px] text-[#1f2937]">
                         {profile.createdAt}
                       </span>
                     </div>
                     <div className="flex flex-wrap items-start justify-between gap-4">
-                      <span className="min-w-[120px] text-[13px] font-semibold text-[#6b5b52]">
+                      <span className="min-w-[120px] text-[13px] font-semibold text-[#6b7280]">
                         Last updated
                       </span>
-                      <span className="break-words text-right text-[15px] text-[#2d2a26]">
+                      <span className="break-words text-right text-[15px] text-[#1f2937]">
                         {profile.updatedAt}
                       </span>
                     </div>

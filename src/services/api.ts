@@ -216,6 +216,23 @@ export interface Eclipse {
   sarosMember?: number;
 }
 
+export interface EclipsesResponse {
+  solar: Eclipse[];
+  lunar: Eclipse[];
+
+  solarTotal: number;
+  lunarTotal: number;
+
+  solarTotalPages: number;
+  lunarTotalPages: number;
+
+  page: number;
+  pageSize: number;
+
+  fromDate: string;
+  toDate: string;
+}
+
 export interface CareerGuidanceResponse {
   guidance: string;
   sections?: {
@@ -461,15 +478,26 @@ export const astroApi = {
     });
   },
 
-  async getEclipses(from: string, to: string): Promise<{ solar: Eclipse[]; lunar: Eclipse[] }> {
-    return request<{ solar: Eclipse[]; lunar: Eclipse[] }>(
-      ASTRO_BASE,
-      "/api/v1/astrology/transits/eclipses",
-      {
-        method: "GET",
-        params: { fromDate: from, toDate: to },
-      },
-    );
+  async getEclipses(params: {
+    fromDate: string;
+    toDate?: string;
+    limit?: number;
+    page?: number;
+    pageSize?: number;
+  }): Promise<EclipsesResponse> {
+    const query: Record<string, string> = {
+      fromDate: params.fromDate,
+    };
+
+    if (params.toDate) {query.toDate = params.toDate;}
+    if (params.limit) {query.limit = String(params.limit);}
+    if (params.page) {query.page = String(params.page);}
+    if (params.pageSize) {query.pageSize = String(params.pageSize);}
+
+    return request<EclipsesResponse>(ASTRO_BASE, "/api/v1/astrology/transits/eclipses", {
+      method: "GET",
+      params: query,
+    });
   },
 };
 

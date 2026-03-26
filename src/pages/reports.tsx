@@ -26,6 +26,8 @@ export default function ReportsPage() {
   const mainClass =
     "h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 ml-[250px]";
   const containerClass = "relative mx-auto max-w-[1200px]";
+  const primaryButtonClass =
+    "rounded-[14px] bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] px-6 py-3 text-[14px] font-bold text-white shadow-[0_8px_22px_rgba(236,72,153,0.35)] transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_14px_32px_rgba(124,58,237,0.45)] disabled:cursor-not-allowed disabled:opacity-60";
 
   const fetchData = useCallback(async () => {
     const t = token?.trim();
@@ -136,7 +138,7 @@ export default function ReportsPage() {
         <AppSidebar />
         <main className={mainClass}>
           <div className={containerClass}>
-            <h1 className="mb-6 text-[26px] font-bold tracking-[-0.01em] text-[#6b4423]">
+            <h1 className="text-[32px] font-extrabold tracking-tight bg-gradient-to-r from-[#7c3aed] via-[#db2777] to-[#d97706] bg-clip-text text-transparent">
               Premium Reports
             </h1>
             {error && <p className="mt-[10px] text-[14px] text-[#d32f2f]">{error}</p>}
@@ -145,7 +147,7 @@ export default function ReportsPage() {
             </p>
             <button
               type="button"
-              className="mt-[14px] rounded-[12px] bg-[linear-gradient(135deg,#8b5e34_0%,#6b4423_100%)] px-[20px] py-4 text-[16px] font-bold text-white shadow-[0_8px_24px_rgba(107,68,35,0.3)] transition-all duration-300 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-[2px] hover:bg-[linear-gradient(135deg,#a67a4a_0%,#7d5a3c_100%)] hover:shadow-[0_12px_36px_rgba(107,68,35,0.4)] disabled:cursor-not-allowed disabled:opacity-60"
+              className={primaryButtonClass}
               disabled={generating}
               onClick={handleGenerate}
             >
@@ -166,7 +168,7 @@ export default function ReportsPage() {
                         download
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="rounded-[8px] bg-[#6b4423] px-3 py-1 text-[0.85rem] text-white no-underline transition-colors duration-200 hover:bg-[#5c3a1f]"
+                        className={primaryButtonClass}
                       >
                         Download
                       </a>

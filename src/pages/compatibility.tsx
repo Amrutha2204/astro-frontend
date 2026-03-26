@@ -79,8 +79,8 @@ const tabBaseClass =
   "bg-transparent px-6 py-3 text-[16px] font-semibold transition-all duration-200";
 const sectionCardClass =
   "mt-[30px] rounded-[12px] bg-white p-[30px] shadow-[0_2px_8px_rgba(0,0,0,0.1)]";
-const brownButtonClass =
-  "rounded-[12px] bg-[#6b4423] px-6 py-3 text-[16px] font-semibold text-white transition-colors duration-200 hover:bg-[#5c3a1f] disabled:cursor-not-allowed disabled:opacity-60";
+const primaryButtonClass =
+  "rounded-[14px] bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] px-6 py-3 text-[14px] font-bold text-white shadow-[0_8px_22px_rgba(236,72,153,0.35)] transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_14px_32px_rgba(124,58,237,0.45)] disabled:cursor-not-allowed disabled:opacity-60";
 
 function getVerdictColorClass(verdict: string) {
   switch (verdict) {
@@ -145,7 +145,7 @@ function ResultActions({
               href={reportDownload.downloadUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block rounded-[8px] bg-[#1565c0] px-[18px] py-[10px] text-[14px] font-semibold text-white no-underline transition-colors duration-200 hover:bg-[#0d47a1]"
+              className={primaryButtonClass}
             >
               Download report
             </a>
@@ -154,7 +154,7 @@ function ResultActions({
               type="button"
               onClick={onGetPdfReport}
               disabled={reportPaying}
-              className="inline-block rounded-[8px] bg-[#2e7d32] px-[18px] py-[10px] text-[14px] font-semibold text-white transition-colors duration-200 hover:bg-[#1b5e20] disabled:cursor-not-allowed disabled:opacity-70"
+              className={primaryButtonClass + " inline-block no-underline"}
             >
               {reportPaying ? "Opening payment…" : "Get PDF report — ₹99"}
             </button>
@@ -162,27 +162,27 @@ function ResultActions({
         </div>
       )}
       {!reportUnlocked && (
-        <div className="my-6 rounded-[10px] border border-[#fde68a] bg-[#fef7ed] p-5">
-          <h3 className="text-[20px] font-bold text-[#6b4423]">Unlock full report</h3>
-          <p className="mb-4 mt-0 text-[14px] text-[#5c4033]">{leadGateText}</p>
+        <div className="my-6 rounded-[10px] border border-[#e9d5ff] bg-[#faf5ff] p-5">
+          <h3 className="text-[20px] font-bold text-[#1f2937]">Unlock full report</h3>
+          <p className="mb-4 mt-0 text-[14px] text-[#6b7280]">{leadGateText}</p>
           <div className="mb-3 flex max-w-[320px] flex-col gap-[10px]">
             <input
               type="email"
               placeholder="Enter your email"
               value={leadEmail}
               onChange={(e) => setLeadEmail(e.target.value)}
-              className="rounded-[8px] border border-[#e8ddd0] px-[14px] py-[10px] text-[15px] focus:border-[#6b4423] focus:outline-none"
+              className="rounded-[8px] border border-[#e9d5ff] px-[14px] py-[10px] text-[15px] focus:border-[#1f2937] focus:outline-none"
             />
             <button
               type="button"
               onClick={onUnlock}
               disabled={unlockLoading}
-              className={brownButtonClass}
+              className={primaryButtonClass}
             >
               {unlockLoading ? "Unlocking…" : "Get full report"}
             </button>
           </div>
-          <p className="m-0 text-[12px] text-[#6b5b52]">
+          <p className="m-0 text-[12px] text-[#6b7280]">
             We use your email only to send this report. No spam.
           </p>
         </div>
@@ -342,7 +342,12 @@ export default function CompatibilityPage() {
       showError("Please enter birth place for both partners");
       return false;
     }
-    if (partner1.gender && partner2.gender && partner1.gender === partner2.gender) {
+    if (!partner1.gender || !partner2.gender) {
+      showError("Please select gender for both partners");
+      return false;
+    }
+
+    if (partner1.gender === partner2.gender) {
       showError("Partners must have different genders for compatibility match.");
       return false;
     }
@@ -564,7 +569,7 @@ export default function CompatibilityPage() {
         <main className="ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]">
           <PageHeader onBack={() => router.back()} />
           <div className="relative mx-auto max-w-[1200px]">
-            <h1 className="mb-6 border-b-[2px] border-b-[#d4a574] pb-[14px] text-[26px] font-bold tracking-[-0.01em] text-[#6b4423]">
+            <h1 className="text-[25px] font-extrabold tracking-tight bg-gradient-to-r from-[#7c3aed] via-[#db2777] to-[#d97706] bg-clip-text text-transparent">
               Match Horoscope (Compatibility)
             </h1>
 
@@ -573,8 +578,8 @@ export default function CompatibilityPage() {
                 <button
                   className={
                     calculationType === "guna-milan"
-                      ? `${tabBaseClass} border-b-[3px] border-b-[#6b4423] text-[#6b4423]`
-                      : `${tabBaseClass} border-b-[3px] border-b-transparent text-[#6b7280] hover:text-[#6b4423]`
+                      ? `${tabBaseClass} border-b-[3px] border-b-[#7c3aed] text-[#7c3aed]`
+                      : `${tabBaseClass} border-b-[3px] border-b-transparent text-[#7c3aed] hover:text-[#7c3aed]`
                   }
                   onClick={() => {
                     setCalculationType("guna-milan");
@@ -590,8 +595,8 @@ export default function CompatibilityPage() {
                 <button
                   className={
                     calculationType === "marriage"
-                      ? `${tabBaseClass} border-b-[3px] border-b-[#6b4423] text-[#6b4423]`
-                      : `${tabBaseClass} border-b-[3px] border-b-transparent text-[#6b7280] hover:text-[#6b4423]`
+                      ? `${tabBaseClass} border-b-[3px] border-b-[#7c3aed] text-[#7c3aed]`
+                      : `${tabBaseClass} border-b-[3px] border-b-transparent text-[#7c3aed] hover:text-[#7c3aed]`
                   }
                   onClick={() => {
                     setCalculationType("marriage");
@@ -608,7 +613,7 @@ export default function CompatibilityPage() {
 
               <div className="mb-[30px] grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-[30px]">
                 <div className={partnerCardClass}>
-                  <h3 className="mb-5 border-b-[2px] border-b-[#e8ddd0] pb-[10px] text-[18px] font-semibold text-[#6b4423]">
+                  <h3 className="mb-5 border-b-[2px] border-b-[#e9d5ff] pb-[10px] text-[18px] font-semibold text-[#1f2937]">
                     Partner 1
                   </h3>
                   <div className="mb-[15px] grid grid-cols-2 gap-[15px]">
@@ -623,7 +628,7 @@ export default function CompatibilityPage() {
                       />
                     </div>
                     <div className={inputGroupClass}>
-                      <label className={fieldLabelClass}>Gender (Optional)</label>
+                      <label className={fieldLabelClass}>Gender *</label>
                       <select
                         value={partner1.gender}
                         onChange={(e) =>
@@ -635,7 +640,7 @@ export default function CompatibilityPage() {
                         <option value="male">Male</option>
                         <option value="female">Female</option>
                       </select>
-                      <p className="m-0 text-[12px] text-[#6b5b52]">
+                      <p className="m-0 text-[12px] text-[#6b7280]">
                         Partners must have different genders for match.
                       </p>
                     </div>
@@ -648,7 +653,7 @@ export default function CompatibilityPage() {
                         required
                         aria-label="Partner 1 birth place"
                       />
-                      <p className="m-0 text-[12px] text-[#6b5b52]">
+                      <p className="m-0 text-[12px] text-[#6b7280]">
                         City, town or village — start typing for suggestions worldwide.
                       </p>
                     </div>
@@ -700,8 +705,8 @@ export default function CompatibilityPage() {
                           onClick={() => setUnknownTime1((p) => !p)}
                           className={
                             unknownTime1
-                              ? "rounded-[8px] border border-[#b47b45] bg-[#e8d0a9] px-3 py-[6px] text-[12px] font-semibold text-[#5a3d2b]"
-                              : "rounded-[8px] border border-[#d9c3a1] bg-[#f5e6d3] px-3 py-[6px] text-[12px] text-[#5a3d2b] transition-colors duration-200 hover:bg-[#ebd4b8]"
+                              ? "rounded-[8px] border border-[var(--accent)] bg-[var(--accent-soft)] px-3 py-[6px] text-[12px] font-semibold text-[var(--accent)]"
+                              : "rounded-[8px] border border-gray-300 bg-white px-3 py-[6px] text-[12px] text-gray-600 hover:bg-gray-50"
                           }
                           aria-pressed={unknownTime1}
                         >
@@ -735,7 +740,7 @@ export default function CompatibilityPage() {
                         </div>
                       )}
                       {unknownTime1 && (
-                        <p className="m-0 text-[12px] text-[#6b5b52]">
+                        <p className="m-0 text-[12px] text-[#6b7280]">
                           Noon (12:00) will be used. Lagna may be approximate.
                         </p>
                       )}
@@ -744,7 +749,7 @@ export default function CompatibilityPage() {
                 </div>
 
                 <div className={partnerCardClass}>
-                  <h3 className="mb-5 border-b-[2px] border-b-[#e8ddd0] pb-[10px] text-[18px] font-semibold text-[#6b4423]">
+                  <h3 className="mb-5 border-b-[2px] border-b-[#e9d5ff] pb-[10px] text-[18px] font-semibold text-[#1f2937]">
                     Partner 2
                   </h3>
                   <div className="mb-[15px] grid grid-cols-2 gap-[15px]">
@@ -759,7 +764,7 @@ export default function CompatibilityPage() {
                       />
                     </div>
                     <div className={inputGroupClass}>
-                      <label className={fieldLabelClass}>Gender (Optional)</label>
+                      <label className={fieldLabelClass}>Gender *</label>
                       <select
                         value={partner2.gender}
                         onChange={(e) =>
@@ -771,8 +776,8 @@ export default function CompatibilityPage() {
                         <option value="male">Male</option>
                         <option value="female">Female</option>
                       </select>
-                      <p className="m-0 text-[12px] text-[#6b5b52]">
-                        Partners must have different genders for match.
+                      <p className="m-0 text-[12px] text-[#6b7280]">
+                        Required. Both partners must be different genders.
                       </p>
                     </div>
                     <div className={inputGroupClass}>
@@ -784,7 +789,7 @@ export default function CompatibilityPage() {
                         required
                         aria-label="Partner 2 birth place"
                       />
-                      <p className="m-0 text-[12px] text-[#6b5b52]">
+                      <p className="m-0 text-[12px] text-[#6b7280]">
                         Start typing to see city suggestions. Unrecognized names fall back to Delhi.
                       </p>
                     </div>
@@ -836,8 +841,8 @@ export default function CompatibilityPage() {
                           onClick={() => setUnknownTime2((p) => !p)}
                           className={
                             unknownTime2
-                              ? "rounded-[8px] border border-[#b47b45] bg-[#e8d0a9] px-3 py-[6px] text-[12px] font-semibold text-[#5a3d2b]"
-                              : "rounded-[8px] border border-[#d9c3a1] bg-[#f5e6d3] px-3 py-[6px] text-[12px] text-[#5a3d2b] transition-colors duration-200 hover:bg-[#ebd4b8]"
+                              ? "rounded-[8px] border border-[var(--accent)] bg-[var(--accent-soft)] px-3 py-[6px] text-[12px] font-semibold text-[var(--accent)]"
+                              : "rounded-[8px] border border-gray-300 bg-white px-3 py-[6px] text-[12px] text-gray-600 hover:bg-gray-50"
                           }
                           aria-pressed={unknownTime2}
                         >
@@ -871,7 +876,7 @@ export default function CompatibilityPage() {
                         </div>
                       )}
                       {unknownTime2 && (
-                        <p className="m-0 text-[12px] text-[#6b5b52]">
+                        <p className="m-0 text-[12px] text-[#6b7280]">
                           Noon (12:00) will be used. Lagna may be approximate.
                         </p>
                       )}
@@ -886,7 +891,7 @@ export default function CompatibilityPage() {
                     calculationType === "guna-milan" ? calculateGunaMilan : calculateMarriage
                   }
                   disabled={loading}
-                  className={brownButtonClass}
+                  className={primaryButtonClass}
                 >
                   {loading
                     ? "Calculating..."
@@ -897,7 +902,7 @@ export default function CompatibilityPage() {
 
             {gunaMilanResult && (
               <div className={sectionCardClass}>
-                <h2 className="mb-6 border-b-[2px] border-b-[#d4a574] pb-[14px] text-[26px] font-bold tracking-[-0.01em] text-[#6b4423]">
+                <h2 className="mb-6 border-b-[2px] border-b-[#e9d5ff] pb-[14px] text-[26px] font-bold tracking-[-0.01em] text-[#1f2937]">
                   Guna Milan Results
                 </h2>
                 {(!isCityRecognized(partner1.birthPlace) ||
@@ -919,7 +924,7 @@ export default function CompatibilityPage() {
 
                 <div className="px-5 py-[30px] text-center">
                   <div className="relative mx-auto my-[30px] w-[200px] animate-pulse">
-                    <svg viewBox="0 0 512 512" className="w-full fill-[#f796a8]">
+                    <svg viewBox="0 0 512 512" className="w-full fill-[#ec4899]">
                       <path d="M471.7 73.1c-54.5-46.4-136-38.3-186.4 13.7L256 116.6l-29.3-29.8C176.3 34.8 94.8 26.7 40.3 73.1-23.6 127.4-10.6 230.8 43 284.3l193.5 199.8c10.5 10.9 27.5 10.9 38 0L469 284.3c53.6-53.5 66.6-156.9 2.7-211.2z" />
                     </svg>
                     <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[55%] text-[38px] font-bold text-white">
@@ -968,7 +973,7 @@ export default function CompatibilityPage() {
                         <progress
                           value={guna.score}
                           max={guna.maxScore}
-                          className="mt-[10px] h-[6px] w-full overflow-hidden rounded-[6px] [&::-webkit-progress-bar]:bg-[#eee] [&::-webkit-progress-value]:rounded-[6px] [&::-webkit-progress-value]:bg-[#ff6b9d] [&::-moz-progress-bar]:bg-[#ff6b9d]"
+                          className="mt-[10px] h-[6px] w-full overflow-hidden rounded-[6px] [&::-webkit-progress-bar]:bg-[#eee] [&::-webkit-progress-value]:rounded-[6px] [&::-webkit-progress-value]:bg-[#7c3aed] [&::-moz-progress-bar]:bg-[#7c3aed]"
                         />
                       </div>
                     ))}
@@ -977,7 +982,7 @@ export default function CompatibilityPage() {
 
                 {selectedGunaIndex !== null && (
                   <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-[rgba(0,0,0,0.5)]">
-                    <div className="relative w-[90%] max-w-[450px] rounded-[12px] bg-[rgb(220,199,214)] p-[30px] text-center">
+                    <div className="relative w-[90%] max-w-[450px] rounded-[12px] bg-white p-[30px] text-center">
                       <button
                         className="absolute right-[10px] top-[10px] border-none bg-transparent text-[20px]"
                         onClick={() => setSelectedGunaIndex(null)}
@@ -999,12 +1004,14 @@ export default function CompatibilityPage() {
                       <p>{gunaMilanResult.gunas[selectedGunaIndex].description}</p>
                       <div className="mt-5 flex justify-between">
                         <button
+                          className="text-[#7c3aed] font-semibold disabled:opacity-40"
                           disabled={selectedGunaIndex === 0}
                           onClick={() => setSelectedGunaIndex((i) => i! - 1)}
                         >
                           ← Previous
                         </button>
                         <button
+                          className="text-[#7c3aed] font-semibold disabled:opacity-40"
                           disabled={selectedGunaIndex === gunaMilanResult.gunas.length - 1}
                           onClick={() => setSelectedGunaIndex((i) => i! + 1)}
                         >
@@ -1033,7 +1040,7 @@ export default function CompatibilityPage() {
 
             {marriageResult && (
               <div className={sectionCardClass}>
-                <h2 className="mb-6 border-b-[2px] border-b-[#d4a574] pb-[14px] text-[26px] font-bold tracking-[-0.01em] text-[#6b4423]">
+                <h2 className="mb-6 border-b-[2px] border-b-[#e9d5ff] pb-[14px] text-[26px] font-bold tracking-[-0.01em] text-[#1f2937]">
                   Marriage Compatibility Results
                 </h2>
                 {(!isCityRecognized(partner1.birthPlace) ||
@@ -1047,9 +1054,9 @@ export default function CompatibilityPage() {
                   </div>
                 )}
                 <div className="mb-[30px]">
-                  <div className="mx-auto max-w-[500px] rounded-[12px] border border-[#e8ddd0] bg-[linear-gradient(135deg,#f5ebe0_0%,#ede4d8_100%)] p-[30px] text-center">
-                    <h3 className="text-[20px] font-bold text-[#6b4423]">Guna Milan Score</h3>
-                    <p className="my-[10px] text-[2rem] font-semibold text-[#6b4423]">
+                  <div className="mx-auto max-w-[500px] rounded-[12px] border border-[#e9d5ff] bg-[linear-gradient(135deg,#faf5ff_0%,#f3e8ff_100%)] p-[30px] text-center">
+                    <h3 className="text-[20px] font-bold text-[#1f2937]">Guna Milan Score</h3>
+                    <p className="my-[10px] text-[2rem] font-semibold text-[#1f2937]">
                       {marriageResult.gunaMilan.totalScore} / {marriageResult.gunaMilan.maxScore}
                     </p>
                     <p
@@ -1077,7 +1084,7 @@ export default function CompatibilityPage() {
                 {reportUnlocked && (
                   <>
                     <div className="my-[30px] rounded-[8px] bg-[#f9fafb] p-5">
-                      <h3 className="text-[20px] font-bold text-[#6b4423]">Dosha Compatibility</h3>
+                      <h3 className="text-[20px] font-bold text-[#1f2937]">Dosha Compatibility</h3>
                       <div className="mt-[15px] flex flex-col gap-3">
                         <div className="rounded-[6px] bg-white p-[10px] text-[14px] text-[#374151]">
                           <strong>Manglik:</strong> {marriageResult.doshas.manglik}
@@ -1091,8 +1098,8 @@ export default function CompatibilityPage() {
                       </div>
                     </div>
 
-                    <div className="my-6 rounded-[8px] border-l-[4px] border-l-[#b45309] bg-[#fef7ed] p-5">
-                      <h3 className="text-[20px] font-bold text-[#6b4423]">Manglik impact</h3>
+                    <div className="my-6 rounded-[8px] border-l-[4px] border-l-[#7c3aed] bg-[#faf5ff] p-5">
+                      <h3 className="text-[20px] font-bold text-[#1f2937]">Manglik impact</h3>
                       <p className="mb-3 mt-0 text-[14px] leading-[1.6] text-[#374151]">
                         {marriageResult.doshas.manglik.toLowerCase().includes("cancel")
                           ? "When both partners are Manglik, the dosha is considered cancelled — no additional remedies are required for Manglik in this match."
@@ -1102,11 +1109,11 @@ export default function CompatibilityPage() {
                       </p>
                       {marriageResult.doshas.manglik.toLowerCase().includes("remed") && (
                         <ul className="m-0 list-none p-0">
-                          <li className="border-b border-b-[#fde68a] py-2 text-[14px] leading-[1.5] text-[#4b5563]">
+                          <li className="border-b border-b-[#e9d5ff] py-2 text-[14px] leading-[1.5] text-[#4b5563]">
                             <strong>Tuesday fasting:</strong> Observe a simple fast on Tuesdays, or
                             avoid non-veg and alcohol.
                           </li>
-                          <li className="border-b border-b-[#fde68a] py-2 text-[14px] leading-[1.5] text-[#4b5563]">
+                          <li className="border-b border-b-[#e9d5ff] py-2 text-[14px] leading-[1.5] text-[#4b5563]">
                             <strong>Hanuman mantra:</strong> Chant “Om Hanumate Namah” or “Hanuman
                             Chalisa” regularly for strength and calm.
                           </li>
@@ -1119,7 +1126,7 @@ export default function CompatibilityPage() {
                     </div>
 
                     {marriageResult.strengths.length > 0 && (
-                      <div className="my-5 rounded-[8px] bg-[#f9fafb] p-5">
+                      <div className="my-5 rounded-[8px] bg-[#faf5ff] p-5">
                         <h3 className="text-[20px] font-bold text-[#10b981]">Strengths</h3>
                         <ul className="m-0 mt-[15px] list-none p-0">
                           {marriageResult.strengths.map((strength, index) => (
@@ -1140,7 +1147,7 @@ export default function CompatibilityPage() {
                           {marriageResult.challenges.map((challenge, index) => (
                             <li
                               key={index}
-                              className="mb-2 rounded-[6px] border-l-[4px] border-l-[#6b4423] bg-white p-[10px] text-[14px] text-[#374151]"
+                              className="mb-2 rounded-[6px] border-l-[4px] border-l-[#1f2937] bg-white p-[10px] text-[14px] text-[#374151]"
                             >
                               {challenge}
                             </li>
@@ -1148,8 +1155,8 @@ export default function CompatibilityPage() {
                         </ul>
                       </div>
                     )}
-                    <div className="mt-[30px] rounded-[8px] border border-[#e8ddd0] bg-[linear-gradient(135deg,#f5ebe0_0%,#ede4d8_100%)] p-5 text-center">
-                      <h3 className="text-[20px] font-bold text-[#6b4423]">Overall Verdict</h3>
+                    <div className="mt-[30px] rounded-[8px] border border-[#e9d5ff] bg-[linear-gradient(135deg,#faf5ff_0%,#f3e8ff_100%)] p-5 text-center">
+                      <h3 className="text-[20px] font-bold text-[#1f2937]">Overall Verdict</h3>
                       <p className="mt-[10px] text-[16px] leading-[1.8] text-[#1f2937]">
                         {marriageResult.overallVerdict}
                       </p>
