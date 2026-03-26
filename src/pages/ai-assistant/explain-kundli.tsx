@@ -15,7 +15,8 @@ export default function ExplainKundliPage() {
   const [focus, setFocus] = useState<string>("overall");
   const [loading, setLoading] = useState(false);
   const [explanation, setExplanation] = useState<ExplainKundliResponse | null>(null);
-
+const primaryButtonClass =
+  "rounded-[14px] bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] px-6 py-3 text-[14px] font-bold text-white shadow-[0_8px_22px_rgba(236,72,153,0.35)] transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_14px_32px_rgba(124,58,237,0.45)] disabled:cursor-not-allowed disabled:opacity-60";
   useEffect(() => {
     if (!rehydrated) {
       return;
@@ -148,7 +149,7 @@ export default function ExplainKundliPage() {
                   <button
                     onClick={handleExplain}
                     disabled={loading}
-                    className="inline-flex items-center gap-[6px] rounded-[6px] border border-[#6b4423] bg-white px-4 py-2 text-[14px] font-medium text-[#6b4423] transition-colors duration-200 hover:bg-[#6b4423] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                    className={primaryButtonClass}
                   >
                     🔄 Regenerate Explanation
                   </button>

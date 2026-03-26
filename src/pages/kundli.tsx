@@ -78,6 +78,8 @@ export default function KundliPage() {
   const [chartSelection, setChartSelection] = useState<string>("lagna");
   const [reportPaying, setReportPaying] = useState(false);
   const [reportDownload, setReportDownload] = useState<GenerateReportResponse | null>(null);
+  const primaryButtonClass =
+  "rounded-[14px] bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] px-6 py-3 text-[14px] font-bold text-white shadow-[0_8px_22px_rgba(236,72,153,0.35)] transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_14px_32px_rgba(124,58,237,0.45)] disabled:cursor-not-allowed disabled:opacity-60";
 
   const zodiacSigns = [
     "Aries",
@@ -527,12 +529,7 @@ disabled:opacity-60 disabled:cursor-not-allowed"
                       type="button"
                       onClick={handleGetPdfReport}
                       disabled={reportPaying}
-                      className="inline-flex items-center justify-center rounded-xl
-bg-gradient-to-r from-rose-700 via-orange-600 to-amber-500
-px-6 py-2.5 text-sm font-semibold text-white
-shadow-lg transition-all duration-300
-hover:scale-105 hover:shadow-xl
-disabled:opacity-60 disabled:cursor-not-allowed"
+                      className={primaryButtonClass}
                     >
                       {reportPaying ? "Opening payment…" : "Get PDF report — ₹99"}
                     </button>

@@ -113,11 +113,14 @@ export default function TransitsPage() {
   const [majorLoading, setMajorLoading] = useState(false);
   const [majorError, setMajorError] = useState<string | null>(null);
 
-  const [eclipseFrom, setEclipseFrom] = useState("1900-01-01");
+  const [eclipseFrom, setEclipseFrom] = useState("2000-01-01");
   const [eclipseLoading, setEclipseLoading] = useState(false);
-  const [eclipseTo, setEclipseTo] = useState("2100-01-01");
+  const [eclipseTo, setEclipseTo] = useState("2050-01-01");
   const [solarEclipses, setSolarEclipses] = useState<Eclipse[]>([]);
   const [lunarEclipses, setLunarEclipses] = useState<Eclipse[]>([]);
+  const [page, setPage] = useState(1);
+const [pageSize] = useState(20);
+const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const rawUser = localStorage.getItem("user");
@@ -181,32 +184,49 @@ export default function TransitsPage() {
   const [eclipsesLoaded, setEclipsesLoaded] = useState(false);
 const [eclipsesFetching, setEclipsesFetching] = useState(false);
   const loadEclipsesSafe = useCallback(async () => {
-  if (eclipsesFetching) return; // prevent duplicate calls
+  if (eclipsesFetching) return;
 
   try {
     setEclipsesFetching(true);
     setEclipseLoading(true);
 
-    const data = await astroApi.getEclipses(eclipseFrom, eclipseTo);
+    const data = await astroApi.getEclipses({
+      fromDate: eclipseFrom,
+      toDate: eclipseTo,
+      page,
+      pageSize,
+    });
 
     setSolarEclipses(data.solar || []);
     setLunarEclipses(data.lunar || []);
-    setEclipsesLoaded(true); // ✅ mark only after success
+    const totalPages = Math.max(
+  data.solarTotalPages || 1,
+  data.lunarTotalPages || 1
+);
+
+setTotalPages(totalPages);
+    setEclipsesLoaded(true);
     setError(null);
   } catch {
     setError("Unable to load eclipses. Please try again later.");
-    setEclipsesLoaded(false); // allow retry
+    setEclipsesLoaded(false);
   } finally {
     setEclipseLoading(false);
     setEclipsesFetching(false);
   }
-}, [eclipseFrom, eclipseTo, eclipsesFetching]);
+}, [eclipseFrom, eclipseTo, page, pageSize, eclipsesFetching]);
 
   useEffect(() => {
   if (activeTab === "eclipses" && !eclipsesLoaded) {
     loadEclipsesSafe();
   }
 }, [activeTab, eclipsesLoaded, loadEclipsesSafe]);
+
+useEffect(() => {
+  if (activeTab === "eclipses") {
+    loadEclipsesSafe();
+  }
+}, [page]);
 
   const handleRefresh = useCallback(() => {
     if (activeTab === "today") {
@@ -526,7 +546,10 @@ const [eclipsesFetching, setEclipsesFetching] = useState(false);
                         type="date"
                         className="formDateInput"
                         value={eclipseFrom}
-                        onChange={(e) => setEclipseFrom(e.target.value)}
+                        onChange={(e) => {
+                          setEclipseFrom(e.target.value);
+                          setPage(1);
+                        }}
                       />
                     </div>
                   </div>
@@ -539,7 +562,10 @@ const [eclipsesFetching, setEclipsesFetching] = useState(false);
                         type="date"
                         className="formDateInput"
                         value={eclipseTo}
-                        onChange={(e) => setEclipseTo(e.target.value)}
+                        onChange={(e) => {
+                          setEclipseTo(e.target.value);
+                          setPage(1);
+                        }}
                       />
                     </div>
                   </div>
@@ -556,51 +582,114 @@ const [eclipsesFetching, setEclipsesFetching] = useState(false);
                 </div>
               </div>
 
-              <div className="grid gap-8">
-                <div className="rounded-[24px] border border-white/60 bg-gradient-to-br from-white/80 to-[#f8fafc] p-7 shadow-[0_14px_40px_rgba(0,0,0,0.10)] backdrop-blur">
-                  <h3 className="mb-5 text-[22px] font-bold text-[#6b4423]">🌞 Solar Eclipses</h3>
-                  {solarEclipses.length > 0 ? (
-                    <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-5">
-                      {solarEclipses
-                        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-                        .map((e) => (
-                          <div
-                            key={e.date}
-                            className="rounded-[18px] border border-[#fcd34d] bg-[linear-gradient(135deg,#fff7d6_0%,#ffefad_100%)] px-6 py-5 shadow-[0_4px_18px_rgba(0,0,0,0.05)]"
-                          >
-                            <div className="mb-2">
-                              <span className={badgeClass}>Solar</span>
-                            </div>
-                            <h4 className="mb-2 text-[18px] font-bold text-[#6b4423]">
-                              {formatDate(e.date)}
-                            </h4>
-                            <p className="mb-3 text-[14px] font-medium text-[#5b4534]">{e.type}</p>
-                            <div className="grid gap-2 text-[14px] text-[#4a4238]">
-                              {e.maximum && (
-                                <p>
-                                  <strong>Max:</strong> {new Date(e.maximum).toLocaleTimeString()}
-                                </p>
-                              )}
-                              {e.umbralMagnitude !== undefined && (
-                                <p>
-                                  <strong>Umbral:</strong> {e.umbralMagnitude.toFixed(2)}
-                                </p>
-                              )}
-                              {e.penumbralMagnitude !== undefined && (
-                                <p>
-                                  <strong>Penumbral:</strong> {e.penumbralMagnitude.toFixed(3)}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-                  ) : (
-                    <p className="rounded-[12px] border border-dashed border-[#d7cabf] bg-[#fffaf5] px-5 py-4 text-[14px] text-[#7a6658]">
-                      No solar eclipses in this period
-                    </p>
-                  )}
-                </div>
+              <div className="relative">
+  
+  {/* 🔥 Sticky Pagination Bar */}
+  {totalPages > 1 && (
+    <div className="sticky top-0 z-20 mb-6 flex items-center justify-between rounded-2xl 
+border border-white/40 
+bg-gradient-to-r from-[#faf5ff]/95 via-white/95 to-[#fff7ed]/95 
+px-6 py-4 
+shadow-[0_8px_30px_rgba(124,58,237,0.15)] 
+backdrop-blur-xl">
+      
+      {/* Left: Title */}
+      <div className="font-semibold text-gray-700">
+        Eclipse Results
+      </div>
+
+      {/* Center: Page Info */}
+      <div className="text-sm font-medium text-[#6b7280]">
+  Page{" "}
+  <span className="font-bold text-[#7c3aed]">{page}</span>
+  {" "}of{" "}
+  <span className="font-bold text-[#db2777]">{totalPages}</span>
+</div>
+
+      {/* Right: Controls */}
+      <div className="flex items-center gap-1">
+        <button
+          onClick={() => setPage(p => p - 1)}
+          disabled={page === 1}
+          className="rounded-xl px-4 py-2 text-sm font-semibold 
+text-[#6b7280] 
+bg-white/70 
+hover:bg-gradient-to-r hover:from-[#ede9fe] hover:to-[#fce7f3] 
+hover:text-[#7c3aed] 
+shadow-sm 
+transition-all duration-200 
+disabled:opacity-40"
+        >
+          ← Prev
+        </button>
+
+        <button
+          onClick={() => setPage(p => p + 1)}
+          disabled={page === totalPages}
+          className="rounded-lg px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100 disabled:opacity-40"
+        >
+          Next →
+        </button>
+      </div>
+    </div>
+  )}
+
+  {/* Content */}
+  <div className="rounded-[18px] bg-white p-6 shadow-[0_4px_18px_rgba(0,0,0,0.05)]">
+  <h3 className="mb-5 text-[22px] font-bold text-[#6b4423]">🌞 Solar Eclipses</h3>
+
+  {solarEclipses.length > 0 ? (
+    <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-5">
+      {solarEclipses
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+        .map((e) => (
+          <div
+            key={e.date}
+            className="rounded-[18px] border border-[#fcd34d] bg-[linear-gradient(135deg,#fff7d6_0%,#ffefad_100%)] px-6 py-5 shadow-[0_4px_18px_rgba(0,0,0,0.05)]"
+          >
+            <div className="mb-2">
+              <span className={badgeClass}>Solar</span>
+            </div>
+
+            <h4 className="mb-2 text-[18px] font-bold text-[#6b4423]">
+              {formatDate(e.date)}
+            </h4>
+
+            <p className="mb-3 text-[14px] font-medium text-[#5b4534]">
+              {e.type}
+            </p>
+
+            <div className="grid gap-2 text-[14px] text-[#4a4238]">
+              {e.maximum && (
+                <p>
+                  <strong>Max:</strong>{" "}
+                  {new Date(e.maximum).toLocaleTimeString()}
+                </p>
+              )}
+
+              {e.umbralMagnitude !== undefined && (
+                <p>
+                  <strong>Umbral:</strong>{" "}
+                  {e.umbralMagnitude.toFixed(2)}
+                </p>
+              )}
+
+              {e.penumbralMagnitude !== undefined && (
+                <p>
+                  <strong>Penumbral:</strong>{" "}
+                  {e.penumbralMagnitude.toFixed(3)}
+                </p>
+              )}
+            </div>
+          </div>
+        ))}
+    </div>
+  ) : (
+    <p className="rounded-[12px] border border-dashed border-[#d7cabf] bg-[#fffaf5] px-5 py-4 text-[14px] text-[#7a6658]">
+      No solar eclipses in this period
+    </p>
+  )}
+</div>
 
                 <div className="rounded-[18px] bg-white p-6 shadow-[0_4px_18px_rgba(0,0,0,0.05)]">
                   <h3 className="mb-5 text-[22px] font-bold text-[#6b4423]">🌕 Lunar Eclipses</h3>
@@ -647,6 +736,63 @@ const [eclipsesFetching, setEclipsesFetching] = useState(false);
                   )}
                 </div>
               </div>
+             {totalPages > 1 && (
+  <div className="mt-10 flex flex-col items-center gap-4">
+    
+    {/* Page Info */}
+    <div className="text-sm text-gray-500">
+      Page <span className="font-semibold text-gray-800">{page}</span> of{" "}
+      <span className="font-semibold text-gray-800">{totalPages}</span>
+    </div>
+
+    {/* Controls */}
+    <div className="flex items-center gap-1 rounded-full border border-gray-200 bg-white p-1 shadow-sm">
+      
+      {/* Prev */}
+      <button
+        onClick={() => setPage(p => p - 1)}
+        disabled={page === 1}
+        className="rounded-full px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        ←
+      </button>
+
+      {/* Page Numbers */}
+      {Array.from({ length: totalPages }, (_, i) => i + 1)
+        .filter(p => 
+          p === 1 ||
+          p === totalPages ||
+          Math.abs(p - page) <= 1
+        )
+        .map((p, i, arr) => (
+          <span key={p} className="flex items-center">
+            {i > 0 && arr[i - 1] !== p - 1 && (
+              <span className="px-2 text-gray-400">…</span>
+            )}
+            <button
+              onClick={() => setPage(p)}
+              className={`min-w-[36px] rounded-full px-3 py-2 text-sm font-semibold transition ${
+                page === p
+                  ? "bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow"
+                  : "text-gray-700 hover:bg-gray-100"
+              }`}
+            >
+              {p}
+            </button>
+          </span>
+        ))}
+
+      {/* Next */}
+      <button
+        onClick={() => setPage(p => p + 1)}
+        disabled={page === totalPages}
+        className="rounded-full px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        →
+      </button>
+    </div>
+  </div>
+)}
             </>
           )}
 

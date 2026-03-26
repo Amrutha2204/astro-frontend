@@ -46,7 +46,7 @@ const AppHeader = () => {
 
   return (
     <header
-      className="flex h-[56px] items-center justify-between px-6
+      className="flex h-[50px] items-center justify-between px-6
 bg-gradient-to-r from-rose-900 via-orange-800 to-amber-700
 text-white shadow-lg backdrop-blur-md border-b border-white/10"
     >

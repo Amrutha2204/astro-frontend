@@ -44,9 +44,7 @@ p-8 max-[768px]:ml-[200px]"
         >
           <div className="mx-auto w-full max-w-5xl p-2">
             <h2
-              className="mb-8 text-3xl font-bold tracking-wide
-bg-gradient-to-r from-rose-800 via-orange-700 to-amber-600
-bg-clip-text text-transparent"
+              className="text-[32px] font-extrabold tracking-tight bg-gradient-to-r from-[#7c3aed] via-[#db2777] to-[#d97706] bg-clip-text text-transparent"
             >
               Career Guidance
             </h2>

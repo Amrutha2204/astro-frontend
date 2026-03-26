@@ -73,6 +73,9 @@ export default function FamilyProfiles() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
+  const primaryButtonClass =
+  "rounded-[14px] bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] px-6 py-3 text-[14px] font-bold text-white shadow-[0_8px_22px_rgba(236,72,153,0.35)] transition-all duration-200 hover:-translate-y-[2px] active:scale-95 hover:shadow-[0_14px_32px_rgba(124,58,237,0.45)] disabled:cursor-not-allowed disabled:opacity-60";
+
   const [selectedMemberData, setSelectedMemberData] = useState<{
     kundli?: MemberKundli;
     calendar?: MemberCalendar;
@@ -270,21 +273,26 @@ export default function FamilyProfiles() {
   const getInitial = (name: string) => (name && name[0] ? name[0].toUpperCase() : "?");
 
   return (
-    <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_15%_20%,#ffe7d6_0%,transparent_35%),radial-gradient(circle_at_85%_10%,#e0f2fe_0%,transparent_40%),radial-gradient(circle_at_80%_80%,#ede9fe_0%,transparent_40%),linear-gradient(135deg,#fffaf5_0%,#f8f4ff_50%,#f0f9ff_100%)] text-[var(--text-main)]">
       <AppHeader />
       <div className="flex w-full">
         <AppSidebar />
         <main className="ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]">
           <div className="relative mx-auto max-w-[1200px]">
             <div className="mx-auto max-w-[920px]">
-              <div className="mb-7 flex flex-wrap items-center justify-between gap-3">
-                <h1 className="m-0 text-[28px] font-bold text-[#2d2a26]">Family Profiles</h1>
-                <span className="text-[14px] font-medium text-[#6b5b52]">
-                  {profiles.length} / {MAX_FREE_MEMBERS} members
-                </span>
-              </div>
+              <div className="mb-10 text-center">
+  <h1 className="text-[36px] font-extrabold tracking-tight bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] bg-clip-text text-transparent drop-shadow-sm">
+    Family Profiles ✨
+  </h1>
+  <p className="mt-2 text-[14px] text-gray-500">
+    Manage your loved ones' astrology insights
+  </p>
+  <span className="mt-2 inline-block text-[13px] font-medium text-gray-600">
+    {profiles.length} / {MAX_FREE_MEMBERS} members
+  </span>
+</div>
 
-              <div className="mb-7 rounded-[16px] border border-[#e8dfd2] bg-white px-8 py-7 shadow-[0_4px_20px_rgba(0,0,0,0.06)]">
+              <div className="mb-7 rounded-[20px] border border-white/40 bg-white/70 px-8 py-7 shadow-[0_10px_30px_rgba(139,94,52,0.12)] backdrop-blur-[10px]">
                 <h2 className="mb-5 border-b border-b-[#f0ebe3] pb-3 text-[18px] font-semibold text-[#2d2a26]">
                   {editingId ? "Edit member" : "Add family member"}
                 </h2>
@@ -296,7 +304,7 @@ export default function FamilyProfiles() {
                       </label>
                       <input
                         id="fp-name"
-                        className="rounded-[10px] border border-[#e0d4c4] bg-[#fdfcfa] px-[14px] py-3 text-[14px] text-[#2d2a26] placeholder:text-[#9c8b73] focus:border-[#6b4423] focus:outline-none focus:ring-[3px] focus:ring-[rgba(107,68,35,0.1)]"
+                        className="rounded-[12px] border border-[#e5e7eb] bg-white px-[14px] py-3 text-[14px] text-[#1f2937] placeholder:text-[#9ca3af] focus:border-[#7c3aed] focus:outline-none focus:ring-[3px] focus:ring-[rgba(124,58,237,0.15)] transition"
                         placeholder="Full name"
                         value={form.name}
                         onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -350,7 +358,7 @@ export default function FamilyProfiles() {
                       </label>
                       <input
                         id="fp-relation"
-                        className="rounded-[10px] border border-[#e0d4c4] bg-[#fdfcfa] px-[14px] py-3 text-[14px] text-[#2d2a26] placeholder:text-[#9c8b73] focus:border-[#6b4423] focus:outline-none focus:ring-[3px] focus:ring-[rgba(107,68,35,0.1)]"
+                        className="rounded-[12px] border border-[#e5e7eb] bg-white px-[14px] py-3 text-[14px] text-[#1f2937] placeholder:text-[#9ca3af] focus:border-[#7c3aed] focus:outline-none focus:ring-[3px] focus:ring-[rgba(124,58,237,0.15)] transition"
                         placeholder="e.g. Mother, Father"
                         value={form.relation}
                         onChange={(e) => setForm({ ...form, relation: e.target.value })}
@@ -360,7 +368,7 @@ export default function FamilyProfiles() {
                   <div className="mt-5 flex flex-wrap items-center gap-4">
                     <button
                       type="submit"
-                      className="rounded-[10px] bg-[linear-gradient(135deg,#7d5a3c_0%,#6b4423_100%)] px-6 py-3 text-[15px] font-semibold text-white shadow-[0_2px_8px_rgba(107,68,35,0.25)] transition-all duration-200 hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(107,68,35,0.3)] disabled:cursor-not-allowed disabled:opacity-70 disabled:transform-none"
+                      className={primaryButtonClass}
                       disabled={isSubmitting}
                     >
                       {isSubmitting ? "Saving…" : editingId ? "Update profile" : "Add member"}
@@ -376,7 +384,7 @@ export default function FamilyProfiles() {
                       </p>
                       <button
                         type="button"
-                        className="rounded-[10px] bg-[linear-gradient(135deg,#7d5a3c_0%,#6b4423_100%)] px-5 py-[10px] text-[14px] font-semibold text-white shadow-[0_2px_8px_rgba(107,68,35,0.2)] transition-all duration-200 hover:-translate-y-[1px] hover:shadow-[0_4px_12px_rgba(107,68,35,0.3)]"
+                        className={primaryButtonClass}
                         onClick={() => setShowSubscribeModal(true)}
                       >
                         Subscribe
@@ -395,7 +403,7 @@ export default function FamilyProfiles() {
                   <Loading text="Loading family profiles..." variant="page" />
                 </div>
               ) : profiles.length === 0 ? (
-                <div className="rounded-[16px] border border-dashed border-[#e0d4c4] bg-[#fdfcfa] px-6 py-12 text-center">
+                <div className="rounded-[12px] border border-[#e5e7eb] bg-white px-[14px] py-3 text-[14px] text-[#1f2937] placeholder:text-[#9ca3af] focus:border-[#7c3aed] focus:outline-none focus:ring-[3px] focus:ring-[rgba(124,58,237,0.15)] transition">
                   <div className="mb-4 text-[48px] opacity-60">👨‍👩‍👧‍👦</div>
                   <div className="mb-2 text-[18px] font-semibold text-[#4a4238]">
                     No family members yet
@@ -410,10 +418,10 @@ export default function FamilyProfiles() {
                   {profiles.map((p) => (
                     <div
                       key={p.id}
-                      className="rounded-[14px] border border-[#e8dfd2] bg-white px-6 py-[22px] shadow-[0_2px_12px_rgba(0,0,0,0.05)] transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_8px_24px_rgba(107,68,35,0.1)]"
+                      className="rounded-[18px] border border-white/40 bg-white/70 backdrop-blur-[8px] px-6 py-[22px] shadow-[0_8px_28px_rgba(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-[4px] hover:shadow-[0_18px_40px_rgba(124,58,237,0.25)]"
                     >
                       <div className="mb-[14px] flex items-start justify-between gap-3">
-                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[12px] bg-[linear-gradient(135deg,#e8ddd0_0%,#d4c4b0_100%)] text-[20px] font-bold text-[#6b4423]">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[12px] bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 text-white shadow-md">
                           {getInitial(p.name)}
                         </div>
                         <div className="text-[18px] font-semibold leading-[1.3] text-[#2d2a26]">
@@ -445,7 +453,7 @@ export default function FamilyProfiles() {
                       <div className="flex flex-wrap gap-2 border-t border-t-[#f0ebe3] pt-[14px]">
                         <button
                           type="button"
-                          className="rounded-[8px] border border-[#e0d4c4] bg-[#f5f0e8] px-[14px] py-2 text-[13px] font-medium text-[#6b4423] transition-colors duration-200 hover:bg-[#ebe4d8]"
+                          className="rounded-[12px] border border-[#e5e7eb] bg-white/80 backdrop-blur-[12px] px-[14px] py-3 text-[14px] text-[#1f2937] placeholder:text-[#9ca3af] focus:border-[#7c3aed] focus:outline-none focus:ring-[3px] focus:ring-[rgba(124,58,237,0.15)] transition"
                           onClick={() => handleEdit(p)}
                         >
                           Edit
@@ -459,7 +467,7 @@ export default function FamilyProfiles() {
                         </button>
                         <button
                           type="button"
-                          className="rounded-[8px] bg-[linear-gradient(135deg,#7d5a3c_0%,#6b4423_100%)] px-[14px] py-2 text-[13px] font-medium text-white shadow-[0_2px_6px_rgba(107,68,35,0.2)] transition-all duration-200 hover:-translate-y-[1px] hover:shadow-[0_4px_10px_rgba(107,68,35,0.25)]"
+                          className={primaryButtonClass}
                           onClick={() => viewMemberData(p)}
                         >
                           View astrology
@@ -476,7 +484,7 @@ export default function FamilyProfiles() {
 
       {showDeleteModal && (
         <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-[rgba(0,0,0,0.45)] p-5">
-          <div className="relative w-full max-w-[420px] rounded-[16px] bg-white px-8 py-7 shadow-[0_20px_50px_rgba(0,0,0,0.2)]">
+          <div className="relative w-full max-w-[420px] rounded-[16px] bg-white/80 backdrop-blur-[12px] px-8 py-7 shadow-[0_20px_50px_rgba(0,0,0,0.2)]">
             <h3 className="mb-3 text-center text-[20px] font-semibold text-[#2d2a26]">
               Delete member?
             </h3>
@@ -505,7 +513,7 @@ export default function FamilyProfiles() {
 
       {showErrorModal && (
         <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-[rgba(0,0,0,0.45)] p-5">
-          <div className="relative w-full max-w-[420px] rounded-[16px] bg-white px-8 py-7 shadow-[0_20px_50px_rgba(0,0,0,0.2)]">
+          <div className="relative w-full max-w-[420px] rounded-[16px] bg-white/80 backdrop-blur-[12px] px-8 py-7 shadow-[0_20px_50px_rgba(0,0,0,0.2)]">
             <h3 className="mb-3 text-center text-[20px] font-semibold text-[#2d2a26]">Error</h3>
             <p className="mb-6 text-center text-[15px] leading-[1.5] text-[#4a4238]">
               {errorMessage}
@@ -525,7 +533,7 @@ export default function FamilyProfiles() {
 
       {showModal && (
         <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-[rgba(0,0,0,0.45)] p-5">
-          <div className="relative max-h-[90vh] w-full max-w-[560px] overflow-y-auto rounded-[16px] bg-white px-8 py-7 shadow-[0_20px_50px_rgba(0,0,0,0.2)]">
+          <div className="relative max-h-[90vh] w-full max-w-[560px] overflow-y-auto rounded-[16px] bg-white/80 backdrop-blur-[12px] px-8 py-7 shadow-[0_20px_50px_rgba(0,0,0,0.2)]">
             <button
               type="button"
               className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-[10px] border-none bg-[#f5f0e8] text-[22px] leading-none text-[#4a4238] transition-colors duration-200 hover:bg-[#e8dfd2]"
@@ -622,7 +630,7 @@ export default function FamilyProfiles() {
 
       {showSubscribeModal && (
         <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-[rgba(0,0,0,0.45)] p-5">
-          <div className="relative w-full max-w-[420px] rounded-[16px] bg-white px-8 py-7 shadow-[0_20px_50px_rgba(0,0,0,0.2)]">
+          <div className="relative w-full max-w-[420px] rounded-[16px] bg-white/80 backdrop-blur-[12px] px-8 py-7 shadow-[0_20px_50px_rgba(0,0,0,0.2)]">
             <h3 className="mb-3 text-center text-[20px] font-semibold text-[#2d2a26]">
               Add more members
             </h3>

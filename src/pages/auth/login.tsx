@@ -158,7 +158,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   placeholder=" "
-                  className={`peer w-full px-4 pt-5 pb-2 pr-12 rounded-xl 
+                  className={`peer w-full px-4 pt-5 pb-2 rounded-xl 
     bg-white/70 dark:bg-gray-700/70 
     border ${!password ? "border-amber-200" : "border-amber-400"} 
     focus:outline-none focus:ring-2 focus:ring-amber-400`}
@@ -178,12 +178,14 @@ export default function LoginPage() {
 
                 {/* 👁 Toggle */}
                 <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-sm"
-                >
-                  {showPassword ? "🙈" : "👁"}
-                </button>
+  type="button"
+  onClick={() => setShowPassword(!showPassword)}
+  className="absolute right-3 top-0 h-full flex items-center text-lg -mt-5"
+>
+  <span className="block -translate-y-[2px]">
+    {showPassword ? "🙈" : "👁"}
+  </span>
+</button>
 
                 {/* Validation */}
                 {!password && <p className="text-xs text-red-500 mt-1">Password is required</p>}

@@ -11,6 +11,9 @@ import {
 import { showError, showSuccess } from "@/utils/toast";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
 
+const primaryButtonClass =
+  "rounded-[14px] bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] px-6 py-3 text-[14px] font-bold text-white shadow-[0_8px_22px_rgba(236,72,153,0.35)] transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_14px_32px_rgba(124,58,237,0.45)] disabled:cursor-not-allowed disabled:opacity-60";
+
 const REDIRECT_DELAY_MS = 2000;
 
 type RazorpayHandlerPayload = {
@@ -182,7 +185,7 @@ export default function PaymentPage() {
         <AppSidebar />
         <main className="ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]">
           <div className="relative mx-auto max-w-[1200px]">
-            <h1 className="mb-6 border-b-[2px] border-b-[#d4a574] pb-[14px] text-[26px] font-bold tracking-[-0.01em] text-[#6b4423]">
+            <h1 className="text-[32px] font-extrabold tracking-tight bg-gradient-to-r from-[#7c3aed] via-[#db2777] to-[#d97706] bg-clip-text text-transparent">
               Wallet &amp; Payment
             </h1>
             {error && <p className="text-[18px] font-semibold text-[#6b4423]">{error}</p>}
@@ -210,7 +213,7 @@ export default function PaymentPage() {
                 <button
                   type="submit"
                   disabled={creating}
-                  className="inline-flex items-center justify-center rounded-[12px] border-none bg-[#6b4423] px-[28px] py-3 text-[16px] font-bold text-white shadow-[0_4px_14px_rgba(139,94,52,0.25)] transition-colors duration-200 hover:bg-[#5c3a1f] disabled:cursor-not-allowed disabled:opacity-60"
+                  className={primaryButtonClass}
                 >
                   {creating ? "Creating…" : "Pay with Razorpay"}
                 </button>
