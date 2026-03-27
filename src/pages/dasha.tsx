@@ -24,18 +24,21 @@ export default function DashaPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showTimeline, setShowTimeline] = useState(false);
-  const pageClass = "min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]";
-  const contentClass = "flex w-full";
+  const pageClass =
+    "min-h-screen bg-[radial-gradient(circle_at_15%_20%,#ffe7d6_0%,transparent_35%),radial-gradient(circle_at_85%_10%,#e0f2fe_0%,transparent_40%),radial-gradient(circle_at_80%_80%,#ede9fe_0%,transparent_40%),linear-gradient(135deg,#fffaf5_0%,#f8f4ff_50%,#f0f9ff_100%)] text-[var(--text-main)]";
+
   const mainClass =
-    "ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]";
-  const containerClass = "relative mx-auto max-w-[1200px]";
+    "ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-white/70 backdrop-blur-[6px] p-8 max-[768px]:ml-[200px]";
+  const contentClass = "flex w-full";
+  const containerClass = "relative mx-auto max-w-[1200px] space-y-8";
   const sectionTitleClass =
-    "mb-6 border-b-[2px] border-b-[#d4a574] pb-[14px] text-[26px] font-bold tracking-[-0.01em] text-[#6b4423]";
+    "text-[32px] font-extrabold tracking-tight bg-gradient-to-r from-[#7c3aed] via-[#db2777] to-[#d97706] bg-clip-text text-transparent";
   const infoGridClass = "mt-4 grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-[14px]";
   const infoCardClass =
-    "rounded-[12px] border border-[#e8ddd0] bg-white p-5 shadow-[0_2px_8px_rgba(0,0,0,0.08)]";
-  const activeCardClass =
-    "bg-[linear-gradient(135deg,#fdf8f3_0%,#f5ebe0_100%)] border-l-[4px] border-l-[#6b4423]";
+    "group relative overflow-hidden rounded-[22px] border border-white/60 bg-gradient-to-br from-white via-[#fff7ed] to-[#f3e8ff] p-6 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(124,58,237,0.18)]";
+  const activeCardClass = "border border-[#e9d5ff] bg-gradient-to-br from-[#faf5ff] to-[#fdf4ff]";
+  const primaryButtonClass =
+    "rounded-[14px] bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] px-6 py-3 text-[14px] font-bold text-white shadow-[0_8px_22px_rgba(236,72,153,0.35)] transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_14px_32px_rgba(124,58,237,0.45)] disabled:cursor-not-allowed disabled:opacity-60";
 
   const fetchDasha = useCallback(async () => {
     const t = token?.trim();
@@ -101,7 +104,9 @@ export default function DashaPage() {
   if (loading) {
     return (
       <div className={pageClass}>
-        <AppHeader />
+        <div className="sticky top-0 z-60">
+          <AppHeader />
+        </div>
         <div className={contentClass}>
           <AppSidebar />
           <main className={mainClass}>
@@ -122,16 +127,10 @@ export default function DashaPage() {
             <div className="flex min-h-[400px] flex-col items-center justify-center gap-5">
               <ErrorMessage message={error} />
               <div className="flex gap-[10px]">
-                <button
-                  onClick={fetchDasha}
-                  className="flex items-center gap-[6px] rounded-[6px] bg-[#6b4423] px-4 py-2 text-[14px] font-medium text-white transition-all duration-200 hover:-translate-x-[2px] hover:bg-[#5c3a1f]"
-                >
+                <button onClick={fetchDasha} className={primaryButtonClass}>
                   🔄 Retry
                 </button>
-                <button
-                  onClick={() => router.push("/auth/login")}
-                  className="flex items-center gap-[6px] rounded-[6px] bg-[#6b4423] px-4 py-2 text-[14px] font-medium text-white transition-all duration-200 hover:-translate-x-[2px] hover:bg-[#5c3a1f]"
-                >
+                <button onClick={() => router.push("/auth/login")} className={primaryButtonClass}>
                   Go to Login
                 </button>
               </div>
@@ -161,10 +160,10 @@ export default function DashaPage() {
 
             {currentDasha && (
               <>
-                <span className="inline-flex rounded-[999px] bg-[#6b4423] px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.05em] text-white">
+                <span className="inline-flex rounded-[999px] bg-gradient-to-r from-[#7c3aed] to-[#ec4899] text-white px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.05em]">
                   You are here
                 </span>
-                <p className="mt-2 rounded-[6px] border-l-[3px] border-l-[#6b4423] bg-[#faf8f5] px-3 py-2 text-[14px] italic text-[#5c4033]">
+                <p className="mt-2 rounded-[6px] border-l-[#7c3aed] bg-white/60 text-slate-700">
                   You’re in this period because your birth chart places you in{" "}
                   {currentDasha.mahadasha} from {formatDate(currentDasha.startDate)}.
                 </p>
@@ -173,7 +172,7 @@ export default function DashaPage() {
                     <h3 className="mb-2 text-[16px] font-semibold text-[#1f2937]">
                       Current Mahadasha
                     </h3>
-                    <p className="text-[20px] font-bold text-[#845127]">{currentDasha.mahadasha}</p>
+                    <p className="text-[20px] font-bold text-[#7c3aed]">{currentDasha.mahadasha}</p>
                     <p className="mt-2 text-[14px] text-[#6b7280]">Planet: {currentDasha.planet}</p>
                   </div>
 
@@ -181,7 +180,7 @@ export default function DashaPage() {
                     <h3 className="mb-2 text-[16px] font-semibold text-[#1f2937]">
                       Current Antardasha
                     </h3>
-                    <p className="text-[20px] font-bold text-[#845127]">
+                    <p className="text-[20px] font-bold text-[#7c3aed]">
                       {currentDasha.antardasha}
                     </p>
                     {currentDasha.pratyantardasha && (
@@ -193,7 +192,7 @@ export default function DashaPage() {
 
                   <div className={infoCardClass}>
                     <h3 className="mb-2 text-[16px] font-semibold text-[#1f2937]">Period</h3>
-                    <p className="text-[20px] font-bold text-[#845127]">
+                    <p className="text-[20px] font-bold text-[#7c3aed]">
                       {formatDate(currentDasha.startDate)}
                     </p>
                     <p className="mt-2 text-[14px] text-[#6b7280]">
@@ -203,7 +202,7 @@ export default function DashaPage() {
 
                   <div className={infoCardClass}>
                     <h3 className="mb-2 text-[16px] font-semibold text-[#1f2937]">Time left</h3>
-                    <p className="text-[20px] font-bold text-[#845127]">
+                    <p className="text-[20px] font-bold text-[#7c3aed]">
                       {currentDasha.remainingDays}
                     </p>
                     <p className="mt-2 text-[14px] text-[#6b7280]">days in this period</p>
@@ -218,7 +217,7 @@ export default function DashaPage() {
               <div className="mt-5 text-center">
                 <button
                   onClick={fetchTimeline}
-                  className="mx-auto block w-full max-w-[300px] rounded-[8px] bg-[#6b4423] px-6 py-[14px] text-[16px] font-semibold text-white transition-all duration-200 hover:-translate-y-px hover:bg-[#5c3a1f] hover:shadow-[0_4px_12px_rgba(107,68,35,0.25)]"
+                  className={`${primaryButtonClass} mx-auto w-full max-w-[300px]`}
                 >
                   View 10-Year Timeline
                 </button>
@@ -245,14 +244,14 @@ export default function DashaPage() {
                       return (
                         <div
                           key={index}
-                          className={`rounded-[8px] border-l-[4px] border-l-[#6b4423] bg-[#f9fafb] p-5 transition-all duration-200 hover:translate-x-1 hover:shadow-[0_2px_8px_rgba(0,0,0,0.1)] ${isCurrent ? "bg-[linear-gradient(135deg,#fdf8f3_0%,#f5ebe0_100%)]" : ""} ${isPast ? "opacity-70" : ""}`}
+                          className={`rounded-[8px] border-l-[4px] border-l-[#7c3aed] bg-white/70 backdrop-blur p-5 transition-all duration-200 hover:translate-x-1 hover:shadow-[0_2px_8px_rgba(0,0,0,0.1)] ${isCurrent ? "bg-gradient-to-r from-[#ede9fe] to-[#fce7f3]" : ""} ${isPast ? "opacity-70" : ""}`}
                         >
                           {(isCurrent || isNext) && (
                             <span
                               className={
                                 isCurrent
-                                  ? "mb-3 inline-flex rounded-[999px] bg-[#6b4423] px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.05em] text-white"
-                                  : "mb-3 inline-flex rounded-[999px] bg-[#f5ebe0] px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.05em] text-[#6b4423]"
+                                  ? "mb-3 inline-flex rounded-[999px] bg-gradient-to-r from-[#7c3aed] to-[#ec4899] text-white px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.05em]"
+                                  : "mb-3 inline-flex rounded-[999px] bg-[#ede9fe] px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.05em] text-[#7c3aed]"
                               }
                             >
                               {isCurrent ? "You are here" : "Up next"}
@@ -264,12 +263,12 @@ export default function DashaPage() {
                             <strong>{formatDate(period.endDate)}</strong>
                           </div>
                           <div className="flex flex-wrap items-center gap-[15px]">
-                            <div className="min-w-20 rounded-[6px] bg-[#6b4423] px-3 py-[6px] text-center text-[14px] font-semibold text-white">
+                            <div className="min-w-20 rounded-[6px] bg-gradient-to-r from-[#7c3aed] to-[#ec4899] text-white px-3 py-[6px] text-center text-[14px] font-semibold">
                               {period.planet}
                             </div>
                             <div className="flex-1 text-[16px] font-semibold text-[#1f2937]">
-                              <span className="text-[#6b4423]">{period.dasha}</span>
-                              <span className="text-[#5c4033]"> / {period.antardasha}</span>
+                              <span className="text-[#7c3aed]">{period.dasha}</span>
+                              <span className="text-slate-600"> / {period.antardasha}</span>
                               {period.pratyantardasha && (
                                 <span className="text-[14px] text-[#6b4423]">
                                   {" "}

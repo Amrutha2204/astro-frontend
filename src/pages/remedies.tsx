@@ -181,6 +181,9 @@ export default function RemediesPage() {
     }
   };
 
+  const primaryButtonClass =
+    "rounded-[14px] bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] px-6 py-3 text-[14px] font-bold text-white shadow-[0_8px_22px_rgba(236,72,153,0.35)] transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_14px_32px_rgba(124,58,237,0.45)] disabled:cursor-not-allowed disabled:opacity-60";
+
   const fetchRemedies = useCallback(async () => {
     const t = token?.trim();
     if (!t || t.split(".").length !== 3) {
@@ -280,7 +283,7 @@ export default function RemediesPage() {
               refreshAriaLabel="Refresh remedies"
               disableRefresh={loading}
             />
-            <h1 className="mb-6 border-b-[2px] border-b-[#d4a574] pb-[14px] text-[26px] font-bold tracking-[-0.01em] text-[#6b4423]">
+            <h1 className="text-[32px] font-extrabold tracking-tight bg-gradient-to-r from-[#7c3aed] via-[#db2777] to-[#d97706] bg-clip-text text-transparent">
               Astrological Remedies
             </h1>
             <p className="mb-[30px] text-[#6b7280]">
@@ -335,7 +338,7 @@ export default function RemediesPage() {
                         {remedyCategories.find((c) => c.id === expandedCategory)?.name}
                       </h2>
                       <button
-                        className="flex h-9 w-9 items-center justify-center rounded-full border-none bg-[#6b4423] text-[18px] text-white transition-all duration-200 hover:rotate-90 hover:bg-[#5c3a1f]"
+                        className={primaryButtonClass}
                         onClick={() => setExpandedCategory(null)}
                       >
                         ✕

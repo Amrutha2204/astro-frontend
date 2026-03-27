@@ -104,7 +104,7 @@ export default function AIChatPage() {
           <PageHeader title="AI Astrology Assistant" onBack={() => router.back()} />
 
           <div className="relative mx-auto max-w-[1200px]">
-            <h1 className="mb-6 border-b-[2px] border-b-[#d4a574] pb-[14px] text-[26px] font-bold tracking-[-0.01em] text-[#6b4423]">
+            <h1 className="text-[32px] font-extrabold tracking-tight bg-gradient-to-r from-[#7c3aed] via-[#db2777] to-[#d97706] bg-clip-text text-transparent">
               AI Astrology Assistant
             </h1>
             <p className="text-sm text-gray-500 mb-6">
