@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/router";
+import { useRef } from "react";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
 import PageHeader from "@/components/layout/PageHeader";
@@ -90,6 +91,7 @@ const cardClass =
 export default function TransitsPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const eclipsesFetchingRef = useRef(false);
   const [place, setPlace] = useState("");
   const [storedUser, setStoredUser] = useState<StoredUser | null>(null);
   const [activeTab, setActiveTab] = useState<TabId>("today");
@@ -184,10 +186,10 @@ export default function TransitsPage() {
   const [eclipsesLoaded, setEclipsesLoaded] = useState(false);
   const [eclipsesFetching, setEclipsesFetching] = useState(false);
   const loadEclipsesSafe = useCallback(async () => {
-    if (eclipsesFetching) {return;}
+    if (eclipsesFetchingRef.current) return;
 
     try {
-      setEclipsesFetching(true);
+      eclipsesFetchingRef.current = true;
       setEclipseLoading(true);
 
       const data = await astroApi.getEclipses({
@@ -209,21 +211,15 @@ export default function TransitsPage() {
       setEclipsesLoaded(false);
     } finally {
       setEclipseLoading(false);
-      setEclipsesFetching(false);
+      eclipsesFetchingRef.current = false;
     }
-  }, [eclipseFrom, eclipseTo, page, pageSize, eclipsesFetching]);
+  }, [eclipseFrom, eclipseTo, page, pageSize]);
 
   useEffect(() => {
-    if (activeTab === "eclipses" && !eclipsesLoaded) {
-      loadEclipsesSafe();
-    }
-  }, [activeTab, eclipsesLoaded, loadEclipsesSafe]);
+  if (activeTab !== "eclipses") return;
 
-  useEffect(() => {
-    if (activeTab === "eclipses") {
-      loadEclipsesSafe();
-    }
-  }, [page, activeTab, loadEclipsesSafe]);
+  loadEclipsesSafe();
+}, [page, activeTab]);
 
   const handleRefresh = useCallback(() => {
     if (activeTab === "today") {
@@ -582,14 +578,15 @@ export default function TransitsPage() {
               <div className="relative">
                 {/* 🔥 Sticky Pagination Bar */}
                 {totalPages > 1 && (
-                  <div
-                    className="sticky top-0 z-20 mb-6 flex items-center justify-between rounded-2xl 
-border border-white/40 
-bg-gradient-to-r from-[#faf5ff]/95 via-white/95 to-[#fff7ed]/95 
-px-6 py-4 
-shadow-[0_8px_30px_rgba(124,58,237,0.15)] 
-backdrop-blur-xl"
-                  >
+                 <div
+  className="sticky top-[70px] z-50 
+  mb-6 flex items-center justify-between rounded-2xl
+  border border-white/40 
+  bg-white/90 
+  px-6 py-4 
+  shadow-[0_8px_30px_rgba(0,0,0,0.12)] 
+  backdrop-blur-lg"
+>
                     {/* Left: Title */}
                     <div className="font-semibold text-gray-700">Eclipse Results</div>
 

@@ -24,7 +24,7 @@ export default function Dashboard() {
     "min-h-screen bg-gradient-to-br from-rose-50 via-orange-50 to-amber-50 text-slate-800";
   const contentClass = "flex w-full";
   const mainClass =
-    "ml-[260px] h-[calc(100vh-56px)] w-full overflow-y-auto overflow-x-hidden p-8 max-[768px]:ml-[200px]";
+  "ml-[260px] h-[calc(100vh-56px)] w-full overflow-y-auto overflow-x-hidden scrollbar-hide p-8 max-[768px]:ml-[200px]";
 
   useEffect(() => {
     if (!rehydrated) {

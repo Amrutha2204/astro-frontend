@@ -92,7 +92,7 @@ max-[768px]:w-[200px]"
           </div>
         </div>
       </div>
-      <nav className="flex-1 overflow-y-auto overflow-x-hidden px-0 py-[10px]">
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden px-0 py-[10px] scrollbar-hide">
         <ul className="m-0 list-none p-3 space-y-1">
           {menuItems.map((item) => (
             <li key={item.id} className="m-0">
