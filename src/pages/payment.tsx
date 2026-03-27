@@ -3,7 +3,11 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
-import { paymentApi, WalletBalanceResponse, UserTransaction } from "@/services/paymentService";
+import {
+  paymentApi,
+  type WalletBalanceResponse,
+  type UserTransaction,
+} from "@/services/paymentService";
 import { showError, showSuccess } from "@/utils/toast";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
 
@@ -72,7 +76,9 @@ export default function PaymentPage() {
 
   const fetchTransactions = useCallback(async () => {
     const t = token?.trim();
-    if (!t) return;
+    if (!t) {
+      return;
+    }
     setLoadingTx(true);
     try {
       const res = await paymentApi.getMyTransactions(t, 30, 0);
@@ -87,7 +93,9 @@ export default function PaymentPage() {
   }, [token]);
 
   useEffect(() => {
-    if (!rehydrated) return;
+    if (!rehydrated) {
+      return;
+    }
     if (!token?.trim() || token.trim().split(".").length !== 3) {
       dispatch(clearToken());
       setTimeout(() => router.push("/auth/login"), REDIRECT_DELAY_MS);
@@ -100,7 +108,9 @@ export default function PaymentPage() {
   const handleCreateOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     const t = token?.trim();
-    if (!t) return;
+    if (!t) {
+      return;
+    }
     const amount = Number(amountRupees);
     if (!amount || amount < 1) {
       showError("Enter a valid amount (₹1 or more)");

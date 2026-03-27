@@ -32,13 +32,14 @@ export default function MonthlyHoroscopePage() {
   const [horoscope, setHoroscope] = useState<MonthlyHoroscope | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const pageClass = "min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]";
+  const pageClass =
+    "min-h-screen bg-gradient-to-br from-rose-50 via-orange-50 to-amber-50 text-slate-800";
   const contentClass = "flex w-full";
   const mainClass =
-    "ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]";
+    "ml-[260px] h-[calc(100vh-56px)] w-full overflow-y-auto overflow-x-hidden p-8 max-[768px]:ml-[200px]";
   const containerClass = "relative mx-auto max-w-[1200px]";
   const sectionTitleClass =
-    "mb-6 border-b-[2px] border-b-[#d4a574] pb-[14px] text-[26px] font-bold tracking-[-0.01em] text-[#6b4423]";
+    "mb-8 pb-3 text-3xl font-bold tracking-tight text-slate-800 border-b border-slate-200";
 
   const fetchHoroscope = useCallback(async () => {
     const t = token?.trim();
@@ -67,7 +68,9 @@ export default function MonthlyHoroscopePage() {
   }, [token, dispatch, router]);
 
   useEffect(() => {
-    if (!rehydrated) return;
+    if (!rehydrated) {
+      return;
+    }
     if (!token?.trim() || token.trim().split(".").length !== 3) {
       dispatch(clearToken());
       setTimeout(() => router.push("/auth/login"), REDIRECT_DELAY_MS);
@@ -134,10 +137,10 @@ export default function MonthlyHoroscopePage() {
         <main className={mainClass}>
           <div className={containerClass}>
             <PageHeader
-              onBack={() => router.push("/dashboard")}
-              backAriaLabel="Go back to dashboard"
+              title="Monthly Horoscope"
+              onBack={() => router.back()} // same behavior as Today
+              backLabel="Back"
               onRefresh={fetchHoroscope}
-              refreshAriaLabel="Refresh horoscope"
               disableRefresh={loading}
             />
             <h1 className={sectionTitleClass}>🌙 Horoscope</h1>
@@ -169,9 +172,12 @@ export default function MonthlyHoroscopePage() {
               <>
                 {horoscope.monthStart && (
                   <div className="mt-4 grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-[14px]">
-                    <div className="rounded-[12px] border-l-[4px] border-l-[#6b4423] border border-[#e8ddd0] bg-[linear-gradient(135deg,#fdf8f3_0%,#f5ebe0_100%)] p-5 shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
-                      <h3>Month starts</h3>
-                      <p className="text-[20px] font-bold text-[#845127]">
+                    {/* Month Starts Card */}
+                    <div className="rounded-2xl border border-white/50 bg-white/80 backdrop-blur-md p-6 shadow-xl">
+                      <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                        Month starts
+                      </h3>
+                      <p className="mt-1 text-xl font-bold text-slate-800">
                         {new Date(horoscope.monthStart).toLocaleDateString("en-US", {
                           year: "numeric",
                           month: "long",
@@ -179,9 +185,13 @@ export default function MonthlyHoroscopePage() {
                         })}
                       </p>
                     </div>
-                    <div className="rounded-[12px] border-l-[4px] border-l-[#6b4423] border border-[#e8ddd0] bg-[linear-gradient(135deg,#fdf8f3_0%,#f5ebe0_100%)] p-5 shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
-                      <h3>Days</h3>
-                      <p className="text-[20px] font-bold text-[#845127]">
+
+                    {/* Total Days Card */}
+                    <div className="rounded-2xl border border-white/50 bg-white/80 backdrop-blur-md p-6 shadow-xl">
+                      <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                        Total days
+                      </h3>
+                      <p className="mt-1 text-xl font-bold text-slate-800">
                         {horoscope.predictions?.length || 0} days
                       </p>
                     </div>

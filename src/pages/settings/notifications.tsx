@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
-import { notificationsApi, NotificationPreferences } from "@/services/notificationsService";
+import { notificationsApi, type NotificationPreferences } from "@/services/notificationsService";
 import { showError, showSuccess } from "@/utils/toast";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
 
@@ -45,7 +45,9 @@ export default function NotificationsSettingsPage() {
   }, [token, dispatch, router]);
 
   useEffect(() => {
-    if (!rehydrated) return;
+    if (!rehydrated) {
+      return;
+    }
     if (!token?.trim() || token.trim().split(".").length !== 3) {
       dispatch(clearToken());
       setTimeout(() => router.push("/auth/login"), REDIRECT_DELAY_MS);
@@ -57,7 +59,9 @@ export default function NotificationsSettingsPage() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     const t = token?.trim();
-    if (!t) return;
+    if (!t) {
+      return;
+    }
     setSaving(true);
     try {
       await notificationsApi.updatePreferences(t, {

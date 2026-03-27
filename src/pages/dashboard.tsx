@@ -13,20 +13,23 @@ import {
 import { isValidJwtFormat } from "@/utils/auth";
 import { showError } from "@/utils/toast";
 import { getUserDetails } from "@/services/userService";
-
+import Image from "next/image";
 export default function Dashboard() {
   const router = useRouter();
   const dispatch = useDispatch();
   const rehydrated = useSelector(selectIsRehydrated);
   const isGuest = useSelector(selectIsGuest);
   const token = useSelector(selectToken);
-  const pageClass = "min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]";
+  const pageClass =
+    "min-h-screen bg-gradient-to-br from-rose-50 via-orange-50 to-amber-50 text-slate-800";
   const contentClass = "flex w-full";
   const mainClass =
-    "ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]";
+    "ml-[260px] h-[calc(100vh-56px)] w-full overflow-y-auto overflow-x-hidden p-8 max-[768px]:ml-[200px]";
 
   useEffect(() => {
-    if (!rehydrated) return;
+    if (!rehydrated) {
+      return;
+    }
     if (isGuest) {
       dispatch(clearToken());
       router.replace("/auth/login");
@@ -34,7 +37,9 @@ export default function Dashboard() {
   }, [rehydrated, isGuest, dispatch, router]);
 
   useEffect(() => {
-    if (!rehydrated || isGuest || !token?.trim()) return;
+    if (!rehydrated || isGuest || !token?.trim()) {
+      return;
+    }
     getUserDetails(token).catch((e: unknown) => {
       const msg = e instanceof Error ? e.message : "Request failed";
       showError(msg);
@@ -44,7 +49,9 @@ export default function Dashboard() {
   useEffect(() => {
     const handlePopState = () => {
       const t = store.getState().auth.token;
-      if (!isValidJwtFormat(t)) router.replace("/auth/login");
+      if (!isValidJwtFormat(t)) {
+        router.replace("/auth/login");
+      }
     };
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
@@ -215,23 +222,38 @@ export default function Dashboard() {
       <div className={contentClass}>
         <AppSidebar />
         <main className={mainClass}>
-          <div className="mb-5 flex items-center justify-between rounded-[12px] border border-[#e8ddd0] bg-[linear-gradient(135deg,#f5ebe0_0%,#ede4d8_100%)] p-[30px] shadow-[0_4px_6px_rgba(0,0,0,0.08)] max-[768px]:flex-col max-[768px]:text-center">
+          <div
+            className="mb-8 flex items-center justify-between rounded-2xl
+bg-white/70 backdrop-blur-md border border-white/40
+p-8 shadow-xl
+max-[768px]:flex-col max-[768px]:text-center"
+          >
             <div className="flex-1">
-              <h2 className="mb-[10px] text-[28px] font-bold text-[#6b4423]">
+              <h2
+                className="mb-3 text-3xl font-bold tracking-wide
+bg-gradient-to-r from-rose-800 via-orange-700 to-amber-600
+bg-clip-text text-transparent"
+              >
                 AI Astrology Assistant
               </h2>
-              <p className="mb-5 text-[16px] text-[#5c4033]">
+              <p className="mb-6 text-base text-slate-600">
                 Get personalized insights and explanations powered by AI
               </p>
               <button
-                className="rounded-[8px] bg-[#6b4423] px-[30px] py-3 text-[16px] font-semibold text-white transition-colors duration-200 hover:bg-[#5c3a1f]"
+                className="rounded-xl bg-gradient-to-r from-rose-700 via-orange-600 to-amber-500
+px-8 py-3 text-base font-semibold text-white shadow-lg
+transition-all duration-300 hover:scale-105 hover:shadow-xl"
                 onClick={() => router.push("/ai-assistant/chat")}
               >
                 Chat Now
               </button>
             </div>
             <div className="flex items-center gap-[15px] max-[768px]:mt-5">
-              <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.2)]">
+              <div
+                className="relative flex h-20 w-20 items-center justify-center rounded-full
+bg-gradient-to-br from-rose-500 via-orange-400 to-amber-300
+text-white shadow-lg"
+              >
                 <div className="text-[40px]">🤖</div>
               </div>
             </div>
@@ -241,20 +263,27 @@ export default function Dashboard() {
             {services.map((service) => (
               <div
                 key={service.id}
-                className="flex cursor-pointer flex-col overflow-hidden rounded-[12px] border border-[var(--border)] bg-[#FFF5E6] text-[var(--text-main)] shadow-[0_1px_3px_rgba(0,0,0,0.1)] transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)]"
+                className="group flex cursor-pointer flex-col overflow-hidden rounded-2xl
+bg-white/80 backdrop-blur-sm border border-white/50
+shadow-md transition-all duration-300
+hover:-translate-y-1 hover:shadow-xl hover:bg-white"
                 onClick={service.onClick}
               >
                 {service.image && (
-                  <img
-                    src={service.image}
-                    alt=""
-                    className="block h-[140px] w-full bg-[#f5f0e8] object-cover object-center"
-                  />
+                  <div className="relative h-[150px] w-full bg-gradient-to-br from-rose-50 to-amber-50">
+                    <Image
+                      src={service.image}
+                      alt={service.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 280px"
+                      className="object-cover object-center"
+                    />
+                  </div>
                 )}
-                <h3 className="mx-4 mt-3 mb-[6px] text-[16px] font-semibold text-[#1f2937]">
+                <h3 className="mx-5 mt-4 mb-1 text-base font-semibold text-slate-800">
                   {service.title}
                 </h3>
-                <p className="mx-4 mb-4 flex-1 text-[13px] leading-[1.5] text-[#6b7280]">
+                <p className="mx-5 mb-5 flex-1 text-sm leading-relaxed text-slate-600">
                   {service.description}
                 </p>
               </div>

@@ -17,7 +17,9 @@ export type FetcherOptions = {
 function buildUrl(base: string, path: string, params?: Record<string, string>): string {
   const baseStr = (base ?? "").replace(/\/$/, "");
   const url = `${baseStr}${path.startsWith("/") ? path : `/${path}`}`;
-  if (!params || Object.keys(params).length === 0) return url;
+  if (!params || Object.keys(params).length === 0) {
+    return url;
+  }
   const search = new URLSearchParams(params).toString();
   return `${url}${url.includes("?") ? "&" : "?"}${search}`;
 }
@@ -28,7 +30,9 @@ function buildHeaders(
   hasBody?: boolean,
 ): Record<string, string> {
   const headers: Record<string, string> = {};
-  if (hasBody) headers["Content-Type"] = "application/json";
+  if (hasBody) {
+    headers["Content-Type"] = "application/json";
+  }
   if (isValidJwtFormat(token)) {
     headers["Authorization"] = `Bearer ${token?.trim()}`;
   }

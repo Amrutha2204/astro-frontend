@@ -25,7 +25,9 @@ export const doshaApi = {
 
   checkDoshas(token: string): Promise<DoshaResponse> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token format. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token format. Please login again.");
+    }
     return request<DoshaResponse>(ASTRO_BASE, "/api/v1/dosha/check", { method: "GET", token: t });
   },
 };

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
 import PageHeader from "@/components/layout/PageHeader";
-import { aiAssistantApi, SuggestionsResponse } from "@/services/aiAssistantService";
+import { aiAssistantApi, type SuggestionsResponse } from "@/services/aiAssistantService";
 import { showSuccess } from "@/utils/toast";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
 import ErrorMessage from "@/components/ui/ErrorMessage";
@@ -43,7 +43,9 @@ export default function SuggestionsPage() {
   }, [token, dispatch, router]);
 
   useEffect(() => {
-    if (!rehydrated) return;
+    if (!rehydrated) {
+      return;
+    }
     if (!token?.trim() || token.trim().split(".").length !== 3) {
       dispatch(clearToken());
       setTimeout(() => router.push("/auth/login"), REDIRECT_DELAY_MS);
@@ -54,29 +56,52 @@ export default function SuggestionsPage() {
 
   const getCategoryIcon = (category: string) => {
     const normalized = category.toLowerCase();
-    if (normalized.includes("relationship")) return "💕";
-    if (normalized.includes("career")) return "💼";
-    if (normalized.includes("wellness") || normalized.includes("health")) return "🌿";
-    if (normalized.includes("finance") || normalized.includes("money")) return "💰";
+    if (normalized.includes("relationship")) {
+      return "💕";
+    }
+    if (normalized.includes("career")) {
+      return "💼";
+    }
+    if (normalized.includes("wellness") || normalized.includes("health")) {
+      return "🌿";
+    }
+    if (normalized.includes("finance") || normalized.includes("money")) {
+      return "💰";
+    }
     return "✨";
   };
 
   const getCategoryBorderClass = (category: string) => {
     const normalized = category.toLowerCase();
-    if (normalized.includes("relationship")) return "border-l-[#ec4899]";
-    if (normalized.includes("career")) return "border-l-[#3b82f6]";
-    if (normalized.includes("wellness") || normalized.includes("health"))
+    if (normalized.includes("relationship")) {
+      return "border-l-[#ec4899]";
+    }
+    if (normalized.includes("career")) {
+      return "border-l-[#3b82f6]";
+    }
+    if (normalized.includes("wellness") || normalized.includes("health")) {
       return "border-l-[#10b981]";
-    if (normalized.includes("finance") || normalized.includes("money")) return "border-l-[#f59e0b]";
+    }
+    if (normalized.includes("finance") || normalized.includes("money")) {
+      return "border-l-[#f59e0b]";
+    }
     return "border-l-[#9333ea]";
   };
 
   const getCategoryTextClass = (category: string) => {
     const normalized = category.toLowerCase();
-    if (normalized.includes("relationship")) return "text-[#ec4899]";
-    if (normalized.includes("career")) return "text-[#3b82f6]";
-    if (normalized.includes("wellness") || normalized.includes("health")) return "text-[#10b981]";
-    if (normalized.includes("finance") || normalized.includes("money")) return "text-[#f59e0b]";
+    if (normalized.includes("relationship")) {
+      return "text-[#ec4899]";
+    }
+    if (normalized.includes("career")) {
+      return "text-[#3b82f6]";
+    }
+    if (normalized.includes("wellness") || normalized.includes("health")) {
+      return "text-[#10b981]";
+    }
+    if (normalized.includes("finance") || normalized.includes("money")) {
+      return "text-[#f59e0b]";
+    }
     return "text-[#9333ea]";
   };
 

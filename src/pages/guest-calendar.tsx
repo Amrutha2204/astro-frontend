@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
-import { astroApi, GuestCalendarResponse } from "@/services/api";
+import { astroApi, type GuestCalendarResponse } from "@/services/api";
 
 export default function GuestCalendarPage() {
   const router = useRouter();

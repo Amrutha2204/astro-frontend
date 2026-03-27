@@ -145,7 +145,7 @@ export default function GuestDashaPage() {
               <p>
                 <strong>Planet:</strong> {current.planet}
               </p>
-              {current.remainingDays != null && (
+              {current.remainingDays !== null && (
                 <p>
                   <strong>Time left in this period:</strong> {current.remainingDays} days
                 </p>

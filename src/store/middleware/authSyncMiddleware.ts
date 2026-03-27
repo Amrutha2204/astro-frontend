@@ -1,4 +1,4 @@
-import { Middleware } from "@reduxjs/toolkit";
+import { type Middleware } from "@reduxjs/toolkit";
 import { setToken, clearToken } from "../slices/authSlice";
 
 /** Syncs auth token to localStorage on setToken/clearToken. */

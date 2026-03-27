@@ -6,7 +6,7 @@ import AppSidebar from "@/components/layout/AppSidebar";
 import PageHeader from "@/components/layout/PageHeader";
 import CalculationInfo from "@/components/common/CalculationInfo";
 import TrustNote from "@/components/common/TrustNote";
-import { dashaApi, DashaResponse, DashaTimelineResponse } from "@/services/dashaService";
+import { dashaApi, type DashaResponse, type DashaTimelineResponse } from "@/services/dashaService";
 import { showError } from "@/utils/toast";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
 import ErrorMessage from "@/components/ui/ErrorMessage";
@@ -61,7 +61,9 @@ export default function DashaPage() {
 
   const fetchTimeline = useCallback(async () => {
     const t = token?.trim();
-    if (!t) return;
+    if (!t) {
+      return;
+    }
     try {
       const data = await dashaApi.getDashaTimeline(t, 10);
       setTimeline(data);
@@ -73,7 +75,9 @@ export default function DashaPage() {
   }, [token]);
 
   useEffect(() => {
-    if (!rehydrated) return;
+    if (!rehydrated) {
+      return;
+    }
     if (!token?.trim() || token.trim().split(".").length !== 3) {
       dispatch(clearToken());
       setTimeout(() => router.push("/auth/login"), REDIRECT_DELAY_MS);

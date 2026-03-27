@@ -51,13 +51,17 @@ export const dashaApi = {
 
   getCurrentDasha(token: string): Promise<DashaResponse> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token format. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token format. Please login again.");
+    }
     return request<DashaResponse>(ASTRO_BASE, "/api/v1/dasha/current", { method: "GET", token: t });
   },
 
   getDashaTimeline(token: string, years = 10): Promise<DashaTimelineResponse> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token format. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token format. Please login again.");
+    }
     return request<DashaTimelineResponse>(ASTRO_BASE, "/api/v1/dasha/timeline", {
       method: "GET",
       token: t,

@@ -27,7 +27,9 @@ export default function BirthDetails() {
     "mb-[10px] block text-[14px] font-bold uppercase tracking-[0.08em] text-[#6b4423]";
 
   useEffect(() => {
-    if (!rehydrated) return;
+    if (!rehydrated) {
+      return;
+    }
     if (!token) {
       router.push("/auth/login");
       return;
@@ -35,10 +37,18 @@ export default function BirthDetails() {
     getUserDetails(token)
       .then((data) => {
         const d = data as { dob?: string; birthPlace?: string; birthTime?: string };
-        if (d?.dob && d?.birthPlace) router.push("/dashboard");
-        if (d?.dob) setDob(d.dob);
-        if (d?.birthPlace) setPlaceOfBirth(d.birthPlace);
-        if (d?.birthTime) setBirthTime(d.birthTime ?? "");
+        if (d?.dob && d?.birthPlace) {
+          router.push("/dashboard");
+        }
+        if (d?.dob) {
+          setDob(d.dob);
+        }
+        if (d?.birthPlace) {
+          setPlaceOfBirth(d.birthPlace);
+        }
+        if (d?.birthTime) {
+          setBirthTime(d.birthTime ?? "");
+        }
       })
       .catch((e: unknown) => {
         const msg = e instanceof Error ? e.message : "Failed to load details";
@@ -48,16 +58,24 @@ export default function BirthDetails() {
   }, [rehydrated, token, router]);
 
   const toDobISO = (value: string): string => {
-    if (!value?.trim()) return value;
+    if (!value?.trim()) {
+      return value;
+    }
     const s = value.trim();
-    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+      return s;
+    }
     const ddmmyy = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
-    if (ddmmyy) return `${ddmmyy[3]}-${ddmmyy[2].padStart(2, "0")}-${ddmmyy[1].padStart(2, "0")}`;
+    if (ddmmyy) {
+      return `${ddmmyy[3]}-${ddmmyy[2].padStart(2, "0")}-${ddmmyy[1].padStart(2, "0")}`;
+    }
     return s;
   };
 
   const submit = async () => {
-    if (!token) return;
+    if (!token) {
+      return;
+    }
     if (!placeOfBirth.trim()) {
       showError("Please enter your birth place");
       return;

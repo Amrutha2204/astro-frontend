@@ -1,4 +1,4 @@
-import { request, AUTH_BASE, ASTRO_BASE } from "./fetcher";
+import { request, ASTRO_BASE } from "./fetcher";
 import { isValidJwtFormat } from "@/utils/auth";
 
 // -------------------- Auth Interfaces --------------------
@@ -234,9 +234,13 @@ export const astroApi = {
   // -------------------- Kundli & Natal --------------------
   async getMyKundli(token: string, chartType?: string, chart?: string): Promise<KundliResponse> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token format. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token format. Please login again.");
+    }
     const params: Record<string, string> = {};
-    if (chartType) params.chartType = chartType;
+    if (chartType) {
+      params.chartType = chartType;
+    }
     if (chart) {
       if (chart === "western") {
         params.system = "western";
@@ -254,7 +258,9 @@ export const astroApi = {
 
   async getNatalChart(token: string, chartType?: string) {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token format. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token format. Please login again.");
+    }
     return request(ASTRO_BASE, "/api/v1/astrology/natal-chart", {
       method: "GET",
       token: t,
@@ -265,7 +271,9 @@ export const astroApi = {
   // -------------------- Today Transit --------------------
   async getTodayTransit(token: string, date?: string): Promise<TransitResponse> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token format. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token format. Please login again.");
+    }
     return request<TransitResponse>(ASTRO_BASE, "/api/v1/astrology/transits/today", {
       method: "GET",
       token: t,
@@ -282,7 +290,9 @@ export const astroApi = {
   // -------------------- Calendar --------------------
   async getTodayCalendar(token: string, date?: string): Promise<CalendarResponse> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token format. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token format. Please login again.");
+    }
     return request<CalendarResponse>(ASTRO_BASE, "/api/v1/astrology/calendar/today", {
       method: "GET",
       token: t,
@@ -394,7 +404,9 @@ export const astroApi = {
     dto: CreateShareableCardDto,
   ): Promise<StoredCardResponse> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token. Please login again.");
+    }
     return request<StoredCardResponse>(ASTRO_BASE, "/api/v1/shareable-card", {
       method: "POST",
       token: t,
@@ -408,7 +420,9 @@ export const astroApi = {
     title?: string,
   ): Promise<{ whatsapp: string; twitter: string; telegram: string }> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token. Please login again.");
+    }
     return request<{ whatsapp: string; twitter: string; telegram: string }>(
       ASTRO_BASE,
       "/api/v1/shareable-card/share-links",
@@ -447,13 +461,13 @@ export const astroApi = {
     });
   },
 
-  async getEclipses(from: string): Promise<{ solar: Eclipse[]; lunar: Eclipse[] }> {
+  async getEclipses(from: string, to: string): Promise<{ solar: Eclipse[]; lunar: Eclipse[] }> {
     return request<{ solar: Eclipse[]; lunar: Eclipse[] }>(
       ASTRO_BASE,
       "/api/v1/astrology/transits/eclipses",
       {
         method: "GET",
-        params: { fromDate: from },
+        params: { fromDate: from, toDate: to },
       },
     );
   },
@@ -494,7 +508,9 @@ export interface AdminContent {
 export const adminApi = {
   async getStats(token: string): Promise<AdminStats> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token. Please login again.");
+    }
     return request<AdminStats>(ASTRO_BASE, "/api/v1/admin/stats", {
       method: "GET",
       token: t,
@@ -507,10 +523,16 @@ export const adminApi = {
     offset?: number,
   ): Promise<{ items: AdminTransaction[]; total: number }> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token. Please login again.");
+    }
     const params: Record<string, string> = {};
-    if (limit != null) params.limit = String(limit);
-    if (offset != null) params.offset = String(offset);
+    if (limit !== null) {
+      params.limit = String(limit);
+    }
+    if (offset !== null) {
+      params.offset = String(offset);
+    }
     return request<{ items: AdminTransaction[]; total: number }>(
       ASTRO_BASE,
       "/api/v1/admin/transactions",
@@ -528,10 +550,16 @@ export const adminApi = {
     offset?: number,
   ): Promise<{ items: AdminReport[]; total: number }> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token. Please login again.");
+    }
     const params: Record<string, string> = {};
-    if (limit != null) params.limit = String(limit);
-    if (offset != null) params.offset = String(offset);
+    if (limit !== null) {
+      params.limit = String(limit);
+    }
+    if (offset !== null) {
+      params.offset = String(offset);
+    }
     return request<{ items: AdminReport[]; total: number }>(ASTRO_BASE, "/api/v1/admin/reports", {
       method: "GET",
       token: t,
@@ -541,13 +569,17 @@ export const adminApi = {
 
   async getContent(token: string): Promise<AdminContent> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token. Please login again.");
+    }
     return request<AdminContent>(ASTRO_BASE, "/api/v1/admin/content", { method: "GET", token: t });
   },
 
   async setContent(token: string, content: AdminContent): Promise<void> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token. Please login again.");
+    }
     return request<void>(ASTRO_BASE, "/api/v1/admin/content", {
       method: "PUT",
       token: t,
@@ -557,7 +589,9 @@ export const adminApi = {
 
   async getAiEnabled(token: string): Promise<{ enabled: boolean }> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token. Please login again.");
+    }
     return request<{ enabled: boolean }>(ASTRO_BASE, "/api/v1/admin/ai-enabled", {
       method: "GET",
       token: t,
@@ -566,7 +600,9 @@ export const adminApi = {
 
   async setAiEnabled(token: string, enabled: boolean): Promise<void> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token. Please login again.");
+    }
     return request<void>(ASTRO_BASE, "/api/v1/admin/ai-enabled", {
       method: "PUT",
       token: t,
@@ -581,8 +617,9 @@ export const careerApi = {
    */
   async getCareerGuidance(token: string): Promise<CareerGuidanceResponse> {
     const t = token?.trim();
-    if (!t || t.split(".").length !== 3)
+    if (!t || t.split(".").length !== 3) {
       throw new Error("Invalid token format. Please login again.");
+    }
 
     return request<CareerGuidanceResponse>(
       "http://localhost:8002", // replace if API is deployed elsewhere

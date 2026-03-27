@@ -149,8 +149,12 @@ transition-all duration-500 hover:shadow-[0_30px_100px_rgba(0,0,0,0.25)]
   };
 
   const getPasswordStrength = (password: string) => {
-    if (password.length < 4) return "Weak";
-    if (password.length < 8) return "Medium";
+    if (password.length < 4) {
+      return "Weak";
+    }
+    if (password.length < 8) {
+      return "Medium";
+    }
     return "Strong";
   };
 

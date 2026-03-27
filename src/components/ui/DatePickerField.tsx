@@ -19,7 +19,9 @@ const MONTHS = [
 ];
 
 function parseDate(value: string): { y: number; m: number; d: number } | null {
-  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return null;
+  }
   const [y, m, d] = value.split("-").map(Number);
   return { y, m: m - 1, d };
 }
@@ -32,7 +34,9 @@ function toValue(y: number, m: number, d: number): string {
 
 function formatDisplay(value: string): string {
   const p = parseDate(value);
-  if (!p) return "";
+  if (!p) {
+    return "";
+  }
   return `${String(p.d).padStart(2, "0")}/${String(p.m + 1).padStart(2, "0")}/${p.y}`;
 }
 
@@ -65,24 +69,27 @@ export default function DatePickerField({
   const [open, setOpen] = useState(false);
   const [view, setView] = useState(() => {
     const p = parseDate(value);
-    if (p) return { y: p.y, m: p.m };
+    if (p) {
+      return { y: p.y, m: p.m };
+    }
     const t = new Date();
     return { y: t.getFullYear(), m: t.getMonth() };
   });
   const wrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const p = parseDate(value);
-    if (p) setView({ y: p.y, m: p.m });
-  }, [value]);
-
-  useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      return;
+    }
     const onDocClick = (e: MouseEvent) => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setOpen(false);
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
     };
     const onEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setOpen(false);
+      }
     };
     document.addEventListener("mousedown", onDocClick);
     document.addEventListener("keydown", onEscape);
@@ -97,8 +104,12 @@ export default function DatePickerField({
   const startPad = first.getDay();
   const daysInMonth = new Date(view.y, view.m + 1, 0).getDate();
   const days: (number | null)[] = [];
-  for (let i = 0; i < startPad; i++) days.push(null);
-  for (let d = 1; d <= daysInMonth; d++) days.push(d);
+  for (let i = 0; i < startPad; i++) {
+    days.push(null);
+  }
+  for (let d = 1; d <= daysInMonth; d++) {
+    days.push(d);
+  }
 
   const handleSelect = (d: number) => {
     onChange(toValue(view.y, view.m, d));
@@ -106,13 +117,19 @@ export default function DatePickerField({
   };
 
   const prevMonth = () => {
-    if (view.m === 0) setView({ y: view.y - 1, m: 11 });
-    else setView({ y: view.y, m: view.m - 1 });
+    if (view.m === 0) {
+      setView({ y: view.y - 1, m: 11 });
+    } else {
+      setView({ y: view.y, m: view.m - 1 });
+    }
   };
 
   const nextMonth = () => {
-    if (view.m === 11) setView({ y: view.y + 1, m: 0 });
-    else setView({ y: view.y, m: view.m + 1 });
+    if (view.m === 11) {
+      setView({ y: view.y + 1, m: 0 });
+    } else {
+      setView({ y: view.y, m: view.m + 1 });
+    }
   };
 
   const displayVal = value ? formatDisplay(value) : "";
@@ -131,7 +148,9 @@ export default function DatePickerField({
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
-            if (!disabled) setOpen((o) => !o);
+            if (!disabled) {
+              setOpen((o) => !o);
+            }
           }
         }}
       >
@@ -200,7 +219,9 @@ export default function DatePickerField({
           </div>
           <div className="grid grid-cols-7 gap-[2px]">
             {days.map((d, i) => {
-              if (d === null) return <span key={`e-${i}`} />;
+              if (d === null) {
+                return <span key={`e-${i}`} />;
+              }
               const isToday =
                 view.y === new Date().getFullYear() &&
                 view.m === new Date().getMonth() &&

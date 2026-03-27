@@ -42,7 +42,10 @@ export default function PageHeader({
       <button
         type="button"
         onClick={handleBack}
-        className="flex items-center gap-[6px] rounded-[6px] bg-[#6b4423] px-4 py-2 text-[14px] font-medium text-white transition-all duration-200 hover:-translate-x-[2px] hover:bg-[#5c3a1f] active:translate-x-0"
+        className="flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-white
+bg-gradient-to-r from-rose-700 via-orange-600 to-amber-500
+shadow-md transition-all duration-300
+hover:scale-105 hover:shadow-lg active:scale-95"
         aria-label={backAriaLabel}
       >
         ← {backLabel}

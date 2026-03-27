@@ -6,7 +6,7 @@ import AppSidebar from "@/components/layout/AppSidebar";
 import PageHeader from "@/components/layout/PageHeader";
 import CalculationInfo from "@/components/common/CalculationInfo";
 import TrustNote from "@/components/common/TrustNote";
-import { doshaApi, DoshaResponse } from "@/services/doshaService";
+import { doshaApi, type DoshaResponse } from "@/services/doshaService";
 import { showError } from "@/utils/toast";
 import { selectToken, selectIsRehydrated, clearToken } from "@/store/slices/authSlice";
 import ErrorMessage from "@/components/ui/ErrorMessage";
@@ -46,7 +46,9 @@ export default function DoshaPage() {
   }, [token, dispatch, router]);
 
   useEffect(() => {
-    if (!rehydrated) return;
+    if (!rehydrated) {
+      return;
+    }
     if (!token?.trim() || token.trim().split(".").length !== 3) {
       dispatch(clearToken());
       setTimeout(() => router.push("/auth/login"), REDIRECT_DELAY_MS);

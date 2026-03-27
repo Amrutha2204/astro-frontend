@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
 import PageHeader from "@/components/layout/PageHeader";
-import { aiAssistantApi, ExplainKundliResponse } from "@/services/aiAssistantService";
+import { aiAssistantApi, type ExplainKundliResponse } from "@/services/aiAssistantService";
 import { showError, showSuccess } from "@/utils/toast";
 import { selectToken, selectIsRehydrated } from "@/store/slices/authSlice";
 
@@ -17,9 +17,13 @@ export default function ExplainKundliPage() {
   const [explanation, setExplanation] = useState<ExplainKundliResponse | null>(null);
 
   useEffect(() => {
-    if (!rehydrated) return;
+    if (!rehydrated) {
+      return;
+    }
     const t = token?.trim();
-    if (!t || t.split(".").length !== 3) router.replace("/auth/login");
+    if (!t || t.split(".").length !== 3) {
+      router.replace("/auth/login");
+    }
   }, [rehydrated, token, router]);
 
   const handleExplain = async () => {

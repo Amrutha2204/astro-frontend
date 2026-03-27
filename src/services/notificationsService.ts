@@ -17,7 +17,9 @@ export interface UpdatePreferencesBody {
 export const notificationsApi = {
   async getPreferences(token: string): Promise<NotificationPreferences> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token. Please login again.");
+    }
     return request<NotificationPreferences>(ASTRO_BASE, "/api/v1/notifications/preferences", {
       method: "GET",
       token: t,
@@ -29,7 +31,9 @@ export const notificationsApi = {
     body: UpdatePreferencesBody,
   ): Promise<NotificationPreferences> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token. Please login again.");
+    }
     return request<NotificationPreferences>(ASTRO_BASE, "/api/v1/notifications/preferences", {
       method: "PUT",
       token: t,
@@ -39,7 +43,9 @@ export const notificationsApi = {
 
   async registerDevice(token: string, deviceToken: string): Promise<{ message: string }> {
     const t = token?.trim();
-    if (!isValidJwtFormat(t)) throw new Error("Invalid token. Please login again.");
+    if (!isValidJwtFormat(t)) {
+      throw new Error("Invalid token. Please login again.");
+    }
     return request<{ message: string }>(ASTRO_BASE, "/api/v1/notifications/register-device", {
       method: "POST",
       token: t,

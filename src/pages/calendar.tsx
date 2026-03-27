@@ -7,13 +7,14 @@ import CalculationInfo from "@/components/common/CalculationInfo";
 import Loading from "@/components/ui/Loading";
 import PlaceAutocomplete from "@/components/ui/PlaceAutocomplete";
 import { showError } from "@/utils/toast";
+import Image from "next/image";
 import {
   astroApi,
-  GuestCalendarResponse,
-  FestivalsResponse,
-  MuhuratResponse,
-  AuspiciousDayResponse,
-  RahuYamagandamResponse,
+  type GuestCalendarResponse,
+  type FestivalsResponse,
+  type MuhuratResponse,
+  type AuspiciousDayResponse,
+  type RahuYamagandamResponse,
 } from "@/services/api";
 
 type TabId = "today" | "festivals" | "muhurat" | "auspicious" | "rahu";
@@ -32,11 +33,11 @@ function getMonthStr(): string {
 }
 
 const filterBarClass =
-  "mb-6 flex flex-wrap items-center gap-3 rounded-[14px] border border-[#e8dfd2] bg-white px-5 py-4 shadow-[0_2px_10px_rgba(0,0,0,0.04)]";
+  "mb-6 flex flex-wrap items-center gap-3 rounded-[18px] border border-white/60 bg-white/70 px-6 py-5 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur";
 const filterLabelClass =
   "inline-flex cursor-pointer items-center gap-2 text-[14px] font-medium text-[#4a4238]";
 const primaryButtonClass =
-  "rounded-[10px] bg-[linear-gradient(135deg,#7d5a3c_0%,#6b4423_100%)] px-5 py-[10px] text-[14px] font-semibold text-white shadow-[0_2px_8px_rgba(107,68,35,0.2)] transition-all duration-200 hover:-translate-y-px hover:shadow-[0_4px_14px_rgba(107,68,35,0.3)] disabled:cursor-not-allowed disabled:opacity-70";
+  "rounded-[14px] bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] px-6 py-3 text-[14px] font-bold text-white shadow-[0_8px_22px_rgba(236,72,153,0.35)] transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_14px_32px_rgba(124,58,237,0.45)] disabled:cursor-not-allowed disabled:opacity-60";
 const errorMessageClass =
   "mb-4 rounded-[12px] border border-[#fecaca] bg-[#fef2f2] px-5 py-4 text-[14px] text-[#b91c1c]";
 
@@ -72,14 +73,18 @@ export default function CalendarPage() {
 
   useEffect(() => {
     const rawUser = localStorage.getItem("user");
-    if (!rawUser) return;
+    if (!rawUser) {
+      return;
+    }
     const parsed = JSON.parse(rawUser) as StoredUser;
     setStoredUser(parsed);
     setPlace(parsed.birthPlace || "");
   }, []);
 
   useEffect(() => {
-    if (activeTab !== "today" || !place) return;
+    if (activeTab !== "today" || !place) {
+      return;
+    }
 
     const fetchToday = async () => {
       try {
@@ -150,7 +155,9 @@ export default function CalendarPage() {
 
   const handleRefresh = useCallback(() => {
     if (activeTab === "today") {
-      if (!place) return;
+      if (!place) {
+        return;
+      }
       (async () => {
         try {
           setTodayLoading(true);
@@ -165,10 +172,18 @@ export default function CalendarPage() {
       })();
       return;
     }
-    if (activeTab === "festivals") fetchFestivals();
-    if (activeTab === "muhurat") fetchMuhurat();
-    if (activeTab === "auspicious") fetchAuspicious();
-    if (activeTab === "rahu") fetchRahuYamagandam();
+    if (activeTab === "festivals") {
+      fetchFestivals();
+    }
+    if (activeTab === "muhurat") {
+      fetchMuhurat();
+    }
+    if (activeTab === "auspicious") {
+      fetchAuspicious();
+    }
+    if (activeTab === "rahu") {
+      fetchRahuYamagandam();
+    }
   }, [activeTab, fetchAuspicious, fetchFestivals, fetchMuhurat, fetchRahuYamagandam, place]);
 
   const tabs: { id: TabId; label: string }[] = [
@@ -180,12 +195,17 @@ export default function CalendarPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_15%_20%,#ffe7d6_0%,transparent_35%),radial-gradient(circle_at_85%_10%,#e0f2fe_0%,transparent_40%),radial-gradient(circle_at_80%_80%,#ede9fe_0%,transparent_40%),linear-gradient(135deg,#fffaf5_0%,#f8f4ff_50%,#f0f9ff_100%)] text-[var(--text-main)]">
       <AppHeader />
       <div className="flex w-full">
         <AppSidebar />
         <main className="ml-[250px] h-[calc(100vh-50px)] w-full overflow-y-auto overflow-x-hidden bg-[var(--bg-main)] p-6 max-[768px]:ml-[200px]">
           <div className="relative mx-auto max-w-[1200px]">
+            <div className="pointer-events-none absolute inset-0 overflow-hidden">
+              <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-[#ffd7ba]/40 blur-3xl" />
+              <div className="absolute top-1/3 -right-24 h-80 w-80 rounded-full bg-[#c7d2fe]/40 blur-3xl" />
+              <div className="absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-[#bae6fd]/40 blur-3xl" />
+            </div>
             <PageHeader
               title="Calendar"
               onTitleClick={handleRefresh}
@@ -202,7 +222,7 @@ export default function CalendarPage() {
               }
             />
             <div className="mx-auto max-w-[900px]">
-              <div className="mb-7 flex items-center gap-4 rounded-[16px] border border-[#ecdcc4] bg-[linear-gradient(135deg,#fffbf5_0%,#fdf6eb_100%)] px-6 py-5 shadow-[0_2px_12px_rgba(107,68,35,0.06)]">
+              <div className="mb-8 flex items-center gap-5 rounded-[20px] border border-white/60 bg-gradient-to-br from-[#fff7ed] via-white to-[#eef2ff] px-7 py-6 shadow-[0_14px_40px_rgba(0,0,0,0.10)] backdrop-blur">
                 <div
                   className="flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-[12px] bg-[linear-gradient(135deg,#8b5e34_0%,#6b4423_100%)] text-[20px] text-white"
                   aria-hidden
@@ -233,8 +253,8 @@ export default function CalendarPage() {
                     onClick={() => setActiveTab(t.id)}
                     className={
                       activeTab === t.id
-                        ? "cursor-pointer rounded-[10px] bg-[linear-gradient(135deg,#7d5a3c_0%,#6b4423_100%)] px-[18px] py-[10px] text-[14px] font-medium text-white shadow-[0_2px_8px_rgba(107,68,35,0.25)] transition-all duration-200"
-                        : "cursor-pointer rounded-[10px] bg-transparent px-[18px] py-[10px] text-[14px] font-medium text-[#6b5b52] transition-all duration-200 hover:bg-[rgba(107,68,35,0.08)] hover:text-[#6b4423]"
+                        ? "cursor-pointer rounded-[12px] bg-gradient-to-r from-[#7c3aed] via-[#ec4899] to-[#f59e0b] px-[20px] py-[11px] text-[14px] font-semibold text-white shadow-[0_6px_18px_rgba(236,72,153,0.35)] transition-all duration-200 hover:-translate-y-[2px]"
+                        : "cursor-pointer rounded-[12px] bg-transparent px-[20px] py-[11px] text-[14px] font-semibold text-[#6b5b52] transition-all duration-200 hover:bg-gradient-to-r hover:from-[#fdf2f8] hover:to-[#eff6ff] hover:text-[#4c1d95]"
                     }
                   >
                     {t.label}
@@ -288,12 +308,14 @@ export default function CalendarPage() {
                           {(todayData.sunrise ?? todayData.sunset) && (
                             <div className="cursor-default overflow-hidden rounded-[18px] border border-[rgba(148,163,184,0.3)] bg-[linear-gradient(135deg,rgba(71,85,105,0.4)_0%,rgba(51,65,85,0.3)_100%)] shadow-[0_8px_24px_rgba(0,0,0,0.15)] backdrop-blur-[12px] transition-all duration-300 hover:-translate-y-2 hover:border-[rgba(148,163,184,0.5)] hover:bg-[linear-gradient(135deg,rgba(71,85,105,0.6)_0%,rgba(51,65,85,0.5)_100%)] hover:shadow-[0_16px_40px_rgba(59,130,246,0.15)]">
                               <div className="relative flex h-[160px] w-full items-center justify-center overflow-hidden border-b-[2px] border-b-[rgba(148,163,184,0.2)] bg-[linear-gradient(135deg,#1e3a8a_0%,#1e40af_50%,#0284c7_100%)]">
-                                <img
+                                <Image
                                   src="https://res.cloudinary.com/dmxmm7emu/image/upload/v1773319718/sunrise_kw5rub.jpg"
                                   alt="Sunrise"
-                                  className="h-full w-full object-cover"
+                                  fill
+                                  sizes="(max-width: 768px) 100vw, 50vw"
+                                  className="object-cover"
                                   onError={(e) => {
-                                    e.currentTarget.style.display = "none";
+                                    (e.target as HTMLImageElement).style.display = "none";
                                   }}
                                 />
                               </div>
@@ -312,12 +334,14 @@ export default function CalendarPage() {
                           {(todayData.moonRise ?? todayData.moonSet) && (
                             <div className="cursor-default overflow-hidden rounded-[18px] border border-[rgba(148,163,184,0.3)] bg-[linear-gradient(135deg,rgba(71,85,105,0.4)_0%,rgba(51,65,85,0.3)_100%)] shadow-[0_8px_24px_rgba(0,0,0,0.15)] backdrop-blur-[12px] transition-all duration-300 hover:-translate-y-2 hover:border-[rgba(148,163,184,0.5)] hover:bg-[linear-gradient(135deg,rgba(71,85,105,0.6)_0%,rgba(51,65,85,0.5)_100%)] hover:shadow-[0_16px_40px_rgba(59,130,246,0.15)]">
                               <div className="relative flex h-[160px] w-full items-center justify-center overflow-hidden border-b-[2px] border-b-[rgba(148,163,184,0.2)] bg-[linear-gradient(135deg,#1e3a8a_0%,#1e40af_50%,#0284c7_100%)]">
-                                <img
+                                <Image
                                   src="https://res.cloudinary.com/dmxmm7emu/image/upload/v1773319343/moonrise_azuvh4.jpg"
                                   alt="Moonrise"
-                                  className="h-full w-full object-cover"
+                                  fill
+                                  sizes="(max-width: 768px) 100vw, 50vw"
+                                  className="object-cover"
                                   onError={(e) => {
-                                    e.currentTarget.style.display = "none";
+                                    (e.target as HTMLImageElement).style.display = "none";
                                   }}
                                 />
                               </div>
@@ -450,7 +474,7 @@ export default function CalendarPage() {
                     </div>
                   )}
                   {muhuratData && !muhuratLoading && (
-                    <div className="mb-5 rounded-[16px] border border-[#e8dfd2] bg-white px-7 py-6 shadow-[0_4px_20px_rgba(0,0,0,0.06)]">
+                    <div className="mb-5 rounded-[20px] border border-white/60 bg-gradient-to-br from-white via-[#fff7ed] to-[#f3e8ff] px-7 py-6 shadow-[0_12px_35px_rgba(0,0,0,0.10)] backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(124,58,237,0.18)]">
                       <div className="mb-3 text-[18px] font-semibold text-[#2d2a26]">
                         Abhijit Muhurat
                       </div>
@@ -493,7 +517,7 @@ export default function CalendarPage() {
                     </div>
                   )}
                   {auspiciousData && !auspiciousLoading && (
-                    <div className="mb-5 rounded-[16px] border border-[#e8dfd2] bg-white px-7 py-6 shadow-[0_4px_20px_rgba(0,0,0,0.06)]">
+                    <div className="mb-5 rounded-[20px] border border-white/60 bg-gradient-to-br from-white via-[#fff7ed] to-[#f3e8ff] px-7 py-6 shadow-[0_12px_35px_rgba(0,0,0,0.10)] backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(124,58,237,0.18)]">
                       <div className="mb-3 text-[18px] font-semibold text-[#2d2a26]">
                         {auspiciousData.isAuspicious ? (
                           <span className="text-[18px] font-bold text-[#0d9488]">
@@ -547,7 +571,7 @@ export default function CalendarPage() {
                   )}
                   {rahuError && !rahuLoading && <p className={errorMessageClass}>{rahuError}</p>}
                   {rahuData && !rahuLoading && (
-                    <div className="mb-5 rounded-[16px] border border-[#e8dfd2] bg-white px-7 py-6 shadow-[0_4px_20px_rgba(0,0,0,0.06)]">
+                    <div className="mb-5 rounded-[20px] border border-white/60 bg-gradient-to-br from-white via-[#fff7ed] to-[#f3e8ff] px-7 py-6 shadow-[0_12px_35px_rgba(0,0,0,0.10)] backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(124,58,237,0.18)]">
                       <div className="mb-3 text-[18px] font-semibold text-[#2d2a26]">
                         {rahuData.date}
                       </div>
